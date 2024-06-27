@@ -11,10 +11,12 @@ CONFIG += c++17
 INCLUDEPATH += include
 
 SOURCES += \
+    src/helpers.cpp \
     src/main.cpp \
     src/mainwindow.cpp
 
 HEADERS += \
+    include/helpers.h \
     include/mainwindow.h
 
 FORMS += \
