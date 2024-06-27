@@ -14,6 +14,5 @@
 
 int main() {
     example("hi");
-
     return 0;
 }
