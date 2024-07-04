@@ -13,14 +13,16 @@ INCLUDEPATH += include
 SOURCES += \
     src/crypto/aes.cpp \
     src/crypto/aes_tables.cpp \
+    src/helpers.cpp \
     src/main.cpp \
-    src/mainwindow.cpp
+    src/mainwindow.cpp \
+    src/user.cpp
 
 HEADERS += \
     include/crypto/aes.h \
-    include/crypto/helpers.h \
     include/crytpo/bigint.h \
-    include/mainwindow.h
+    include/mainwindow.h \
+    include/user.h
 
 FORMS += \
     forms/mainwindow.ui

@@ -2,10 +2,12 @@
 #define HELPERS_H
 
 
-#include "bigint.h"
+#include "crypto/bigint.h"
 #include <iostream>
 #include <bitset>
 
+
+/*******************************************CONVERSIONS START************************************************/
 /*
     Binary to Decimal
         Input: Binary
@@ -150,5 +152,13 @@ inline std::string textToHex(std::string text) {
     }
     return result;
 }
+/*****************************************CONVERSIONS END*******************************************************/
+
+
+
+bool CheckForUser(string username);
+void Login(string username, string password);
+void CreateUser(string username, string password);
+
 
 #endif // HELPERS_H
