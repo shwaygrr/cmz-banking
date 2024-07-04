@@ -13,11 +13,13 @@ INCLUDEPATH += include
 SOURCES += \
     src/helpers.cpp \
     src/main.cpp \
-    src/mainwindow.cpp
+    src/mainwindow.cpp \
+    src/user.cpp
 
 HEADERS += \
     include/helpers.h \
-    include/mainwindow.h
+    include/mainwindow.h \
+    include/user.h
 
 FORMS += \
     forms/mainwindow.ui
