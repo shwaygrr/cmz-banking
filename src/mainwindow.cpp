@@ -1,15 +1,21 @@
 #include "mainwindow.h"
-#include "user.h"
 #include "ui_mainwindow.h"
-#include <QDebug>
-#include <string.h>
 
+#include <QDebug>
+#include <regex>
+#include <user.h>
+
+string username, password, email;
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+    : QMainWindow(parent), ui(new Ui::MainWindow), layout(new QVBoxLayout), centralWidget(new QWidget(this))
 {
     ui->setupUi(this);
+    setCentralWidget(centralWidget);
+    centralWidget->setLayout(layout);
+
+    qDebug() << "Program starting...";
+    loadUI(":/forms/mainwindow.ui");
 }
 
 MainWindow::~MainWindow()
@@ -17,10 +23,26 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-QString username, password;
-vector<User> users;
+void MainWindow::loadUI(const QString &uiFile)
+{
+    username = "";
+    password = "";
+    QFile file(uiFile);
+    file.open(QFile::ReadOnly);
+    QWidget *widget = loader.load(&file, this);
+    file.close();
 
-bool CheckForUser(string username)
+    QLayoutItem *child;
+    while ((child = layout->takeAt(0)) != nullptr) {
+        delete child->widget();
+        delete child;
+    }
+    layout->addWidget(widget);
+
+    setupButtonConnections();
+}
+
+bool MainWindow::CheckForUser(string username)
 {
     for(int i = 0; i < (int)users.size(); i++)
     {
@@ -32,7 +54,7 @@ bool CheckForUser(string username)
     return false;
 }
 
-void Login(string username, string password)
+void MainWindow::Login()
 {
     if(username.empty() && password.empty()){ return; }
 
@@ -42,7 +64,7 @@ void Login(string username, string password)
     {
         if(users.at(i).GetUsername() == username && users.at(i).GetPassword() == password)
         {
-            qDebug() << "Successfully logged in...Welcome back " << username;
+            qDebug() << "Successfully logged in...Welcome back" << username << "!";
             return;
         }
     }
@@ -50,7 +72,7 @@ void Login(string username, string password)
     qDebug() << "Failed to login...Invalid credentials";
 }
 
-bool CheckPassword(string password)
+bool MainWindow::CheckPassword(string password)
 {
     if(password.length() < 8){ return false; }
     else
@@ -86,39 +108,132 @@ bool CheckPassword(string password)
     return true;
 }
 
-void CreateUser(string username, string password)
+int MainWindow::CheckEmail(const string &email)
 {
-    if(username.empty() && password.empty()){ return; }
+    for(int i = 0; i < (int)users.size(); i++)
+    {
+        if(users.at(i).GetEmail() == email)
+        {
+            return 0;
+        }
+    }
 
-    if(!CheckPassword(password)){ qDebug() << "Password does not meet the requirements."; return; }
+    const regex pattern(R"((^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$))");
+    if(!regex_match(email, pattern))
+    {
+        return 1;
+    }
+    else{
+        return 2;
+    }
+}
+
+void MainWindow::CreateUser()
+{
+    int valid = CheckEmail(email);
+
+    if(valid == 0)
+    {
+        qDebug() << "Failed to create...Email is already in use...";
+        return;
+    }
+    else if(valid == 1)
+    {
+        qDebug() << "Failed to create...Email is not a valid address.";
+        return;
+    }
 
     if(!CheckForUser(username))
     {
-        User newUser = User(username, password);
-        users.push_back(newUser);
-        qDebug() << "Successfully created user...Welcome " << username << "!";
+        if(username.empty())
+        {
+            qDebug() << "Failed to create...Username cannot be empty.";
+            return;
+        }
     }
     else
     {
         qDebug() << "Failed to create...username already in use";
+        return;
+    }
+
+    if(!CheckPassword(password))
+    {
+        qDebug() << "Password does not meet the requirements.";
+        return;
+    }
+
+    User newUser = User(username, password, email);
+    users.push_back(newUser);
+    qDebug() << "Successfully created user...Welcome" << username << "!";
+
+    loadUI(":/forms/mainwindow.ui");
+}
+
+void MainWindow::setupButtonConnections()
+{
+    // Main Elements
+    QLineEdit *main_input_username = centralWidget->findChild<QLineEdit*>("main_input_username");
+    if(main_input_username)
+    {
+        connect(main_input_username, &QLineEdit::textChanged, this, [](const QString &text)
+        {
+            username = text.toStdString();
+        });
+    }
+    QLineEdit *main_input_password = centralWidget->findChild<QLineEdit*>("main_input_password");
+    if(main_input_password)
+    {
+        connect(main_input_password, &QLineEdit::textChanged, this, [](const QString &text)
+        {
+            password = text.toStdString();
+        });
+    }
+    QPushButton *main_button_login = centralWidget->findChild<QPushButton*>("main_button_login");
+    if(main_button_login)
+    {
+        connect(main_button_login, &QPushButton::clicked, this, [this]() { Login(); });
+    }
+    QPushButton *main_button_create = centralWidget->findChild<QPushButton*>("main_button_createaccount");
+    if(main_button_create)
+    {
+        connect(main_button_create, &QPushButton::clicked, this, [this]() { loadUI(":/forms/createwindow.ui"); });
+    }
+
+
+    // Create Elements
+    QLineEdit *create_input_username = centralWidget->findChild<QLineEdit*>("create_input_username");
+    if(create_input_username)
+    {
+        connect(create_input_username, &QLineEdit::textChanged, this, [](const QString &text)
+        {
+             username = text.toStdString();
+        });
+    }
+    QLineEdit *create_input_password = centralWidget->findChild<QLineEdit*>("create_input_password");
+    if(create_input_password)
+    {
+        connect(create_input_password, &QLineEdit::textChanged, this, [](const QString &text)
+        {
+            password = text.toStdString();
+        });
+    }
+    QLineEdit *create_input_email = centralWidget->findChild<QLineEdit*>("create_input_email");
+    if(create_input_email)
+    {
+        connect(create_input_email, &QLineEdit::textChanged, this, [](const QString &text)
+        {
+            email = text.toStdString();
+        });
+    }
+    QPushButton *create_button_createaccount = centralWidget->findChild<QPushButton*>("create_button_createaccount");
+    if(create_button_createaccount)
+    {
+        connect(create_button_createaccount, &QPushButton::clicked, this, [this]() { CreateUser(); });
+    }
+    QPushButton *create_button_backtologin = centralWidget->findChild<QPushButton*>("create_button_backtologin");
+    if(create_button_backtologin)
+    {
+        connect(create_button_backtologin, &QPushButton::clicked, this, [this]() { loadUI(":/forms/mainwindow.ui"); });
     }
 }
-
-void MainWindow::on_button_login_clicked()
-{
-    username = ui->input_username->text();
-    password = ui->input_password->text();
-
-    Login(username.toStdString(), password.toStdString());
-}
-
-
-
-void MainWindow::on_button_createaccount_clicked()
-{
-    username = ui->input_username->text();
-    password = ui->input_password->text();
-
-    CreateUser(username.toStdString(), password.toStdString());
-}
-
