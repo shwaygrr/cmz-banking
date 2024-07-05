@@ -1,12 +1,19 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+
 #include <QMainWindow>
+#include <QWidget>
+#include <QUiLoader>
+#include <QVBoxLayout>
+#include <QFile>
+#include <QPushButton>
+
+#include <user.h>
 
 QT_BEGIN_NAMESPACE
-namespace Ui {
-class MainWindow;
-}
+namespace Ui {class MainWindow;}
+using namespace std;
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
@@ -17,13 +24,27 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-private slots:
-    void on_button_login_clicked();
+    vector<User> users;
 
-    void on_button_createaccount_clicked();
+
+private slots:
+
 
 private:
     Ui::MainWindow *ui;
+    QVBoxLayout *layout;
+    QWidget *centralWidget;
+    QUiLoader loader;
 
+    void loadUI(const QString &uiFile);
+    void setupButtonConnections();
+
+    void Login();
+    void CreateUser();
+
+    bool CheckForUser(string username);
+    bool CheckPassword(string password);
+
+    int CheckEmail(const string &email);
 };
 #endif // MAINWINDOW_H

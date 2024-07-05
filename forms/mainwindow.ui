@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="label_username">
+   <widget class="QLabel" name="main_label_username">
     <property name="geometry">
      <rect>
       <x>140</x>
@@ -27,7 +27,7 @@
      <string>Username  :</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_password">
+   <widget class="QLabel" name="main_label_password">
     <property name="geometry">
      <rect>
       <x>140</x>
@@ -40,12 +40,12 @@
      <string>Password   :</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="input_username">
+   <widget class="QLineEdit" name="main_input_username">
     <property name="geometry">
      <rect>
       <x>220</x>
       <y>110</y>
-      <width>113</width>
+      <width>110</width>
       <height>24</height>
      </rect>
     </property>
@@ -53,12 +53,12 @@
      <string>username</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="input_password">
+   <widget class="QLineEdit" name="main_input_password">
     <property name="geometry">
      <rect>
       <x>220</x>
       <y>160</y>
-      <width>113</width>
+      <width>110</width>
       <height>24</height>
      </rect>
     </property>
@@ -72,25 +72,25 @@
      <string>password</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="button_login">
+   <widget class="QPushButton" name="main_button_login">
     <property name="geometry">
      <rect>
-      <x>230</x>
-      <y>240</y>
-      <width>80</width>
+      <x>200</x>
+      <y>270</y>
+      <width>130</width>
       <height>24</height>
      </rect>
     </property>
     <property name="text">
-     <string>Log In</string>
+     <string>Login</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="button_createaccount">
+   <widget class="QPushButton" name="main_button_createaccount">
     <property name="geometry">
      <rect>
-      <x>210</x>
-      <y>280</y>
-      <width>121</width>
+      <x>200</x>
+      <y>310</y>
+      <width>130</width>
       <height>24</height>
      </rect>
     </property>

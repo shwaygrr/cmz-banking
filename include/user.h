@@ -10,15 +10,17 @@ using namespace std;
 
 class User{
     private:
-        string username, password;
+        string username, password, email;
     public:
-        User(string u, string p);
+        User(string u, string p, string e);
 
         void SetUsername(string s);
         void SetPassword(string s);
+        void SetEmail(string s);
 
         string GetUsername();
         string GetPassword();
+        string GetEmail();
 };
 
 #endif // USER_H

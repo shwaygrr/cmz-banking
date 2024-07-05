@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>forms/createwindow.ui</file>
+        <file>forms/mainwindow.ui</file>
+    </qresource>
+</RCC>
