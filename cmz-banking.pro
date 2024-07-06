@@ -1,6 +1,6 @@
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets uitools
 
 CONFIG += c++17
 
@@ -11,16 +11,29 @@ CONFIG += c++17
 INCLUDEPATH += include
 
 SOURCES += \
+    src/bankaccount.cpp \
+    src/helpers.cpp \
     src/main.cpp \
-    src/mainwindow.cpp
+    src/mainwindow.cpp \
+    src/user.cpp \
+    src/transaction.cpp
 
 HEADERS += \
-    include/mainwindow.h
+    include/helpers.h \
+    include/mainwindow.h \
+    include/user.h \
+    include/bankaccount.h \
+    include/transaction.h
 
 FORMS += \
-    forms/mainwindow.ui
+    forms/mainwindow.ui \
+    forms/createwindow.ui
+
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    resources.qrc
