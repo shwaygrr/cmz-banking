@@ -21,6 +21,7 @@ SOURCES += \
     src/transaction.cpp
     src/hash.cpp
 
+
 HEADERS += \
     include/crypto/aes.h \
     include/crytpo/bigint.h \
@@ -28,7 +29,8 @@ HEADERS += \
     include/user.h \
     include/bankaccount.h \
     include/transaction.h \
-    include/hash.cpp
+    include/hash.h \
+    include/transaction.h
 
 FORMS += \
     forms/mainwindow.ui \
