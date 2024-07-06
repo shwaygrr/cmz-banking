@@ -16,14 +16,14 @@ SOURCES += \
     src/main.cpp \
     src/mainwindow.cpp \
     src/user.cpp \
-    transaction.cpp
+    src/transaction.cpp
 
 HEADERS += \
     include/helpers.h \
     include/mainwindow.h \
     include/user.h \
-    src/bankaccount.h \
-    transaction.h
+    include/bankaccount.h \
+    include/transaction.h
 
 FORMS += \
     forms/mainwindow.ui \
