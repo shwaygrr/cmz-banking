@@ -1,18 +1,30 @@
-// #include "mainwindow.h"
+#include "mainwindow.h"
 
-#include "helpers.h"
 
-// #include <QApplication>
+#include <QApplication>
 
-// int main(int argc, char *argv[])
-// {
-//     QApplication a(argc, argv);
-//     MainWindow w;
-//     w.show();
-//     return a.exec();
-// }
+using namespace std;
 
-int main() {
-    example("hi");
-    return 0;
+int main(int argc, char *argv[])
+{
+    QApplication a(argc, argv);
+
+    MainWindow w;
+
+    w.show();
+
+    return a.exec();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
