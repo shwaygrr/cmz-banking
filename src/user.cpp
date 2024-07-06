@@ -33,4 +33,3 @@ string User::GetEmail()
 {
     return email;
 }
-

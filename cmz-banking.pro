@@ -11,15 +11,19 @@ CONFIG += c++17
 INCLUDEPATH += include
 
 SOURCES += \
+    src/bankaccount.cpp \
     src/helpers.cpp \
     src/main.cpp \
     src/mainwindow.cpp \
-    src/user.cpp
+    src/user.cpp \
+    src/transaction.cpp
 
 HEADERS += \
     include/helpers.h \
     include/mainwindow.h \
-    include/user.h
+    include/user.h \
+    include/bankaccount.h \
+    include/transaction.h
 
 FORMS += \
     forms/mainwindow.ui \
