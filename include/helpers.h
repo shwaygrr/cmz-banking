@@ -156,9 +156,9 @@ inline std::string textToHex(std::string text) {
 
 
 
-bool CheckForUser(string username);
-void Login(string username, string password);
-void CreateUser(string username, string password);
+bool CheckForUser(std::string username);
+void Login(std::string username, std::string password);
+void CreateUser(std::string username, std::string password);
 
 
 #endif // HELPERS_H
