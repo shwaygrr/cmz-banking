@@ -214,16 +214,6 @@ bool MainWindow::VerifyAction()
     return false;
 }
 
-QWidget CloneWidget(QWidget *original, QWidget* parent = nullptr)
-{
-    QWidget* clonedWidget = new QWidget(parent);
-
-    QLabel label1 = new QLabel("", this);
-    QLabel label2;
-    QLabel label3;
-
-    clonedWidget->
-}
 
 void MainWindow::setupButtonConnections()
 {
