@@ -11,12 +11,15 @@ CONFIG += c++17
 INCLUDEPATH += include
 
 SOURCES += \
-    src/helpers.cpp \
+    src/crypto/aes.cpp \
+    src/crypto/aes_tables.cpp \
     src/main.cpp \
     src/mainwindow.cpp
 
 HEADERS += \
-    include/helpers.h \
+    include/crypto/aes.h \
+    include/crypto/helpers.h \
+    include/crytpo/bigint.h \
     include/mainwindow.h
 
 FORMS += \
