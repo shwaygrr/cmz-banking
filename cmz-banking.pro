@@ -30,7 +30,8 @@ HEADERS += \
     include/bankaccount.h \
     include/transaction.h \
     include/hash.h \
-    include/transaction.h
+    include/transaction.h \
+    src/bankwidget.h
 
 
 FORMS += \
