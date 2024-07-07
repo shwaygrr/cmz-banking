@@ -32,6 +32,7 @@ HEADERS += \
     include/hash.h \
     include/transaction.h
 
+
 FORMS += \
     forms/mainwindow.ui \
     forms/createwindow.ui
