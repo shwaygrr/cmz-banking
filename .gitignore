@@ -128,3 +128,6 @@ compile_commands.json
 *_qmlcache.qrc
 
 build/
+
+#environment variables
+*.env
