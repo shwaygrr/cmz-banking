@@ -129,6 +129,10 @@ public:
         str = n.str;
     }
 
+    bigint(unsigned int n) {
+        str = std::to_string(n);
+    }
+
     // operator overloading for output stream {<<}
     friend std::ostream &operator << (std::ostream& stream, const bigint &n) {
         stream << n.str;

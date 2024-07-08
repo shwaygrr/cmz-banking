@@ -12,6 +12,8 @@ public:
     std::string encECB128(std::string message_hex, std::string priv_key_hex);
     std::string decECB128(std::string message_hex, std::string priv_key_hex);
 
+    //AES-128 encryption
+    std::bitset<128> aesEnc128(const std::string& plain_text128, const std::string& priv_key128);
 
 private:
     //tables
@@ -62,9 +64,6 @@ private:
     void shiftRows(std::bitset<128>& bin128);
 
     void mixColumn(std::bitset<128>& bin128, const std::vector<std::vector<std::string>>& table); //used in decryption
-
-    //AES-128 encryption
-    std::bitset<128> aesEnc128(const std::string& plain_text128, const std::string& priv_key128);
 
     //decryption
     //inverse round functions

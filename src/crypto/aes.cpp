@@ -253,7 +253,6 @@ void AES128::mixColumn(std::bitset<128>& bin128, const std::vector<std::vector<s
 
 //AES-128 encryption
 std::bitset<128> AES128::aesEnc128(const std::string& plain_text, const std::string& priv_key) {
-    std::cout << "beginning encryption..." << std::endl;
     //generate keys
     std::vector<std::string> round_keys_hex = keyGen(priv_key);
 
