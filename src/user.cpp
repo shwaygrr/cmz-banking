@@ -21,6 +21,15 @@ User::User(string u, string p, string e)
     vector<BankAccount> accounts;
 }
 
+User::User(string u, string p, string e, vector<string> l, vector<BankAccount> a)
+{
+    username = u;
+    password = p;
+    email = e;
+    vector<string> activityLog = l;
+    vector<BankAccount> accounts = a;
+}
+
 void User::SetUsername(string s)
 {
     username = s;
@@ -44,6 +53,26 @@ string User::GetPassword()
 string User::GetEmail()
 {
     return email;
+}
+
+vector<string> User::GetActivityLog()
+{
+    return activityLog;
+}
+
+vector<BankAccount> User::GetBankAccounts()
+{
+    return accounts;
+}
+
+void User::SetActivityLog(vector<string> s)
+{
+    activityLog = s;
+}
+
+void User::SetBankAccounts(vector<BankAccount> a)
+{
+    accounts = a;
 }
 
 void User::AddToActivityLog(string s)
@@ -70,12 +99,3 @@ BankAccount User::FindBankAccount(int num)
     qDebug() << "Couldn't find account";
 }
 
-vector<string> User::GetActivityLog()
-{
-    return activityLog;
-}
-
-vector<BankAccount> User::GetAccounts()
-{
-    return accounts;
-}

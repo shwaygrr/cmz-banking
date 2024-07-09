@@ -31,6 +31,8 @@ MainWindow::MainWindow(QWidget *parent)
     qDebug() << "Program starting...";
 
     users.push_back(User("", "", ""));      // TESTING PURPOSES ONLY
+    users.push_back(User("a", "a", "a"));
+    users.push_back(User("b", "b", "b"));
 
     loadUI("mainwindow.ui");
 }
@@ -45,6 +47,7 @@ void MainWindow::loadUI(const QString &uiFile)
     QString ui = ":/forms/" + uiFile;
     username = "";
     password = "";
+    email = "";
     QFile file(ui);
     file.open(QFile::ReadOnly);
     QWidget *widget = loader.load(&file, this);
@@ -76,7 +79,8 @@ bool MainWindow::CheckForUser(string username)
 
 void MainWindow::Login()
 {
-    //if(username.empty() && password.empty()){ return; }         DELETE COMMENT UNLESS TESTING, this is so you can log in with nothing in username and password
+    // DELETE COMMENT UNLESS TESTING, this is so you can log in with nothing in username and password
+    //if(username.empty() && password.empty()){ return; }
 
     qDebug() << "Attempting to login...";
 
@@ -85,11 +89,12 @@ void MainWindow::Login()
     for(int i = 0; i < (int)users.size(); i++)
     {
         tempUser = users.at(i);
+        qDebug() << tempUser.GetUsername() << " " << tempUser.GetPassword() << " " << tempUser.GetBankAccounts().size();
         if(users.at(i).GetUsername() == username)
         {
             if(users.at(i).GetPassword() == password)
             {
-                tempUser.AddToActivityLog("Successfully logged in...Welcome back" + username + "!");
+                tempUser.AddToActivityLog("Successfully logged in...Welcome back " + username + "!");
                 qDebug() << "Successfully logged in...Welcome back" << username << "!";
                 currentUser = tempUser;
                 loadUI("dashboardwindow.ui");
@@ -239,10 +244,22 @@ BankWidget* MainWindow::CreateAccount(string accountNumber, string accountType, 
     widget->SetAccountType(accountType);
     widget->SetAccountBalance(accountBalance);
 
-    currentUser.AddToActivityLog("Added a new account | Account Number: " + accountNumber + ", Account Type: " + accountType + ", Account Balance: " + accountBalance);
+    currentUser.AddToActivityLog("Added a new account | Account Number: " + accountNumber + ", Account Type: " + accountType + ", Account Balance: $" + accountBalance);
     currentUser.CreateBankAccount(stoi(accountNumber), accountType, stof(accountBalance));
 
     return widget;
+}
+
+void MainWindow::SaveUser()
+{
+    for(int i = 0; i < (int)users.size(); i++)
+    {
+        if(users.at(i).GetUsername() == currentUser.GetUsername())
+        {
+            users.at(i).SetActivityLog(currentUser.GetActivityLog());
+            users.at(i).SetBankAccounts(currentUser.GetBankAccounts());
+        }
+    }
 }
 
 void MainWindow::setupButtonConnections()
@@ -331,6 +348,12 @@ void MainWindow::setupButtonConnections()
             connect(goto_transfer, &QPushButton::clicked, this, [this]() { loadUI("transferwindow.ui"); });
         }
 
+        QPushButton *goto_profile = centralWidget->findChild<QPushButton*>("button_profile");
+        if(goto_profile)
+        {
+            connect(goto_profile, &QPushButton::clicked, this, [this]() { loadUI("profilewindow.ui"); });
+        }
+
         QPushButton *add_account = centralWidget->findChild<QPushButton*>("button_add_account");
         if(add_account)
         {
@@ -354,9 +377,9 @@ void MainWindow::setupButtonConnections()
         }
 
         //Load user bank accounts
-        for(int i = 0; i < (int)currentUser.GetAccounts().size(); i++)
+        for(int i = 0; i < (int)currentUser.GetBankAccounts().size(); i++)
         {
-            BankAccount userAccount = currentUser.GetAccounts().at(i);
+            BankAccount userAccount = currentUser.GetBankAccounts().at(i);
             QString strNumber = QString::number(userAccount.getBalance(), 'f', 2);
             scrollWidget->findChild<QVBoxLayout*>()->addWidget(LoadAccount(to_string(userAccount.getNumber()), userAccount.getType(), strNumber.toStdString()));
         }
@@ -369,11 +392,11 @@ void MainWindow::setupButtonConnections()
 
         amountToTransfer = 0;
 
-        for(int i = 0; i < (int)currentUser.GetAccounts().size(); i++)
+        for(int i = 0; i < (int)currentUser.GetBankAccounts().size(); i++)
         {
-            BankAccount userAccount = currentUser.GetAccounts().at(i);
+            BankAccount userAccount = currentUser.GetBankAccounts().at(i);
             QString strNumber = QString::number(userAccount.getBalance(), 'f', 2);
-            accounts.push_back(QString::fromStdString(to_string(userAccount.getNumber()) + "     " + userAccount.getType() + "     " + strNumber.toStdString()));
+            accounts.push_back(QString::fromStdString(to_string(userAccount.getNumber()) + "     " + userAccount.getType() + "     $" + strNumber.toStdString()));
         }
 
         from = centralWidget->findChild<QComboBox*>("from");
@@ -415,6 +438,24 @@ void MainWindow::setupButtonConnections()
                 BankAccount to_account = currentUser.FindBankAccount(to_text.left(11).toInt());
 
                 qDebug() << "Transferred $" << amountToTransfer << " From: " << from_account.getNumber() << " To: " << to_account.getNumber();
+            });
+        }
+    }
+
+    else if(currentwindow == "profilewindow.ui")
+    {
+        QPushButton *goto_dashboard = centralWidget->findChild<QPushButton*>("button_back");
+        if(goto_dashboard)
+        {
+            connect(goto_dashboard, &QPushButton::clicked, this, [this]() { loadUI("dashboardwindow.ui"); });
+        }
+        QPushButton *signout = centralWidget->findChild<QPushButton*>("button_signout");
+        if(signout)
+        {
+            connect(signout, &QPushButton::clicked, this, [this]()
+            {
+                SaveUser();
+                loadUI("mainwindow.ui");
             });
         }
     }

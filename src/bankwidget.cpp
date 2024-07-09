@@ -28,5 +28,5 @@ void BankWidget::SetAccountType(string &accountType)
 }
 void BankWidget::SetAccountBalance(string &accountBalance)
 {
-    balanceLabel->setText(QString::fromStdString(accountBalance));
+    balanceLabel->setText("$" + QString::fromStdString(accountBalance));
 }

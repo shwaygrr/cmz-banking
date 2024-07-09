@@ -42,6 +42,7 @@ private:
 
     void Login();
     void CreateUser();
+    void SaveUser();
 
     BankWidget* CreateAccount(string accountNumber, string accountType, string accountBalance);
     BankWidget* LoadAccount(string accountNumber, string accountType, string accountBalance);
