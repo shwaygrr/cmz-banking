@@ -103,11 +103,6 @@ void User::CreateBankAccount(int accNum, string type, float balance)
     this->AddToActivityLog("Created bank account #" + to_string(accNum));
 }
 
-vector<string> User::GetActivityLog()
-{
-    return activityLog;
-}
-
 BankAccount User::FindBankAccount(int num)
 {
     for(int i = 0; i < (int)accounts.size(); i++)
