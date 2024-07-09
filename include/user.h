@@ -23,7 +23,9 @@ class User{
         void SetPassword(string s);
         void SetEmail(string s);
         void AddToActivityLog(string s);
-        void CreateBankAccount(int accNum, string type, float balance);
+        void CreateBankAccount(int accNum, string type, float balance, User ownerUser);
+        void TransferMoney(float amount, BankAccount sender, BankAccount receiver);
+        void SendMoney(float amount, BankAccount sendAccount, User receiver);
 
         string GetUsername();
         string GetPassword();
