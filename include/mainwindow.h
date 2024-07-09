@@ -44,6 +44,7 @@ private:
     void CreateUser();
 
     BankWidget* CreateAccount(string accountNumber, string accountType, string accountBalance);
+    BankWidget* LoadAccount(string accountNumber, string accountType, string accountBalance);
 
     bool CheckForUser(string username);
     bool CheckPassword(string password);

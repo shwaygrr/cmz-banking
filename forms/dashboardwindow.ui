@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="dashboard_button_profile">
+   <widget class="QPushButton" name="button_profile">
     <property name="geometry">
      <rect>
       <x>250</x>
@@ -27,7 +27,7 @@
      <string>Profile</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="dashboard_button_transfer">
+   <widget class="QPushButton" name="button_transfer">
     <property name="geometry">
      <rect>
       <x>100</x>

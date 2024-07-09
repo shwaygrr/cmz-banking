@@ -57,7 +57,25 @@ void User::CreateBankAccount(int accNum, string type, float balance)
     accounts.push_back(BankAccount(accNum, type, balance));
 }
 
+BankAccount User::FindBankAccount(int num)
+{
+    for(int i = 0; i < (int)accounts.size(); i++)
+    {
+        qDebug() << accounts.at(i).getNumber() << " ? " << num;
+        if(accounts.at(i).getNumber() == num)
+        {
+            return accounts.at(i);
+        }
+    }
+    qDebug() << "Couldn't find account";
+}
+
 vector<string> User::GetActivityLog()
 {
     return activityLog;
+}
+
+vector<BankAccount> User::GetAccounts()
+{
+    return accounts;
 }

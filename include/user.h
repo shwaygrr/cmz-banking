@@ -24,12 +24,14 @@ class User{
         void SetEmail(string s);
         void AddToActivityLog(string s);
         void CreateBankAccount(int accNum, string type, float balance);
+        BankAccount FindBankAccount(int num);
 
         string GetUsername();
         string GetPassword();
         string GetEmail();
 
         vector<string> GetActivityLog();
+        vector<BankAccount> GetAccounts();
 };
 
 #endif // USER_H

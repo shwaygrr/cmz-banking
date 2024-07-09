@@ -7,12 +7,19 @@
 #include <regex>
 #include <user.h>
 #include <QWidget>
+#include <QComboBox>
+#include <random>
 
 
 string username, password, email;
 string currentwindow;
 
 User currentUser;
+
+int amountToTransfer;
+
+QComboBox *from, *to;
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow), layout(new QVBoxLayout), centralWidget(new QWidget(this))
@@ -212,9 +219,22 @@ bool MainWindow::VerifyAction()
     return false;
 }
 
+BankWidget* MainWindow::LoadAccount(string accountNumber, string accountType, string accountBalance)
+{
+    BankWidget *widget = new BankWidget(this);
+
+    widget->SetAccountNumber(accountNumber);
+    widget->SetAccountType(accountType);
+    widget->SetAccountBalance(accountBalance);
+
+    return widget;
+}
+
+
 BankWidget* MainWindow::CreateAccount(string accountNumber, string accountType, string accountBalance)
 {
     BankWidget *widget = new BankWidget(this);
+
     widget->SetAccountNumber(accountNumber);
     widget->SetAccountType(accountType);
     widget->SetAccountBalance(accountBalance);
@@ -224,7 +244,6 @@ BankWidget* MainWindow::CreateAccount(string accountNumber, string accountType, 
 
     return widget;
 }
-
 
 void MainWindow::setupButtonConnections()
 {
@@ -306,6 +325,12 @@ void MainWindow::setupButtonConnections()
         QVBoxLayout *scrollLayout = new QVBoxLayout(scrollWidget);
         scrollLayout->stretch(0);
 
+        QPushButton *goto_transfer = centralWidget->findChild<QPushButton*>("button_transfer");
+        if(goto_transfer)
+        {
+            connect(goto_transfer, &QPushButton::clicked, this, [this]() { loadUI("transferwindow.ui"); });
+        }
+
         QPushButton *add_account = centralWidget->findChild<QPushButton*>("button_add_account");
         if(add_account)
         {
@@ -313,7 +338,83 @@ void MainWindow::setupButtonConnections()
             {
                 QScrollArea *scrollArea = centralWidget->findChild<QScrollArea*>("scrollArea");
                 QWidget *scrollWidget = scrollArea->findChild<QWidget*>("contents");
-                scrollWidget->findChild<QVBoxLayout*>()->addWidget(CreateAccount("1234567890", "Checking", "420.69"));
+
+                random_device rd;
+                mt19937 gen(rd());
+
+                int min = 1000000000;
+                int max = 9999999999;
+
+                uniform_int_distribution<> distr(min, max);
+
+                int randomInt = distr(gen);
+
+                scrollWidget->findChild<QVBoxLayout*>()->addWidget(CreateAccount(QString::number(randomInt).toStdString(), "Checking", "420.69"));
+            });
+        }
+
+        //Load user bank accounts
+        for(int i = 0; i < (int)currentUser.GetAccounts().size(); i++)
+        {
+            BankAccount userAccount = currentUser.GetAccounts().at(i);
+            QString strNumber = QString::number(userAccount.getBalance(), 'f', 2);
+            scrollWidget->findChild<QVBoxLayout*>()->addWidget(LoadAccount(to_string(userAccount.getNumber()), userAccount.getType(), strNumber.toStdString()));
+        }
+    }
+
+    // Transfer Elements
+    else if(currentwindow == "transferwindow.ui")
+    {
+        QList<QString> accounts;
+
+        amountToTransfer = 0;
+
+        for(int i = 0; i < (int)currentUser.GetAccounts().size(); i++)
+        {
+            BankAccount userAccount = currentUser.GetAccounts().at(i);
+            QString strNumber = QString::number(userAccount.getBalance(), 'f', 2);
+            accounts.push_back(QString::fromStdString(to_string(userAccount.getNumber()) + "     " + userAccount.getType() + "     " + strNumber.toStdString()));
+        }
+
+        from = centralWidget->findChild<QComboBox*>("from");
+        if(from)
+        {
+            from->addItems(accounts);
+        }
+
+        to = centralWidget->findChild<QComboBox*>("to");
+        if(to)
+        {
+            to->addItems(accounts);
+        }
+
+        QLineEdit *amount = centralWidget->findChild<QLineEdit*>("amount");
+        if(amount)
+        {
+            connect(amount, &QLineEdit::textChanged, this, [](const QString &text)
+            {
+                amountToTransfer = stoi(text.toStdString());
+            });
+        }
+
+        QPushButton *goto_dashboard = centralWidget->findChild<QPushButton*>("button_back");
+        if(goto_dashboard)
+        {
+            connect(goto_dashboard, &QPushButton::clicked, this, [this]() { loadUI("dashboardwindow.ui"); });
+        }
+
+        QPushButton *transfer = centralWidget->findChild<QPushButton*>("button_transfer");
+        if(transfer)
+        {
+            connect(transfer, &QPushButton::clicked, this, []()
+            {
+                QString from_text = from->currentText();
+                QString to_text = to->currentText();
+
+                BankAccount from_account = currentUser.FindBankAccount(from_text.left(11).toInt());
+                BankAccount to_account = currentUser.FindBankAccount(to_text.left(11).toInt());
+
+                qDebug() << "Transferred $" << amountToTransfer << " From: " << from_account.getNumber() << " To: " << to_account.getNumber();
             });
         }
     }
