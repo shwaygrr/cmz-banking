@@ -11,19 +11,28 @@ CONFIG += c++17
 INCLUDEPATH += include
 
 SOURCES += \
+    src/crypto/aes.cpp \
+    src/crypto/aes_tables.cpp \
     src/bankaccount.cpp \
     src/helpers.cpp \
     src/main.cpp \
     src/mainwindow.cpp \
     src/user.cpp \
     src/transaction.cpp
+    src/hash.cpp
+
 
 HEADERS += \
-    include/helpers.h \
+    include/crypto/aes.h \
+    include/crytpo/bigint.h \
     include/mainwindow.h \
     include/user.h \
     include/bankaccount.h \
-    include/transaction.h
+    include/transaction.h \
+    include/hash.h \
+    include/transaction.h \
+    src/bankwidget.h
+
 
 FORMS += \
     forms/mainwindow.ui \

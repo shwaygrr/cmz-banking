@@ -45,6 +45,8 @@ private:
     bool CheckForUser(string username);
     bool CheckPassword(string password);
 
+    bool VerifyAction();
+
     int CheckEmail(const string &email);
 };
 #endif // MAINWINDOW_H

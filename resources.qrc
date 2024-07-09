@@ -2,5 +2,9 @@
     <qresource prefix="/">
         <file>forms/createwindow.ui</file>
         <file>forms/mainwindow.ui</file>
+        <file>forms/dashboardwindow.ui</file>
+        <file>forms/logwindow.ui</file>
+        <file>forms/profilewindow.ui</file>
+        <file>forms/transferwindow.ui</file>
     </qresource>
 </RCC>

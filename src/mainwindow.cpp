@@ -1,11 +1,18 @@
 #include "mainwindow.h"
+#include "qscrollarea.h"
 #include "ui_mainwindow.h"
 
 #include <QDebug>
 #include <regex>
 #include <user.h>
+#include <qwidget.h>
+#include <QWidget>
+
 
 string username, password, email;
+string currentwindow;
+
+User currentUser;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow), layout(new QVBoxLayout), centralWidget(new QWidget(this))
@@ -15,7 +22,12 @@ MainWindow::MainWindow(QWidget *parent)
     centralWidget->setLayout(layout);
 
     qDebug() << "Program starting...";
-    loadUI(":/forms/mainwindow.ui");
+
+
+    users.push_back(User("", "", ""));      // TESTING PURPOSES ONLY
+
+
+    loadUI("mainwindow.ui");
 }
 
 MainWindow::~MainWindow()
@@ -25,9 +37,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::loadUI(const QString &uiFile)
 {
+    QString ui = ":/forms/" + uiFile;
     username = "";
     password = "";
-    QFile file(uiFile);
+    QFile file(ui);
     file.open(QFile::ReadOnly);
     QWidget *widget = loader.load(&file, this);
     file.close();
@@ -38,6 +51,8 @@ void MainWindow::loadUI(const QString &uiFile)
         delete child;
     }
     layout->addWidget(widget);
+
+    currentwindow = uiFile.toStdString();
 
     setupButtonConnections();
 }
@@ -56,19 +71,33 @@ bool MainWindow::CheckForUser(string username)
 
 void MainWindow::Login()
 {
-    if(username.empty() && password.empty()){ return; }
+    //if(username.empty() && password.empty()){ return; }
 
     qDebug() << "Attempting to login...";
 
+    User tempUser;
+
     for(int i = 0; i < (int)users.size(); i++)
     {
-        if(users.at(i).GetUsername() == username && users.at(i).GetPassword() == password)
+        tempUser = users.at(i);
+        if(users.at(i).GetUsername() == username)
         {
-            qDebug() << "Successfully logged in...Welcome back" << username << "!";
-            return;
+            if(users.at(i).GetPassword() == password)
+            {
+                tempUser.AddToActivityLog("Successfully logged in...Welcome back" + username + "!");
+                qDebug() << "Successfully logged in...Welcome back" << username << "!";
+                currentUser = tempUser;
+                loadUI("dashboardwindow.ui");
+                return;
+            }
+            else
+            {
+                users.at(i).AddToActivityLog("Someone has tried logging in with your username with an incorrect password");
+                qDebug() << "Failed to login...Invalid password";
+                return;
+            }
         }
     }
-
     qDebug() << "Failed to login...Invalid credentials";
 }
 
@@ -165,75 +194,139 @@ void MainWindow::CreateUser()
 
     User newUser = User(username, password, email);
     users.push_back(newUser);
+    newUser.AddToActivityLog("Successfully created user...Welcome" + username + "!");
     qDebug() << "Successfully created user...Welcome" << username << "!";
 
-    loadUI(":/forms/mainwindow.ui");
+    loadUI("mainwindow.ui");
 }
+
+bool MainWindow::VerifyAction()
+{
+    username = currentUser.GetUsername();
+
+    for(int i = 0; i < (int)users.size(); i++)
+    {
+        if(users[i].GetUsername() == username)
+        {
+            return users[i].GetPassword() == currentUser.GetPassword();
+        }
+    }
+    return false;
+}
+
 
 void MainWindow::setupButtonConnections()
 {
     // Main Elements
-    QLineEdit *main_input_username = centralWidget->findChild<QLineEdit*>("main_input_username");
-    if(main_input_username)
+    if(currentwindow == "mainwindow.ui")
     {
-        connect(main_input_username, &QLineEdit::textChanged, this, [](const QString &text)
+        QLineEdit *main_input_username = centralWidget->findChild<QLineEdit*>("main_input_username");
+        if(main_input_username)
         {
-            username = text.toStdString();
-        });
-    }
-    QLineEdit *main_input_password = centralWidget->findChild<QLineEdit*>("main_input_password");
-    if(main_input_password)
-    {
-        connect(main_input_password, &QLineEdit::textChanged, this, [](const QString &text)
+            connect(main_input_username, &QLineEdit::textChanged, this, [](const QString &text)
+                    {
+                        username = text.toStdString();
+                    });
+        }
+        QLineEdit *main_input_password = centralWidget->findChild<QLineEdit*>("main_input_password");
+        if(main_input_password)
         {
-            password = text.toStdString();
-        });
+            connect(main_input_password, &QLineEdit::textChanged, this, [](const QString &text)
+                    {
+                        password = text.toStdString();
+                    });
+        }
+        QPushButton *main_button_login = centralWidget->findChild<QPushButton*>("main_button_login");
+        if(main_button_login)
+        {
+            connect(main_button_login, &QPushButton::clicked, this, [this]() { Login(); });
+        }
+        QPushButton *main_button_create = centralWidget->findChild<QPushButton*>("main_button_createaccount");
+        if(main_button_create)
+        {
+            connect(main_button_create, &QPushButton::clicked, this, [this]() { loadUI("createwindow.ui"); });
+        }
     }
-    QPushButton *main_button_login = centralWidget->findChild<QPushButton*>("main_button_login");
-    if(main_button_login)
-    {
-        connect(main_button_login, &QPushButton::clicked, this, [this]() { Login(); });
-    }
-    QPushButton *main_button_create = centralWidget->findChild<QPushButton*>("main_button_createaccount");
-    if(main_button_create)
-    {
-        connect(main_button_create, &QPushButton::clicked, this, [this]() { loadUI(":/forms/createwindow.ui"); });
-    }
-
 
     // Create Elements
-    QLineEdit *create_input_username = centralWidget->findChild<QLineEdit*>("create_input_username");
-    if(create_input_username)
+    else if(currentwindow == "createwindow.ui")
     {
-        connect(create_input_username, &QLineEdit::textChanged, this, [](const QString &text)
+        QLineEdit *create_input_username = centralWidget->findChild<QLineEdit*>("create_input_username");
+        if(create_input_username)
         {
-             username = text.toStdString();
-        });
-    }
-    QLineEdit *create_input_password = centralWidget->findChild<QLineEdit*>("create_input_password");
-    if(create_input_password)
-    {
-        connect(create_input_password, &QLineEdit::textChanged, this, [](const QString &text)
+            connect(create_input_username, &QLineEdit::textChanged, this, [](const QString &text)
+                    {
+                        username = text.toStdString();
+                    });
+        }
+        QLineEdit *create_input_password = centralWidget->findChild<QLineEdit*>("create_input_password");
+        if(create_input_password)
         {
-            password = text.toStdString();
-        });
-    }
-    QLineEdit *create_input_email = centralWidget->findChild<QLineEdit*>("create_input_email");
-    if(create_input_email)
-    {
-        connect(create_input_email, &QLineEdit::textChanged, this, [](const QString &text)
+            connect(create_input_password, &QLineEdit::textChanged, this, [](const QString &text)
+                    {
+                        password = text.toStdString();
+                    });
+        }
+        QLineEdit *create_input_email = centralWidget->findChild<QLineEdit*>("create_input_email");
+        if(create_input_email)
         {
-            email = text.toStdString();
-        });
+            connect(create_input_email, &QLineEdit::textChanged, this, [](const QString &text)
+                    {
+                        email = text.toStdString();
+                    });
+        }
+        QPushButton *create_button_createaccount = centralWidget->findChild<QPushButton*>("create_button_createaccount");
+        if(create_button_createaccount)
+        {
+            connect(create_button_createaccount, &QPushButton::clicked, this, [this]() { CreateUser(); });
+        }
+        QPushButton *create_button_backtologin = centralWidget->findChild<QPushButton*>("create_button_backtologin");
+        if(create_button_backtologin)
+        {
+            connect(create_button_backtologin, &QPushButton::clicked, this, [this]() { loadUI("mainwindow.ui"); });
+        }
     }
-    QPushButton *create_button_createaccount = centralWidget->findChild<QPushButton*>("create_button_createaccount");
-    if(create_button_createaccount)
+
+    // Dashboard Elements
+    else if(currentwindow == "dashboardwindow.ui")
     {
-        connect(create_button_createaccount, &QPushButton::clicked, this, [this]() { CreateUser(); });
-    }
-    QPushButton *create_button_backtologin = centralWidget->findChild<QPushButton*>("create_button_backtologin");
-    if(create_button_backtologin)
-    {
-        connect(create_button_backtologin, &QPushButton::clicked, this, [this]() { loadUI(":/forms/mainwindow.ui"); });
+        QWidget *defaultbankaccount = centralWidget->findChild<QWidget*>("widget_defaultbank");
+        if(defaultbankaccount)
+        {
+            defaultbankaccount->findChild<QLabel*>("accountnumber")->setText("----------");
+            defaultbankaccount->findChild<QLabel*>("type")->setText("TBD");
+            defaultbankaccount->findChild<QLabel*>("balance")->setText("$-.--");
+        }
+        //defaultbankaccount->hide();
+
+        QWidget *newbankaccount = defaultbankaccount;
+
+        if(newbankaccount)
+        {
+            newbankaccount->findChild<QLabel*>("accountnumber")->setText("1234567890");
+            newbankaccount->findChild<QLabel*>("type")->setText("Checking");
+            newbankaccount->findChild<QLabel*>("balance")->setText("$420.69");
+        }
+        newbankaccount->show();
+
+        QWidget *new2bankaccount = defaultbankaccount;
+
+        if(new2bankaccount)
+        {
+            new2bankaccount->findChild<QLabel*>("accountnumber")->setText("88888880");
+            new2bankaccount->findChild<QLabel*>("type")->setText("Checking");
+            new2bankaccount->findChild<QLabel*>("balance")->setText("$420.69");
+        }
+        new2bankaccount->show();
+
+        QScrollArea *dashboard_scrollarea = centralWidget->findChild<QScrollArea*>("scrollArea");
+        QWidget *scrollWidget = new QWidget(dashboard_scrollarea);
+        QVBoxLayout *scrollLayout = new QVBoxLayout(dashboard_scrollarea);
+
+        scrollLayout->addWidget(newbankaccount);
+        scrollLayout->addWidget(new2bankaccount);
+
+        dashboard_scrollarea->setWidget(scrollWidget);
+        dashboard_scrollarea->setWidgetResizable(true);
     }
 }
