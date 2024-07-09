@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "bankwidget.h"
 #include "qscrollarea.h"
 #include "ui_mainwindow.h"
 
@@ -7,12 +8,19 @@
 #include "user.h"
 #include <qwidget.h>
 #include <QWidget>
+#include <QComboBox>
+#include <random>
 
 
 string username, password, email;
 string currentwindow;
 
 User currentUser;
+
+int amountToTransfer;
+
+QComboBox *from, *to;
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow), layout(new QVBoxLayout), centralWidget(new QWidget(this))
@@ -23,9 +31,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     qDebug() << "Program starting...";
 
-
     users.push_back(User("", "", ""));      // TESTING PURPOSES ONLY
-
+    users.push_back(User("a", "a", "a"));
+    users.push_back(User("b", "b", "b"));
 
     loadUI("mainwindow.ui");
 }
@@ -40,6 +48,7 @@ void MainWindow::loadUI(const QString &uiFile)
     QString ui = ":/forms/" + uiFile;
     username = "";
     password = "";
+    email = "";
     QFile file(ui);
     file.open(QFile::ReadOnly);
     QWidget *widget = loader.load(&file, this);
@@ -71,6 +80,7 @@ bool MainWindow::CheckForUser(string username)
 
 void MainWindow::Login()
 {
+    // DELETE COMMENT UNLESS TESTING, this is so you can log in with nothing in username and password
     //if(username.empty() && password.empty()){ return; }
 
     qDebug() << "Attempting to login...";
@@ -80,11 +90,12 @@ void MainWindow::Login()
     for(int i = 0; i < (int)users.size(); i++)
     {
         tempUser = users.at(i);
+        qDebug() << tempUser.GetUsername() << " " << tempUser.GetPassword() << " " << tempUser.GetBankAccounts().size();
         if(users.at(i).GetUsername() == username)
         {
             if(users.at(i).GetPassword() == password)
             {
-                tempUser.AddToActivityLog("Successfully logged in...Welcome back" + username + "!");
+                tempUser.AddToActivityLog("Successfully logged in...Welcome back " + username + "!");
                 qDebug() << "Successfully logged in...Welcome back" << username << "!";
                 currentUser = tempUser;
                 loadUI("dashboardwindow.ui");
@@ -214,6 +225,43 @@ bool MainWindow::VerifyAction()
     return false;
 }
 
+BankWidget* MainWindow::LoadAccount(string accountNumber, string accountType, string accountBalance)
+{
+    BankWidget *widget = new BankWidget(this);
+
+    widget->SetAccountNumber(accountNumber);
+    widget->SetAccountType(accountType);
+    widget->SetAccountBalance(accountBalance);
+
+    return widget;
+}
+
+
+BankWidget* MainWindow::CreateAccount(string accountNumber, string accountType, string accountBalance)
+{
+    BankWidget *widget = new BankWidget(this);
+
+    widget->SetAccountNumber(accountNumber);
+    widget->SetAccountType(accountType);
+    widget->SetAccountBalance(accountBalance);
+
+    currentUser.AddToActivityLog("Added a new account | Account Number: " + accountNumber + ", Account Type: " + accountType + ", Account Balance: $" + accountBalance);
+    currentUser.CreateBankAccount(stoi(accountNumber), accountType, stof(accountBalance));
+
+    return widget;
+}
+
+void MainWindow::SaveUser()
+{
+    for(int i = 0; i < (int)users.size(); i++)
+    {
+        if(users.at(i).GetUsername() == currentUser.GetUsername())
+        {
+            users.at(i).SetActivityLog(currentUser.GetActivityLog());
+            users.at(i).SetBankAccounts(currentUser.GetBankAccounts());
+        }
+    }
+}
 
 void MainWindow::setupButtonConnections()
 {
@@ -290,43 +338,126 @@ void MainWindow::setupButtonConnections()
     // Dashboard Elements
     else if(currentwindow == "dashboardwindow.ui")
     {
-        QWidget *defaultbankaccount = centralWidget->findChild<QWidget*>("widget_defaultbank");
-        if(defaultbankaccount)
+        QScrollArea *scrollArea = centralWidget->findChild<QScrollArea*>("scrollArea");
+        QWidget *scrollWidget = scrollArea->findChild<QWidget*>("contents");
+        QVBoxLayout *scrollLayout = new QVBoxLayout(scrollWidget);
+        scrollLayout->stretch(0);
+
+        QPushButton *goto_transfer = centralWidget->findChild<QPushButton*>("button_transfer");
+        if(goto_transfer)
         {
-            defaultbankaccount->findChild<QLabel*>("accountnumber")->setText("----------");
-            defaultbankaccount->findChild<QLabel*>("type")->setText("TBD");
-            defaultbankaccount->findChild<QLabel*>("balance")->setText("$-.--");
+            connect(goto_transfer, &QPushButton::clicked, this, [this]() { loadUI("transferwindow.ui"); });
         }
-        //defaultbankaccount->hide();
 
-        QWidget *newbankaccount = defaultbankaccount;
-
-        if(newbankaccount)
+        QPushButton *goto_profile = centralWidget->findChild<QPushButton*>("button_profile");
+        if(goto_profile)
         {
-            newbankaccount->findChild<QLabel*>("accountnumber")->setText("1234567890");
-            newbankaccount->findChild<QLabel*>("type")->setText("Checking");
-            newbankaccount->findChild<QLabel*>("balance")->setText("$420.69");
+            connect(goto_profile, &QPushButton::clicked, this, [this]() { loadUI("profilewindow.ui"); });
         }
-        newbankaccount->show();
 
-        QWidget *new2bankaccount = defaultbankaccount;
-
-        if(new2bankaccount)
+        QPushButton *add_account = centralWidget->findChild<QPushButton*>("button_add_account");
+        if(add_account)
         {
-            new2bankaccount->findChild<QLabel*>("accountnumber")->setText("88888880");
-            new2bankaccount->findChild<QLabel*>("type")->setText("Checking");
-            new2bankaccount->findChild<QLabel*>("balance")->setText("$420.69");
+            connect(add_account, &QPushButton::clicked, this, [this]()
+            {
+                QScrollArea *scrollArea = centralWidget->findChild<QScrollArea*>("scrollArea");
+                QWidget *scrollWidget = scrollArea->findChild<QWidget*>("contents");
+
+                random_device rd;
+                mt19937 gen(rd());
+
+                int min = 1000000000;
+                int max = 9999999999;
+
+                uniform_int_distribution<> distr(min, max);
+
+                int randomInt = distr(gen);
+
+                scrollWidget->findChild<QVBoxLayout*>()->addWidget(CreateAccount(QString::number(randomInt).toStdString(), "Checking", "420.69"));
+            });
         }
-        new2bankaccount->show();
 
-        QScrollArea *dashboard_scrollarea = centralWidget->findChild<QScrollArea*>("scrollArea");
-        QWidget *scrollWidget = new QWidget(dashboard_scrollarea);
-        QVBoxLayout *scrollLayout = new QVBoxLayout(dashboard_scrollarea);
+        //Load user bank accounts
+        for(int i = 0; i < (int)currentUser.GetBankAccounts().size(); i++)
+        {
+            BankAccount userAccount = currentUser.GetBankAccounts().at(i);
+            QString strNumber = QString::number(userAccount.getBalance(), 'f', 2);
+            scrollWidget->findChild<QVBoxLayout*>()->addWidget(LoadAccount(to_string(userAccount.getNumber()), userAccount.getType(), strNumber.toStdString()));
+        }
+    }
 
-        scrollLayout->addWidget(newbankaccount);
-        scrollLayout->addWidget(new2bankaccount);
+    // Transfer Elements
+    else if(currentwindow == "transferwindow.ui")
+    {
+        QList<QString> accounts;
 
-        dashboard_scrollarea->setWidget(scrollWidget);
-        dashboard_scrollarea->setWidgetResizable(true);
+        amountToTransfer = 0;
+
+        for(int i = 0; i < (int)currentUser.GetBankAccounts().size(); i++)
+        {
+            BankAccount userAccount = currentUser.GetBankAccounts().at(i);
+            QString strNumber = QString::number(userAccount.getBalance(), 'f', 2);
+            accounts.push_back(QString::fromStdString(to_string(userAccount.getNumber()) + "     " + userAccount.getType() + "     $" + strNumber.toStdString()));
+        }
+
+        from = centralWidget->findChild<QComboBox*>("from");
+        if(from)
+        {
+            from->addItems(accounts);
+        }
+
+        to = centralWidget->findChild<QComboBox*>("to");
+        if(to)
+        {
+            to->addItems(accounts);
+        }
+
+        QLineEdit *amount = centralWidget->findChild<QLineEdit*>("amount");
+        if(amount)
+        {
+            connect(amount, &QLineEdit::textChanged, this, [](const QString &text)
+            {
+                amountToTransfer = stoi(text.toStdString());
+            });
+        }
+
+        QPushButton *goto_dashboard = centralWidget->findChild<QPushButton*>("button_back");
+        if(goto_dashboard)
+        {
+            connect(goto_dashboard, &QPushButton::clicked, this, [this]() { loadUI("dashboardwindow.ui"); });
+        }
+
+        QPushButton *transfer = centralWidget->findChild<QPushButton*>("button_transfer");
+        if(transfer)
+        {
+            connect(transfer, &QPushButton::clicked, this, []()
+            {
+                QString from_text = from->currentText();
+                QString to_text = to->currentText();
+
+                BankAccount from_account = currentUser.FindBankAccount(from_text.left(11).toInt());
+                BankAccount to_account = currentUser.FindBankAccount(to_text.left(11).toInt());
+
+                qDebug() << "Transferred $" << amountToTransfer << " From: " << from_account.getNumber() << " To: " << to_account.getNumber();
+            });
+        }
+    }
+
+    else if(currentwindow == "profilewindow.ui")
+    {
+        QPushButton *goto_dashboard = centralWidget->findChild<QPushButton*>("button_back");
+        if(goto_dashboard)
+        {
+            connect(goto_dashboard, &QPushButton::clicked, this, [this]() { loadUI("dashboardwindow.ui"); });
+        }
+        QPushButton *signout = centralWidget->findChild<QPushButton*>("button_signout");
+        if(signout)
+        {
+            connect(signout, &QPushButton::clicked, this, [this]()
+            {
+                SaveUser();
+                loadUI("mainwindow.ui");
+            });
+        }
     }
 }

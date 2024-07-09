@@ -111,7 +111,7 @@
      <string>email address</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="profile_button_signout">
+   <widget class="QPushButton" name="button_signout">
     <property name="geometry">
      <rect>
       <x>220</x>
@@ -161,6 +161,19 @@
     </property>
     <property name="text">
      <string>Change</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="button_back">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>310</y>
+      <width>90</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Back</string>
     </property>
    </widget>
   </widget>
