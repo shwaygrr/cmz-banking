@@ -5,7 +5,8 @@
 
 #include <QDebug>
 #include <regex>
-#include <user.h>
+#include "user.h"
+#include <qwidget.h>
 #include <QWidget>
 #include <QComboBox>
 #include <random>

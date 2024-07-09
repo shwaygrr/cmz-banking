@@ -1,7 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-
 #include "BankWidget.h"
 #include <QMainWindow>
 #include <QWidget>

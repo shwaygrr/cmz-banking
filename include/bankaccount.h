@@ -24,7 +24,7 @@ public:
     string getType();
     float getBalance();
 
-    void send(float amount, BankAccount receiver);
+    void send(float amount, BankAccount &receiver);
     void receive(float amount);
 };
 

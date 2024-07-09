@@ -24,11 +24,15 @@ class User{
         void SetPassword(string s);
         void SetEmail(string s);
         void AddToActivityLog(string s);
-        void CreateBankAccount(int accNum, string type, float balance);
+
         BankAccount FindBankAccount(int num);
 
         void SetActivityLog(vector<string> s);
         void SetBankAccounts(vector<BankAccount> a);
+
+        void CreateBankAccount(int accNum, string type, float balance=0);
+        void TransferMoney(float amount, BankAccount sender, BankAccount receiver);
+        void SendMoney(float amount, BankAccount sendAccount, User receiver);
 
         string GetUsername();
         string GetPassword();

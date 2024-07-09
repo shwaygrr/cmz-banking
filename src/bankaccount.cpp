@@ -1,4 +1,7 @@
-#include "bankaccount.h"
+#include <bankaccount.h>
+#include <QDebug>
+#include "transaction.h"
+#include <string>
 
 BankAccount::BankAccount(int n, string t, float b) {
     number = n;
@@ -30,9 +33,10 @@ float BankAccount::getBalance() {
     return balance;
 }
 
-void BankAccount::send(float amount, BankAccount receiver) {
+void BankAccount::send(float amount, BankAccount &receiver) {
     balance -= amount;
     receiver.receive(amount);
+    qDebug() << "Sent " << amount << " from account " << this->getNumber() << " to " << receiver.getNumber();
 }
 
 void BankAccount::receive(float amount) {
