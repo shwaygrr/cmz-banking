@@ -1,6 +1,6 @@
 #include <bankaccount.h>
 #include <QDebug>
-#include <transaction.h>
+#include "transaction.h"
 #include <string>
 
 BankAccount::BankAccount(int n, string t, float b) {
