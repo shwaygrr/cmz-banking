@@ -11,6 +11,7 @@ CONFIG += c++17
 INCLUDEPATH += include
 
 SOURCES += \
+    src/bankwidget.cpp \
     src/crypto/aes.cpp \
     src/crypto/aes_tables.cpp \
     src/bankaccount.cpp \
@@ -31,12 +32,13 @@ HEADERS += \
     include/transaction.h \
     include/hash.h \
     include/transaction.h \
-    src/bankwidget.h
+    include/bankwidget.h
 
 
 FORMS += \
     forms/mainwindow.ui \
-    forms/createwindow.ui
+    forms/createwindow.ui \
+    forms/dashboardwindow.ui
 
 
 # Default rules for deployment.

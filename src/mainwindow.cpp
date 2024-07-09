@@ -1,11 +1,11 @@
 #include "mainwindow.h"
+#include "bankwidget.h"
 #include "qscrollarea.h"
 #include "ui_mainwindow.h"
 
 #include <QDebug>
 #include <regex>
 #include <user.h>
-#include <qwidget.h>
 #include <QWidget>
 
 
@@ -23,9 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     qDebug() << "Program starting...";
 
-
     users.push_back(User("", "", ""));      // TESTING PURPOSES ONLY
-
 
     loadUI("mainwindow.ui");
 }
@@ -71,7 +69,7 @@ bool MainWindow::CheckForUser(string username)
 
 void MainWindow::Login()
 {
-    //if(username.empty() && password.empty()){ return; }
+    //if(username.empty() && password.empty()){ return; }         DELETE COMMENT UNLESS TESTING, this is so you can log in with nothing in username and password
 
     qDebug() << "Attempting to login...";
 
@@ -214,6 +212,19 @@ bool MainWindow::VerifyAction()
     return false;
 }
 
+BankWidget* MainWindow::CreateAccount(string accountNumber, string accountType, string accountBalance)
+{
+    BankWidget *widget = new BankWidget(this);
+    widget->SetAccountNumber(accountNumber);
+    widget->SetAccountType(accountType);
+    widget->SetAccountBalance(accountBalance);
+
+    currentUser.AddToActivityLog("Added a new account | Account Number: " + accountNumber + ", Account Type: " + accountType + ", Account Balance: " + accountBalance);
+    currentUser.CreateBankAccount(stoi(accountNumber), accountType, stof(accountBalance));
+
+    return widget;
+}
+
 
 void MainWindow::setupButtonConnections()
 {
@@ -290,43 +301,20 @@ void MainWindow::setupButtonConnections()
     // Dashboard Elements
     else if(currentwindow == "dashboardwindow.ui")
     {
-        QWidget *defaultbankaccount = centralWidget->findChild<QWidget*>("widget_defaultbank");
-        if(defaultbankaccount)
+        QScrollArea *scrollArea = centralWidget->findChild<QScrollArea*>("scrollArea");
+        QWidget *scrollWidget = scrollArea->findChild<QWidget*>("contents");
+        QVBoxLayout *scrollLayout = new QVBoxLayout(scrollWidget);
+        scrollLayout->stretch(0);
+
+        QPushButton *add_account = centralWidget->findChild<QPushButton*>("button_add_account");
+        if(add_account)
         {
-            defaultbankaccount->findChild<QLabel*>("accountnumber")->setText("----------");
-            defaultbankaccount->findChild<QLabel*>("type")->setText("TBD");
-            defaultbankaccount->findChild<QLabel*>("balance")->setText("$-.--");
+            connect(add_account, &QPushButton::clicked, this, [this]()
+            {
+                QScrollArea *scrollArea = centralWidget->findChild<QScrollArea*>("scrollArea");
+                QWidget *scrollWidget = scrollArea->findChild<QWidget*>("contents");
+                scrollWidget->findChild<QVBoxLayout*>()->addWidget(CreateAccount("1234567890", "Checking", "420.69"));
+            });
         }
-        //defaultbankaccount->hide();
-
-        QWidget *newbankaccount = defaultbankaccount;
-
-        if(newbankaccount)
-        {
-            newbankaccount->findChild<QLabel*>("accountnumber")->setText("1234567890");
-            newbankaccount->findChild<QLabel*>("type")->setText("Checking");
-            newbankaccount->findChild<QLabel*>("balance")->setText("$420.69");
-        }
-        newbankaccount->show();
-
-        QWidget *new2bankaccount = defaultbankaccount;
-
-        if(new2bankaccount)
-        {
-            new2bankaccount->findChild<QLabel*>("accountnumber")->setText("88888880");
-            new2bankaccount->findChild<QLabel*>("type")->setText("Checking");
-            new2bankaccount->findChild<QLabel*>("balance")->setText("$420.69");
-        }
-        new2bankaccount->show();
-
-        QScrollArea *dashboard_scrollarea = centralWidget->findChild<QScrollArea*>("scrollArea");
-        QWidget *scrollWidget = new QWidget(dashboard_scrollarea);
-        QVBoxLayout *scrollLayout = new QVBoxLayout(dashboard_scrollarea);
-
-        scrollLayout->addWidget(newbankaccount);
-        scrollLayout->addWidget(new2bankaccount);
-
-        dashboard_scrollarea->setWidget(scrollWidget);
-        dashboard_scrollarea->setWidgetResizable(true);
     }
 }

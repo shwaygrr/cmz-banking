@@ -48,8 +48,13 @@ string User::GetEmail()
 
 void User::AddToActivityLog(string s)
 {
-    qDebug() << "Activity log for " << username << " has been updated";
+    qDebug() << "Activity log for " << username << " has been updated: " << s;
     this->activityLog.push_back(s);
+}
+
+void User::CreateBankAccount(int accNum, string type, float balance)
+{
+    accounts.push_back(BankAccount(accNum, type, balance));
 }
 
 vector<string> User::GetActivityLog()

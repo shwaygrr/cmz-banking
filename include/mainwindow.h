@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 
+#include "BankWidget.h"
 #include <QMainWindow>
 #include <QWidget>
 #include <QUiLoader>
@@ -41,6 +42,8 @@ private:
 
     void Login();
     void CreateUser();
+
+    BankWidget* CreateAccount(string accountNumber, string accountType, string accountBalance);
 
     bool CheckForUser(string username);
     bool CheckPassword(string password);
