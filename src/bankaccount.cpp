@@ -36,7 +36,6 @@ float BankAccount::getBalance() {
 void BankAccount::send(float amount, BankAccount &receiver) {
     balance -= amount;
     receiver.receive(amount);
-    qDebug() << "Sent " << amount << " from account " << this->getNumber() << " to " << receiver.getNumber();
 }
 
 void BankAccount::receive(float amount) {
