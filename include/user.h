@@ -31,6 +31,7 @@ class User{
         void SetBankAccounts(vector<BankAccount> a);
 
         void CreateBankAccount(int accNum, string type, float balance=0);
+        void DeleteBankAccount(int accNum);
         void TransferMoney(float amount, BankAccount &sender, BankAccount &receiver);
         void SendMoney(float amount, BankAccount sendAccount, User receiver);
 

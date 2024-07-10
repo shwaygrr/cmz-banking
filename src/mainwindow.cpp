@@ -17,7 +17,7 @@ string currentwindow;
 
 User currentUser;
 
-int amountToTransfer;
+float amountToTransfer;
 
 QComboBox *from, *to;
 int from_index, to_index;
@@ -425,7 +425,7 @@ void MainWindow::setupButtonConnections()
         {
             connect(amount, &QLineEdit::textChanged, this, [](const QString &text)
             {
-                amountToTransfer = stoi(text.toStdString());
+                amountToTransfer = stof(text.toStdString());
             });
         }
         QPushButton *goto_dashboard = centralWidget->findChild<QPushButton*>("button_back");

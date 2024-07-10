@@ -102,6 +102,24 @@ void User::CreateBankAccount(int accNum, string type, float balance)
     this->accounts.push_back(BankAccount(accNum, type, balance)); //create new bank account with $0
 }
 
+void User::DeleteBankAccount(int accNum)
+{
+    for (int i=0; i < (int)this->accounts.size(); i++) {
+        bool found = false;
+
+        if (accNum == this->accounts[i].getNumber()) {
+            this->accounts.erase(accounts.begin() + i);
+            this->AddToActivityLog("Closed account #" + to_string(accNum));
+            qDebug() << "User " << this->GetUsername() << " closed account #" << to_string(accNum);
+            found = true;
+        }
+
+        if (!found) {
+            qDebug() << "Could not find bank account #" << accNum;
+        }
+    }
+}
+
 BankAccount* User::FindBankAccount(int num)
 {
     for(int i = 0; i < (int)accounts.size(); i++)
