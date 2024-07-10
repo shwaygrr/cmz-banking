@@ -20,6 +20,7 @@ User currentUser;
 int amountToTransfer;
 
 QComboBox *from, *to;
+int from_index, to_index;
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -90,7 +91,6 @@ void MainWindow::Login()
     for(int i = 0; i < (int)users.size(); i++)
     {
         tempUser = users.at(i);
-        qDebug() << tempUser.GetUsername() << " " << tempUser.GetPassword() << " " << tempUser.GetBankAccounts().size();
         if(users.at(i).GetUsername() == username)
         {
             if(users.at(i).GetPassword() == password)
@@ -223,6 +223,19 @@ bool MainWindow::VerifyAction()
         }
     }
     return false;
+}
+
+void MainWindow::LoadAllAccounts()
+{
+    QScrollArea *scrollArea = centralWidget->findChild<QScrollArea*>("scrollArea");
+    QWidget *scrollWidget = scrollArea->findChild<QWidget*>("contents");
+    for(int i = 0; i < (int)currentUser.GetBankAccounts().size(); i++)
+    {
+        BankAccount userAccount = currentUser.GetBankAccounts().at(i);
+        QString strNumber = QString::number(userAccount.getBalance(), 'f', 2);
+        scrollWidget->findChild<QVBoxLayout*>()->addWidget(LoadAccount(to_string(userAccount.getNumber()), userAccount.getType(), strNumber.toStdString()));
+    }
+
 }
 
 BankWidget* MainWindow::LoadAccount(string accountNumber, string accountType, string accountBalance)
@@ -378,12 +391,7 @@ void MainWindow::setupButtonConnections()
         }
 
         //Load user bank accounts
-        for(int i = 0; i < (int)currentUser.GetBankAccounts().size(); i++)
-        {
-            BankAccount userAccount = currentUser.GetBankAccounts().at(i);
-            QString strNumber = QString::number(userAccount.getBalance(), 'f', 2);
-            scrollWidget->findChild<QVBoxLayout*>()->addWidget(LoadAccount(to_string(userAccount.getNumber()), userAccount.getType(), strNumber.toStdString()));
-        }
+        LoadAllAccounts();
     }
 
     // Transfer Elements
@@ -420,7 +428,6 @@ void MainWindow::setupButtonConnections()
                 amountToTransfer = stoi(text.toStdString());
             });
         }
-
         QPushButton *goto_dashboard = centralWidget->findChild<QPushButton*>("button_back");
         if(goto_dashboard)
         {
@@ -430,15 +437,43 @@ void MainWindow::setupButtonConnections()
         QPushButton *transfer = centralWidget->findChild<QPushButton*>("button_transfer");
         if(transfer)
         {
-            connect(transfer, &QPushButton::clicked, this, []()
+            connect(transfer, &QPushButton::clicked, this, [this]()
             {
+                if(from->currentIndex() == to->currentIndex()) { return; }
+
+                from_index = from->currentIndex();
+                to_index = to->currentIndex();
+
                 QString from_text = from->currentText();
                 QString to_text = to->currentText();
 
-                BankAccount from_account = currentUser.FindBankAccount(from_text.left(11).toInt());
-                BankAccount to_account = currentUser.FindBankAccount(to_text.left(11).toInt());
+                BankAccount *from_account = currentUser.FindBankAccount(from_text.left(11).toInt());
+                BankAccount *to_account = currentUser.FindBankAccount(to_text.left(11).toInt());
 
-                qDebug() << "Transferred $" << amountToTransfer << " From: " << from_account.getNumber() << " To: " << to_account.getNumber();
+                QList<QString> accounts;
+
+                currentUser.TransferMoney(amountToTransfer, *from_account, *to_account);
+
+                for(int i = 0; i < (int)currentUser.GetBankAccounts().size(); i++)
+                {
+                    BankAccount userAccount = currentUser.GetBankAccounts().at(i);
+                    QString strNumber = QString::number(userAccount.getBalance(), 'f', 2);
+                    accounts.push_back(QString::fromStdString(to_string(userAccount.getNumber()) + "     " + userAccount.getType() + "     $" + strNumber.toStdString()));
+                }
+
+                from = centralWidget->findChild<QComboBox*>("from");
+                to = centralWidget->findChild<QComboBox*>("to");
+
+                from->clear();
+                to->clear();
+
+                from->addItems(accounts);
+                to->addItems(accounts);
+
+                from->setCurrentIndex(from_index);
+                to->setCurrentIndex(to_index);
+
+                SaveUser();
             });
         }
     }

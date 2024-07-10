@@ -78,15 +78,16 @@ void User::SetBankAccounts(vector<BankAccount> a)
 
 void User::AddToActivityLog(string s)
 {
-    qDebug() << "Activity log for " << username << " has been updated: " << s;
+    qDebug() << s;
     this->activityLog.push_back(s);
 }
 
 
-void User::TransferMoney(float amount, BankAccount sender, BankAccount receiver)
+void User::TransferMoney(float amount, BankAccount &sender, BankAccount &receiver)
 {
     sender.send(amount, receiver);
-    this->AddToActivityLog("Transferred " + to_string(amount) + " from account " + to_string(sender.getNumber()) + " to account " + to_string(receiver.getNumber()));
+    QString strNumber = QString::number(amount, 'f', 2);
+    this->AddToActivityLog("Transferred $" + strNumber.toStdString() + " from account " + to_string(sender.getNumber()) + " to account " + to_string(receiver.getNumber()));
 }
 
 void User::SendMoney(float amount, BankAccount sendAccount, User receiver)
@@ -99,18 +100,15 @@ void User::SendMoney(float amount, BankAccount sendAccount, User receiver)
 void User::CreateBankAccount(int accNum, string type, float balance)
 {
     this->accounts.push_back(BankAccount(accNum, type, balance)); //create new bank account with $0
-    qDebug() << "Created bank account #" + to_string(accNum) + " under user " + this->GetUsername();
-    this->AddToActivityLog("Created bank account #" + to_string(accNum));
 }
 
-BankAccount User::FindBankAccount(int num)
+BankAccount* User::FindBankAccount(int num)
 {
     for(int i = 0; i < (int)accounts.size(); i++)
     {
-        qDebug() << accounts.at(i).getNumber() << " ? " << num;
         if(accounts.at(i).getNumber() == num)
         {
-            return accounts.at(i);
+            return &accounts.at(i);
         }
     }
     qDebug() << "Couldn't find account";
