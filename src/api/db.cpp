@@ -61,21 +61,21 @@ DB::~DB() {
 }
 
 void DB::createTables() {
-    QSqlQuery qry;
+    QSqlQuery query;
 
     QString createUsersTable = R"(
         CREATE TABLE Users (
             user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            full_name VARCHAR(255),
             username VARCHAR(255) UNIQUE NOT NULL,
             password_hash VARCHAR(255) NOT NULL,
-            full_name VARCHAR(255),
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     )";
 
-    if (!qry.exec(createUsersTable)) {
-        qDebug() << "Error creating Users table:" << qry.lastError();
+    if (!query.exec(createUsersTable)) {
+        qDebug() << "Error creating Users table:" << query.lastError();
     }
 
     QString createBankAccountsTable = R"(
@@ -91,8 +91,8 @@ void DB::createTables() {
         );
     )";
 
-    if (!qry.exec(createBankAccountsTable)) {
-        qDebug() << "Error creating BankAccounts table:" << qry.lastError();
+    if (!query.exec(createBankAccountsTable)) {
+        qDebug() << "Error creating BankAccounts table:" << query.lastError();
     }
 
     QString createTransactionsTable = R"(
@@ -109,9 +109,56 @@ void DB::createTables() {
         );
     )";
 
-    if (!qry.exec(createTransactionsTable)) {
-        qDebug() << "Error creating Transactions table:" << qry.lastError();
+    if (!query.exec(createTransactionsTable)) {
+        qDebug() << "Error creating Transactions table:" << query.lastError();
     }
 
     // db.close();
+}
+
+bool DB::createUser(const QString& full_name, const QString& username, const QString& password_hash) {
+    QSqlQuery query;
+
+    // Prepare the SQL query to insert a new user
+    query.prepare("INSERT INTO Users (full_name, username, password_hash) VALUES (:full_name, :username, :password_hash)");
+    query.bindValue(":full_name", full_name);
+    query.bindValue(":username", username);
+    query.bindValue(":password_hash", password_hash);
+
+    // Execute the query and check for errors
+    if (!query.exec()) {
+        qDebug() << "Error adding user:" << query.lastError().text();
+        return false;
+    }
+
+    qDebug() << "User added successfully";
+    return true;
+}
+
+User DB::getUserById(const int user_id) {
+    QSqlQuery query;
+    // Prepare the SQL query to select a user by ID
+    query.prepare("SELECT user_id, full_name, username, password_hash, created_at FROM Users WHERE user_id = :user_id");
+    query.bindValue(":user_id", user_id);
+
+    // Execute the query and check for errors
+    if (!query.exec()) {
+        qDebug() << "Error retrieving user:" << query.lastError().text();
+        return User(); // Return an empty user object if there's an error
+    }
+
+    // Process the query result
+    if (query.next()) {
+        QSqlRecord record = query.record();
+
+        int user_id = record.value("user_id").toInt();
+        QString full_name = record.value("full_name").toString();
+        QString username = record.value("username").toString();
+        QString created_at = record.value("created_at").toString("dd-MM-yyyy:HH-mm-ss");
+
+        return User(user_id, full_name, username, created_at);
+    } else {
+        qDebug() << "User not found";
+        return User();
+    }
 }

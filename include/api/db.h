@@ -6,14 +6,19 @@
 #include <filesystem>
 #include <string>
 #include <vector>
+
+#include "user.h"
 class DB {
 public:
     DB();
     ~DB();
-    //sign in
+    //user table
+    bool createUser(const QString& full_name, const QString& username, const QString& password_hash); //create user
+    User getUserById(const int user_id); //get user data by id
 
     //sign up
     void signUp();
+
     //sign out
 
     //create bank account
@@ -28,8 +33,15 @@ public:
 private:
     QSqlDatabase db;
 
+    //initialize database
     std::string dbPath();
     void createTables();
+    //user table operations
+    //create user
+
+    //get user
+
+
 };
 
 #endif // DB_H

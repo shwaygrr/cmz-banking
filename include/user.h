@@ -3,24 +3,25 @@
 
 #include <iostream>
 #include <string>
-
+#include <QDebug>
 using namespace std;
 
 //this is where you put helper function declarations
 
-class User{
+class User {
     private:
-        string username, password, email;
+        QString full_name, username, created_at;
+        int user_id;
     public:
-        User(string u, string p, string e);
+        User();
+        User(int user_id_, QString full_name_, QString username_, QString created_at);
 
-        void SetUsername(string s);
-        void SetPassword(string s);
-        void SetEmail(string s);
+        friend QDebug operator << (QDebug dbg, const User& user);
 
-        string GetUsername();
-        string GetPassword();
-        string GetEmail();
+        int getUserId() const;
+        QString getFullName() const;
+        QString getUsername() const;
+        QString getCreatedAt() const;
 };
 
 #endif // USER_H
