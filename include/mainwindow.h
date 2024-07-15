@@ -39,12 +39,12 @@ private:
     void loadUI(const QString &uiFile);
     void setupButtonConnections();
 
-    void Login();
-    void CreateUser();
+    void login();
+    void createUser();
 
-    bool CheckForUser(string username);
-    bool CheckPassword(string password);
+    bool checkForUser(string username);
+    bool checkPassword(string password);
 
-    int CheckEmail(const string &email);
+    int checkEmail(const string &email);
 };
 #endif // MAINWINDOW_H

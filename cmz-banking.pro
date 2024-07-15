@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets uitools
 
@@ -19,7 +19,8 @@ SOURCES += \
     src/mainwindow.cpp \
     src/user.cpp \
     src/crypto/hash.cpp \
-    src/transaction.cpp
+    src/transaction.cpp \
+    src/api/db.cpp
 
 
 
@@ -31,7 +32,8 @@ HEADERS += \
     include/bankaccount.h \
     include/transaction.h \
     include/hash.h \
-    include/transaction.h
+    include/transaction.h \
+    include/api/db.h
 
 
 FORMS += \

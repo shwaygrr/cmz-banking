@@ -42,37 +42,34 @@ void MainWindow::loadUI(const QString &uiFile)
     setupButtonConnections();
 }
 
-bool MainWindow::CheckForUser(string username)
+bool MainWindow::checkForUser(string username)
 {
-    for(int i = 0; i < (int)users.size(); i++)
-    {
-        if(users.at(i).GetUsername() == username)
-        {
-            return true;
-        }
-    }
+    // for(int i = 0; i < (int)users.size(); i++)
+    // {
+    //     if(users.at(i).getUsername() == username)
+    //     {
+    //         return true;
+    //     }
+    // }
     return false;
 }
 
-void MainWindow::Login()
+void MainWindow::login()
 {
     if(username.empty() && password.empty()){ return; }
 
     qDebug() << "Attempting to login...";
 
-    for(int i = 0; i < (int)users.size(); i++)
-    {
-        if(users.at(i).GetUsername() == username && users.at(i).GetPassword() == password)
-        {
-            qDebug() << "Successfully logged in...Welcome back" << username << "!";
-            return;
-        }
-    }
-
+    // for(int i = 0; i < (int)users.size(); i++) {
+    //     if(users.at(i).getUsername() == username && users.at(i).getPassword() == password) {
+    //         qDebug() << "Successfully logged in...Welcome back" << username << "!";
+    //         return;
+    //     }
+    // }
     qDebug() << "Failed to login...Invalid credentials";
 }
 
-bool MainWindow::CheckPassword(string password)
+bool MainWindow::checkPassword(string password)
 {
     if(password.length() < 8){ return false; }
     else
@@ -108,15 +105,15 @@ bool MainWindow::CheckPassword(string password)
     return true;
 }
 
-int MainWindow::CheckEmail(const string &email)
+int MainWindow::checkEmail(const string &email)
 {
-    for(int i = 0; i < (int)users.size(); i++)
-    {
-        if(users.at(i).GetEmail() == email)
-        {
-            return 0;
-        }
-    }
+    // for(int i = 0; i < (int)users.size(); i++)
+    // {
+    //     if(users.at(i).getEmail() == email)
+    //     {
+    //         return 0;
+    //     }
+    // }
 
     const regex pattern(R"((^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$))");
     if(!regex_match(email, pattern))
@@ -128,9 +125,9 @@ int MainWindow::CheckEmail(const string &email)
     }
 }
 
-void MainWindow::CreateUser()
+void MainWindow::createUser()
 {
-    int valid = CheckEmail(email);
+    int valid = checkEmail(email);
 
     if(valid == 0)
     {
@@ -143,7 +140,7 @@ void MainWindow::CreateUser()
         return;
     }
 
-    if(!CheckForUser(username))
+    if(!checkForUser(username))
     {
         if(username.empty())
         {
@@ -157,14 +154,14 @@ void MainWindow::CreateUser()
         return;
     }
 
-    if(!CheckPassword(password))
+    if(!checkPassword(password))
     {
         qDebug() << "Password does not meet the requirements.";
         return;
     }
 
-    User newUser = User(username, password, email);
-    users.push_back(newUser);
+    // User newUser = User(username, password, email);
+    // users.push_back(newUser);
     qDebug() << "Successfully created user...Welcome" << username << "!";
 
     loadUI(":/forms/mainwindow.ui");
@@ -192,7 +189,7 @@ void MainWindow::setupButtonConnections()
     QPushButton *main_button_login = centralWidget->findChild<QPushButton*>("main_button_login");
     if(main_button_login)
     {
-        connect(main_button_login, &QPushButton::clicked, this, [this]() { Login(); });
+        connect(main_button_login, &QPushButton::clicked, this, [this]() { login(); });
     }
     QPushButton *main_button_create = centralWidget->findChild<QPushButton*>("main_button_createaccount");
     if(main_button_create)
@@ -229,7 +226,7 @@ void MainWindow::setupButtonConnections()
     QPushButton *create_button_createaccount = centralWidget->findChild<QPushButton*>("create_button_createaccount");
     if(create_button_createaccount)
     {
-        connect(create_button_createaccount, &QPushButton::clicked, this, [this]() { CreateUser(); });
+        connect(create_button_createaccount, &QPushButton::clicked, this, [this]() { createUser(); });
     }
     QPushButton *create_button_backtologin = centralWidget->findChild<QPushButton*>("create_button_backtologin");
     if(create_button_backtologin)

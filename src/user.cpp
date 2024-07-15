@@ -1,35 +1,48 @@
 #include "user.h"
 
-
-
-User::User(string u, string p, string e)
-{
-    username = u;
-    password = p;
-    email = e;
+User::User() {
+    user_id = 0;
+    full_name = "";
+    username = "";
+    created_at = "";
 }
 
-void User::SetUsername(string s)
-{
-    username = s;
+User::User(int user_id_, QString full_name_, QString username_, QString created_at_) {
+    user_id = user_id_;
+    full_name = full_name_;
+    username = username_;
+    created_at = created_at;
 }
-void User::SetPassword(string s)
-{
-    password = s;
+
+QDebug operator << (QDebug dbg, const User& user) {
+    QDebugStateSaver saver(dbg);
+    dbg.nospace();
+
+    if (user.getUserId() == 0) {
+        dbg << "Invalid User -- User undefined";
+    } else {
+        dbg << "User ID: " << user.getUserId() << "\n"
+            << "Full Name: " << user.getFullName() << "\n"
+            << "Username: " << user.getUsername() << "\n"
+            << "Created At: " << user.getCreatedAt();
+    }
+    return dbg;
 }
-void User::SetEmail(string s)
-{
-    email = s;
+
+
+//add security levels and error handling to getters later
+int User::getUserId() const {
+    return user_id;
 }
-string User::GetUsername()
-{
+
+QString User::getFullName() const {
+    return full_name;
+}
+
+QString User::getUsername() const {
     return username;
 }
-string User::GetPassword()
-{
-    return password;
-}
-string User::GetEmail()
-{
-    return email;
+
+QString User::getCreatedAt() const {
+    return created_at;
 }
