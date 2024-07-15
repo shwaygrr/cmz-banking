@@ -6,7 +6,7 @@
         Input: 2 Hex values one 4 bit and other 8 bits
         Ouput: Product GF(2^3)
 */
-std::bitset<8> gf8Mult(const std::string& mix_hex, const std::string& state_hex) {
+std::bitset<8> AES128::gf8Mult(const std::string& mix_hex, const std::string& state_hex) {
     std::bitset<8> mix8(hexToBin<8>(mix_hex)), state8(hexToBin<8>(state_hex));
 
     // std::cout << mix_hex << std::endl;
@@ -82,7 +82,7 @@ std::bitset<8> gf8Mult(const std::string& mix_hex, const std::string& state_hex)
         -Input: hex string
         -Output: basically flipped matrix
 */
-std::string flipMatrix(const std::string& hex_str) {
+std::string AES128::flipMatrix(const std::string& hex_str) {
     std::string hex_matrix;
 
     for(int i = 0; i < 8; i+=2) {
@@ -103,7 +103,7 @@ std::string flipMatrix(const std::string& hex_str) {
         Input: 32-bit word
         Output: 32-bit word to xor with word1
 */
-std::bitset<32> g32(std::bitset<32> word_32, unsigned int round) {
+std::bitset<32> AES128::g32(std::bitset<32> word_32, unsigned int round) {
     //1 byte shift left
     word_32 = (word_32 << 8) | (word_32 >> (32 - 8));
 
@@ -125,7 +125,7 @@ std::bitset<32> g32(std::bitset<32> word_32, unsigned int round) {
         Input: Previous subkey, k_(i-1) as hex
         Ouput: Subkey, k_i as hex
 */
-std::string roundKey128(const std::string& prev_key_hex, unsigned int round) {
+std::string AES128::roundKey128(const std::string& prev_key_hex, unsigned int round) {
     std::bitset<128> prev_key128(hexToBin<128>(prev_key_hex));
 
     //split into words
@@ -157,7 +157,7 @@ std::string roundKey128(const std::string& prev_key_hex, unsigned int round) {
         Input: First key as hex
         Output: 10 round keys as hes
 */
-std::vector<std::string> keyGen(const std::string& key_hex) {
+std::vector<std::string> AES128::keyGen(const std::string& key_hex) {
     std::vector<std::string> keys = {key_hex};
 
     for(int i = 1; i <= 10; i++) {
@@ -181,7 +181,7 @@ std::vector<std::string> keyGen(const std::string& key_hex) {
         -Input: 128 block of Plaintext and key0
         -Output: Plaintext xor key0
 */
-std::bitset<128> addRoundKey(const std::string& plain_text_hex, const std::string& key_hex) {
+std::bitset<128> AES128::addRoundKey(const std::string& plain_text_hex, const std::string& key_hex) {
 
     std::bitset<128> plain_text128(hexToBin<128>(plain_text_hex));
     std::bitset<128> key128(hexToBin<128>(key_hex));
@@ -195,7 +195,7 @@ std::bitset<128> addRoundKey(const std::string& plain_text_hex, const std::strin
         Input: 128-bit binary
         Output: Four rows shifted cyclically to the left by offsets of 0,1,2, and 3
 */
-void shiftRows(std::bitset<128>& bin128) {
+void AES128::shiftRows(std::bitset<128>& bin128) {
     //split into words
     std::string str = bin128.to_string();
     std::bitset<32> word0_32(str.substr(0, 32)),
@@ -220,7 +220,7 @@ void shiftRows(std::bitset<128>& bin128) {
        -Input:
         -Output:
 */
-void mixColumn(std::bitset<128>& bin128, const std::vector<std::vector<std::string>>& table) {
+void AES128::mixColumn(std::bitset<128>& bin128, const std::vector<std::vector<std::string>>& table) {
     // represent as matrix
     std::vector<std::vector<std::string>> hex_matrix;
 
@@ -252,8 +252,7 @@ void mixColumn(std::bitset<128>& bin128, const std::vector<std::vector<std::stri
 }
 
 //AES-128 encryption
-std::bitset<128> aesEnc128(const std::string& plain_text, const std::string& priv_key) {
-    std::cout << "beginning encryption..." << std::endl;
+std::bitset<128> AES128::aesEnc128(const std::string& plain_text, const std::string& priv_key) {
     //generate keys
     std::vector<std::string> round_keys_hex = keyGen(priv_key);
 
@@ -289,7 +288,7 @@ std::bitset<128> aesEnc128(const std::string& plain_text, const std::string& pri
         Input: 128-bit binary
         Output: Four rows shifted cyclically to the right by offsets of 0,1,2, and 3
 */
-void invShiftRows(std::bitset<128>& bin128) {
+void AES128::invShiftRows(std::bitset<128>& bin128) {
     //split into words
     std::string str = bin128.to_string();
     std::bitset<32> word0_32(str.substr(0, 32)),
@@ -309,7 +308,7 @@ void invShiftRows(std::bitset<128>& bin128) {
 
 
 //AES-128 decryption
-std::bitset<128> aesDec128(const std::string& cipher_text, const std::string& priv_key) {
+std::bitset<128> AES128::aesDec128(const std::string& cipher_text, const std::string& priv_key) {
     std::cout << "beginning decryption..." << std::endl;
 
     //generate keys
@@ -356,7 +355,7 @@ std::bitset<128> aesDec128(const std::string& cipher_text, const std::string& pr
         - Input: 128x-bit Plain text as hex and 128-bit hex
         - Output: 128x-bit Cipher text as hex
 */
-std::string encECB128(std::string message_hex, std::string priv_key_hex) {
+std::string AES128::encECB128(std::string message_hex, std::string priv_key_hex) {
 
     //pad message and key
     while (message_hex.size() % 32 != 0) message_hex = "0" + message_hex;
@@ -385,7 +384,7 @@ std::string encECB128(std::string message_hex, std::string priv_key_hex) {
         - Input: 128x-bit Cipher text as hex and 128-bit hex
         - Output: 128x-bit Plain text as hex
 */
-std::string decECB128(std::string message_hex, std::string priv_key_hex) {
+std::string AES128::decECB128(std::string message_hex, std::string priv_key_hex) {
 
     //pad message and key
     while (message_hex.size() % 32 != 0) message_hex = "0" + message_hex;

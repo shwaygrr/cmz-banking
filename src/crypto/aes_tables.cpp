@@ -1,6 +1,6 @@
 #include "crypto/aes.h"
 
-const std::vector<std::vector<std::string>> SBOX = {
+const std::vector<std::vector<std::string>> AES128::SBOX = {
     {"63", "7C", "77", "7B", "F2", "6B", "6F", "C5", "30", "01", "67", "2B", "FE", "D7", "AB", "76"},
     {"CA", "82", "C9", "7D", "FA", "59", "47", "F0", "AD", "D4", "A2", "AF", "9C", "A4", "72", "C0"},
     {"B7", "FD", "93", "26", "36", "3F", "F7", "CC", "34", "A5", "E5", "F1", "71", "D8", "31", "15"},
@@ -19,7 +19,7 @@ const std::vector<std::vector<std::string>> SBOX = {
     {"8C", "A1", "89", "0D", "BF", "E6", "42", "68", "41", "99", "2D", "0F", "B0", "54", "BB", "16"},
 };
 
-const std::vector<std::vector<std::string>> INV_SBOX = {
+const std::vector<std::vector<std::string>> AES128::INV_SBOX = {
     {"52", "09", "6A", "D5", "30", "36", "A5", "38", "BF", "40", "A3", "9E", "81", "F3", "D7", "FB"},
     {"7C", "E3", "39", "82", "9B", "2F", "FF", "87", "34", "8E", "43", "44", "C4", "DE", "E9", "CB"},
     {"54", "7B", "94", "32", "A6", "C2", "23", "3D", "EE", "4C", "95", "0B", "42", "FA", "C3", "4E"},
@@ -39,16 +39,16 @@ const std::vector<std::vector<std::string>> INV_SBOX = {
 };
 
 
-const std::vector<std::string> ROUND_CONSTANTS = {"01", "02", "04", "08", "10", "20", "40", "80", "1B", "36"};
+const std::vector<std::string> AES128::ROUND_CONSTANTS = {"01", "02", "04", "08", "10", "20", "40", "80", "1B", "36"};
 
-const std::vector<std::vector<std::string>> MIX = {
+const std::vector<std::vector<std::string>> AES128::MIX = {
     {"02","03","01","01"},
     {"01","02","03","01"},
     {"01","01","02","03"},
     {"03","01","01","02"}
 };
 
-const std::vector<std::vector<std::string>> INV_MIX = {
+const std::vector<std::vector<std::string>> AES128::INV_MIX = {
     {"0E", "0B", "0D", "09"},
     {"09", "0E", "0B", "0D"},
     {"0D", "09", "0E", "0B"},

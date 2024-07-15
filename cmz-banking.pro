@@ -19,8 +19,9 @@ SOURCES += \
     src/main.cpp \
     src/mainwindow.cpp \
     src/user.cpp \
+    src/crypto/hash.cpp \
     src/transaction.cpp
-    src/hash.cpp
+
 
 
 HEADERS += \
