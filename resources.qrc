@@ -6,5 +6,6 @@
         <file>forms/logwindow.ui</file>
         <file>forms/profilewindow.ui</file>
         <file>forms/transferwindow.ui</file>
+        <file>forms/activitylogwindow.ui</file>
     </qresource>
 </RCC>

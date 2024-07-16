@@ -17,8 +17,8 @@
    <widget class="QPushButton" name="button_profile">
     <property name="geometry">
      <rect>
-      <x>250</x>
-      <y>300</y>
+      <x>190</x>
+      <y>330</y>
       <width>130</width>
       <height>24</height>
      </rect>
@@ -27,69 +27,43 @@
      <string>Profile</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="button_transfer">
-    <property name="geometry">
-     <rect>
-      <x>100</x>
-      <y>300</y>
-      <width>130</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Transfer/Send</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_accountnumber">
     <property name="geometry">
      <rect>
-      <x>110</x>
-      <y>70</y>
+      <x>20</x>
+      <y>80</y>
       <width>61</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>Account #</string>
+     <string>Activity</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_type">
     <property name="geometry">
      <rect>
-      <x>230</x>
-      <y>70</y>
+      <x>310</x>
+      <y>80</y>
       <width>61</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>Type</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_balance">
-    <property name="geometry">
-     <rect>
-      <x>320</x>
-      <y>70</y>
-      <width>61</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Balance</string>
+     <string>Time</string>
     </property>
    </widget>
    <widget class="QScrollArea" name="scrollArea">
     <property name="geometry">
      <rect>
-      <x>100</x>
+      <x>20</x>
       <y>100</y>
-      <width>281</width>
-      <height>191</height>
+      <width>451</width>
+      <height>221</height>
      </rect>
     </property>
     <property name="horizontalScrollBarPolicy">
-     <enum>Qt::ScrollBarAlwaysOff</enum>
+     <enum>Qt::ScrollBarAsNeeded</enum>
     </property>
     <property name="widgetResizable">
      <bool>true</bool>
@@ -102,8 +76,8 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>279</width>
-       <height>189</height>
+       <width>449</width>
+       <height>219</height>
       </rect>
      </property>
      <property name="sizePolicy">
@@ -113,32 +87,6 @@
       </sizepolicy>
      </property>
     </widget>
-   </widget>
-   <widget class="QPushButton" name="button_add_account">
-    <property name="geometry">
-     <rect>
-      <x>390</x>
-      <y>100</y>
-      <width>80</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Add Account</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="button_delete_account">
-    <property name="geometry">
-     <rect>
-      <x>390</x>
-      <y>200</y>
-      <width>81</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Delete</string>
-    </property>
    </widget>
   </widget>
  </widget>

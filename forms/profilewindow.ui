@@ -176,6 +176,19 @@
      <string>Back</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="button_activitylog">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>310</y>
+      <width>131</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Activity Log</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>

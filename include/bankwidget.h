@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <QLabel>
 #include <QHBoxLayout>
+#include <QRadioButton>
+
 
 using namespace std;
 
@@ -16,11 +18,18 @@ public:
     void SetAccountNumber(string &accountNumber);
     void SetAccountType(string &accountType);
     void SetAccountBalance(string &accountBalance);
+    string GetAccountNumber();
+    string GetAccountType();
+    string GetAccountBalance();
+    QRadioButton* GetRadioButton();
+
+    bool CheckState();
 
 private:
     QLabel *numberLabel;
     QLabel *typeLabel;
     QLabel *balanceLabel;
+    QRadioButton *radio;
 };
 
 #endif // BANKWIDGET_H

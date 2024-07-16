@@ -1,6 +1,7 @@
 #ifndef USER_H
 #define USER_H
 
+#include "BankWidget.h"
 #include "bankaccount.h"
 #include <iostream>
 #include <string>
@@ -15,6 +16,8 @@ class User{
         string username, password, email;
         vector<string> activityLog;
         vector<BankAccount> accounts;
+        vector<BankWidget*> widgets;
+
     public:
         User();
         User(string u, string p, string e);
@@ -26,6 +29,8 @@ class User{
         void AddToActivityLog(string s);
 
         BankAccount* FindBankAccount(int num);
+        vector<BankWidget*> GetBankWidgets();
+        void AddBankWidget(BankWidget *widget);
 
         void SetActivityLog(vector<string> s);
         void SetBankAccounts(vector<BankAccount> a);

@@ -1,4 +1,5 @@
 #include "user.h"
+#include "BankWidget.h"
 #include <vector>
 #include <QDebug>
 #include <string>
@@ -105,19 +106,22 @@ void User::CreateBankAccount(int accNum, string type, float balance)
 void User::DeleteBankAccount(int accNum)
 {
     for (int i=0; i < (int)this->accounts.size(); i++) {
-        bool found = false;
-
         if (accNum == this->accounts[i].getNumber()) {
             this->accounts.erase(accounts.begin() + i);
             this->AddToActivityLog("Closed account #" + to_string(accNum));
             qDebug() << "User " << this->GetUsername() << " closed account #" << to_string(accNum);
-            found = true;
-        }
-
-        if (!found) {
-            qDebug() << "Could not find bank account #" << accNum;
         }
     }
+}
+
+vector<BankWidget*> User::GetBankWidgets()
+{
+    return widgets;
+}
+
+void User::AddBankWidget(BankWidget *widget)
+{
+    widgets.push_back(widget);
 }
 
 BankAccount* User::FindBankAccount(int num)
