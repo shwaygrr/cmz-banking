@@ -8,6 +8,7 @@
 
 using namespace std;
 
+//Transaction will be user for transfering and sending money
 class Transaction
 {
 private:

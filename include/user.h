@@ -1,51 +1,27 @@
 #ifndef USER_H
 #define USER_H
 
-#include "BankWidget.h"
-#include "bankaccount.h"
 #include <iostream>
 #include <string>
-#include <vector>
-
+#include <QDebug>
 using namespace std;
 
 //this is where you put helper function declarations
 
-class User{
+class User {
     private:
-        string username, password, email;
-        vector<string> activityLog;
-        vector<BankAccount> accounts;
-        vector<BankWidget*> widgets;
-
+        QString full_name, username, created_at;
+        int user_id;
     public:
         User();
-        User(string u, string p, string e);
-        User(string u, string p, string e, vector<string> l, vector<BankAccount> a);
+        User(int user_id_, QString full_name_, QString username_, QString created_at);
 
-        void SetUsername(string s);
-        void SetPassword(string s);
-        void SetEmail(string s);
-        void AddToActivityLog(string s);
+        friend QDebug operator << (QDebug dbg, const User& user);
 
-        BankAccount* FindBankAccount(int num);
-
-        void AddBankWidget(BankWidget *widget);
-
-        void SetActivityLog(vector<string> s);
-        void SetBankAccounts(vector<BankAccount> a);
-
-        void CreateBankAccount(int accNum, string type, float balance=0);
-        void DeleteBankAccount(int accNum);
-        void TransferMoney(float amount, BankAccount &sender, BankAccount &receiver);
-        void SendMoney(float amount, BankAccount sendAccount, User receiver);
-
-        string GetUsername();
-        string GetPassword();
-        string GetEmail();
-
-        vector<string> GetActivityLog();
-        vector<BankAccount> GetBankAccounts();
+        int getUserId() const;
+        QString getFullName() const;
+        QString getUsername() const;
+        QString getCreatedAt() const;
 };
 
 #endif // USER_H

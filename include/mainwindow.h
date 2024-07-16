@@ -1,8 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "BankWidget.h"
-#include "ActivityWidget.h"
+
 #include <QMainWindow>
 #include <QWidget>
 #include <QUiLoader>
@@ -40,21 +39,12 @@ private:
     void loadUI(const QString &uiFile);
     void setupButtonConnections();
 
-    void Login();
-    void CreateUser();
-    void SaveUser();
-    void LoadAllAccounts();
+    void login();
+    void createUser();
 
-    BankWidget* CreateAccount(string accountNumber, string accountType, string accountBalance);
-    BankWidget* LoadAccount(string accountNumber, string accountType, string accountBalance);
-    ActivityWidget* CreateActivity(string activity, string time);
-    void DeleteAccount(string accountNumber);
+    bool checkForUser(string username);
+    bool checkPassword(string password);
 
-    bool CheckForUser(string username);
-    bool CheckPassword(string password);
-
-    bool VerifyAction();
-
-    int CheckEmail(const string &email);
+    int checkEmail(const string &email);
 };
 #endif // MAINWINDOW_H
