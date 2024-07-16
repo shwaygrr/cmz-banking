@@ -83,7 +83,6 @@ void User::AddToActivityLog(string s)
     this->activityLog.push_back(s);
 }
 
-
 void User::TransferMoney(float amount, BankAccount &sender, BankAccount &receiver)
 {
     sender.send(amount, receiver);
@@ -112,11 +111,6 @@ void User::DeleteBankAccount(int accNum)
             qDebug() << "User " << this->GetUsername() << " closed account #" << to_string(accNum);
         }
     }
-}
-
-vector<BankWidget*> User::GetBankWidgets()
-{
-    return widgets;
 }
 
 void User::AddBankWidget(BankWidget *widget)

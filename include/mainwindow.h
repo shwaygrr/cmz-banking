@@ -48,7 +48,7 @@ private:
     BankWidget* CreateAccount(string accountNumber, string accountType, string accountBalance);
     BankWidget* LoadAccount(string accountNumber, string accountType, string accountBalance);
     ActivityWidget* CreateActivity(string activity, string time);
-    void DeleteAccount();
+    void DeleteAccount(string accountNumber);
 
     bool CheckForUser(string username);
     bool CheckPassword(string password);

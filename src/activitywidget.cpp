@@ -22,5 +22,3 @@ void ActivityWidget::SetTime(string &time)
 {
     timeLabel->setText(QString::fromStdString(time));
 }
-
-

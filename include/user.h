@@ -29,7 +29,7 @@ class User{
         void AddToActivityLog(string s);
 
         BankAccount* FindBankAccount(int num);
-        vector<BankWidget*> GetBankWidgets();
+
         void AddBankWidget(BankWidget *widget);
 
         void SetActivityLog(vector<string> s);

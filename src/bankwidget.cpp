@@ -6,28 +6,18 @@ BankWidget::BankWidget(QWidget *parent)
     numberLabel = new QLabel(this);
     typeLabel = new QLabel(this);
     balanceLabel = new QLabel(this);
-
-    radio = new QRadioButton(this);
-
-    radio->autoExclusive();
+    trashButton = new QPushButton(this);
 
     QHBoxLayout *layout = new QHBoxLayout(this);
 
     layout->addWidget(numberLabel);
     layout->addWidget(typeLabel);
     layout->addWidget(balanceLabel);
-    layout->addWidget(radio);
-
-    radio->setText("");
+    layout->addWidget(trashButton);
 
     layout->setSpacing(20);
 
     setLayout(layout);
-}
-
-bool BankWidget::CheckState()
-{
-    return radio->isChecked();
 }
 
 void BankWidget::SetAccountNumber(string &accountNumber)
@@ -55,7 +45,8 @@ string BankWidget::GetAccountBalance()
 {
     return balanceLabel->text().toStdString();
 }
-QRadioButton* BankWidget::GetRadioButton()
+
+QPushButton* BankWidget::GetTrashButton()
 {
-    return radio;
+    return trashButton;
 }

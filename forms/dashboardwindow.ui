@@ -127,19 +127,6 @@
      <string>Add Account</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="button_delete_account">
-    <property name="geometry">
-     <rect>
-      <x>390</x>
-      <y>200</y>
-      <width>81</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Delete</string>
-    </property>
-   </widget>
   </widget>
  </widget>
  <resources/>

@@ -10,7 +10,6 @@
 #include <qwidget.h>
 #include <QWidget>
 #include <QComboBox>
-#include <QButtonGroup>
 #include <random>
 
 string username, password, email;
@@ -24,8 +23,6 @@ QComboBox *from, *to;
 QButtonGroup *radioGroup;
 int from_index, to_index;
 
-vector<BankWidget*> bankWidgets;
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow), layout(new QVBoxLayout), centralWidget(new QWidget(this))
 {
@@ -38,8 +35,6 @@ MainWindow::MainWindow(QWidget *parent)
     users.push_back(User("", "", ""));      // TESTING PURPOSES ONLY
     users.push_back(User("a", "a", "a"));
     users.push_back(User("b", "b", "b"));
-
-    radioGroup = new QButtonGroup(this);
 
     loadUI("mainwindow.ui");
 }
@@ -238,12 +233,6 @@ void MainWindow::LoadAllAccounts()
 
         scrollWidget->findChild<QVBoxLayout*>()->addWidget(LoadAccount(to_string(userAccount.getNumber()), userAccount.getType(), strNumber.toStdString()));
     }
-    //BankWidget *newAccount = CreateAccount(QString::number(userAccount.getNumber()).toStdString(), userAccount.getType(), strNumber.toStdString());
-
-    //radioGroup->addButton(newAccount->GetRadioButton());
-
-    //scrollWidget->findChild<QVBoxLayout*>()->addWidget(newAccount);
-
 }
 
 BankWidget* MainWindow::LoadAccount(string accountNumber, string accountType, string accountBalance)
@@ -283,28 +272,9 @@ ActivityWidget* MainWindow::CreateActivity(string activity, string time)
     return widget;
 }
 
-void MainWindow::DeleteAccount()
+void MainWindow::DeleteAccount(string accountNumber)
 {
-    for(int i = 0; i < (int)currentUser->GetBankWidgets().size(); i++)
-    {
-        if(currentUser->GetBankWidgets()[i]->CheckState())
-        {
-            qDebug() << "Selected Bank Account Number: " << currentUser->GetBankAccounts()[i].getNumber();
-            currentUser->DeleteBankAccount(currentUser->GetBankAccounts()[i].getNumber());
-        }
-    }
-}
-
-void MainWindow::SaveUser()
-{
-    //for(int i = 0; i < (int)users.size(); i++)
-    //{
-    //    if(users.at(i).GetUsername() == currentUser->GetUsername())
-    //    {
-    //        users.at(i).SetActivityLog(currentUser->GetActivityLog());
-    //        users.at(i).SetBankAccounts(currentUser->GetBankAccounts());
-    //    }
-    //}
+    //for(int i = 0; (int)currentUser->GetBankAccounts())
 }
 
 void MainWindow::setupButtonConnections()
@@ -419,7 +389,7 @@ void MainWindow::setupButtonConnections()
 
                 BankWidget *newAccount = CreateAccount(QString::number(randomInt).toStdString(), "Checking", "420.69");
 
-                radioGroup->addButton(newAccount->GetRadioButton());
+                connect(newAccount->GetTrashButton(), &QPushButton::clicked, this, [this, newAccount]() { DeleteAccount(newAccount->GetAccountNumber()); });
 
                 scrollWidget->findChild<QVBoxLayout*>()->addWidget(newAccount);
             });
@@ -428,7 +398,7 @@ void MainWindow::setupButtonConnections()
         QPushButton *button_delete_account = centralWidget->findChild<QPushButton*>("button_delete_account");
         if(button_delete_account)
         {
-            connect(button_delete_account, &QPushButton::clicked, this, [this]() { DeleteAccount(); });
+
         }
 
         //Load user bank accounts
@@ -513,8 +483,6 @@ void MainWindow::setupButtonConnections()
 
                 from->setCurrentIndex(from_index);
                 to->setCurrentIndex(to_index);
-
-                SaveUser();
             });
         }
     }
