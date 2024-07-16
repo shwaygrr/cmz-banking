@@ -486,7 +486,7 @@ void MainWindow::setupButtonConnections()
             });
         }
     }
-
+    // Profile Elements
     else if(currentwindow == "profilewindow.ui")
     {
         QPushButton *goto_dashboard = centralWidget->findChild<QPushButton*>("button_back");
@@ -509,6 +509,7 @@ void MainWindow::setupButtonConnections()
         }
     }
 
+    // Activity Elements
     else if(currentwindow == "activitylogwindow.ui")
     {
         QScrollArea *scrollArea = centralWidget->findChild<QScrollArea*>("scrollArea");
