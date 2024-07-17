@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets uitools
 
@@ -11,8 +11,6 @@ CONFIG += c++17
 INCLUDEPATH += include
 
 SOURCES += \
-    src/activitywidget.cpp \
-    src/bankwidget.cpp \
     src/crypto/aes.cpp \
     src/crypto/aes_tables.cpp \
     src/bankaccount.cpp \
@@ -22,6 +20,7 @@ SOURCES += \
     src/user.cpp \
     src/crypto/hash.cpp \
     src/transaction.cpp \
+    src/api/db.cpp
 
 
 
@@ -34,14 +33,12 @@ HEADERS += \
     include/transaction.h \
     include/hash.h \
     include/transaction.h \
-    include/bankwidget.h \
-    include/activitywidget.h
+    include/api/db.h
 
 
 FORMS += \
     forms/mainwindow.ui \
-    forms/createwindow.ui \
-    forms/dashboardwindow.ui
+    forms/createwindow.ui
 
 
 # Default rules for deployment.
