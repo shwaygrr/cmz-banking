@@ -23,29 +23,29 @@ class User{
         User(string u, string p, string e);
         User(string u, string p, string e, vector<string> l, vector<BankAccount> a);
 
-        void SetUsername(string s);
-        void SetPassword(string s);
-        void SetEmail(string s);
-        void AddToActivityLog(string s);
+        void setUsername(string s);
+        void setPassword(string s);
+        void setEmail(string s);
+        void addToActivityLog(string s);
 
-        BankAccount* FindBankAccount(int num);
+        BankAccount* findBankAccount(int num);
 
-        void AddBankWidget(BankWidget *widget);
+        void addBankWidget(BankWidget *widget);
 
-        void SetActivityLog(vector<string> s);
-        void SetBankAccounts(vector<BankAccount> a);
+        void setActivityLog(vector<string> s);
+        void setBankAccounts(vector<BankAccount> a);
 
-        void CreateBankAccount(int accNum, string type, float balance=0);
-        void DeleteBankAccount(int accNum);
-        void TransferMoney(float amount, BankAccount &sender, BankAccount &receiver);
-        void SendMoney(float amount, BankAccount sendAccount, User receiver);
+        void createBankAccount(int accNum, string type, float balance=0);
+        void deleteBankAccount(int accNum);
+        void transferMoney(float amount, BankAccount &sender, BankAccount &receiver);
+        void sendMoney(float amount, BankAccount sendAccount, User receiver);
 
-        string GetUsername();
-        string GetPassword();
-        string GetEmail();
+        string getUsername();
+        string getPassword();
+        string getEmail();
 
-        vector<string> GetActivityLog();
-        vector<BankAccount> GetBankAccounts();
+        vector<string> getActivityLog();
+        vector<BankAccount> getBankAccounts();
 };
 
 #endif // USER_H

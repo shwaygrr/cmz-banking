@@ -16,17 +16,17 @@ class BankWidget : public QWidget
 public:
     BankWidget(QWidget *parent = 0);
 
-    void SetAccountNumber(string &accountNumber);
-    void SetAccountType(string &accountType);
-    void SetAccountBalance(string &accountBalance);
+    void setAccountNumber(string &accountNumber);
+    void setAccountType(string &accountType);
+    void setAccountBalance(string &accountBalance);
 
-    string GetAccountNumber();
-    string GetAccountType();
-    string GetAccountBalance();
+    string getAccountNumber();
+    string getAccountType();
+    string getAccountBalance();
 
-    QPushButton* GetTrashButton();
+    QPushButton* getTrashButton();
 
-    bool CheckState();
+    bool checkState();
 
 private:
     QLabel *numberLabel;

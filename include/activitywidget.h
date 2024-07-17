@@ -19,8 +19,8 @@ private:
 
 public:
     ActivityWidget(QWidget *parent = 0);
-    void SetActivity(string &activity);
-    void SetTime(string &time);
+    void setActivity(string &activity);
+    void setTime(string &time);
 
 
 };

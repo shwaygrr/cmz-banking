@@ -14,11 +14,11 @@ ActivityWidget::ActivityWidget(QWidget *parent)
     setLayout(layout);
 }
 
-void ActivityWidget::SetActivity(string &activity)
+void ActivityWidget::setActivity(string &activity)
 {
     activityLabel->setText(QString::fromStdString(activity));
 }
-void ActivityWidget::SetTime(string &time)
+void ActivityWidget::setTime(string &time)
 {
     timeLabel->setText(QString::fromStdString(time));
 }

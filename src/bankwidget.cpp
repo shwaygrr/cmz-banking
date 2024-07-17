@@ -20,33 +20,33 @@ BankWidget::BankWidget(QWidget *parent)
     setLayout(layout);
 }
 
-void BankWidget::SetAccountNumber(string &accountNumber)
+void BankWidget::setAccountNumber(string &accountNumber)
 {
     numberLabel->setText(QString::fromStdString(accountNumber));
 }
-void BankWidget::SetAccountType(string &accountType)
+void BankWidget::setAccountType(string &accountType)
 {
     typeLabel->setText(QString::fromStdString(accountType));
 }
-void BankWidget::SetAccountBalance(string &accountBalance)
+void BankWidget::setAccountBalance(string &accountBalance)
 {
     balanceLabel->setText("$" + QString::fromStdString(accountBalance));
 }
 
-string BankWidget::GetAccountNumber()
+string BankWidget::getAccountNumber()
 {
     return numberLabel->text().toStdString();
 }
-string BankWidget::GetAccountType()
+string BankWidget::getAccountType()
 {
     return typeLabel->text().toStdString();
 }
-string BankWidget::GetAccountBalance()
+string BankWidget::getAccountBalance()
 {
     return balanceLabel->text().toStdString();
 }
 
-QPushButton* BankWidget::GetTrashButton()
+QPushButton* BankWidget::getTrashButton()
 {
     return trashButton;
 }

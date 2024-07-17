@@ -40,21 +40,22 @@ private:
     void loadUI(const QString &uiFile);
     void setupButtonConnections();
 
-    void Login();
-    void CreateUser();
-    void SaveUser();
-    void LoadAllAccounts();
+    void login();
+    void createUser();
+    void saveUser();
+    void deleteAllAccountsUI();
+    void loadAllAccounts();
 
-    BankWidget* CreateAccount(string accountNumber, string accountType, string accountBalance);
-    BankWidget* LoadAccount(string accountNumber, string accountType, string accountBalance);
-    ActivityWidget* CreateActivity(string activity, string time);
-    void DeleteAccount(string accountNumber);
+    BankWidget* createAccount(string accountNumber, string accountType, string accountBalance);
+    BankWidget* loadAccount(string accountNumber, string accountType, string accountBalance);
+    ActivityWidget* createActivity(string activity, string time);
+    void deleteAccount(string accountNumber);
 
-    bool CheckForUser(string username);
-    bool CheckPassword(string password);
+    bool checkForUser(string username);
+    bool checkPassword(string password);
 
-    bool VerifyAction();
+    bool verifyAction();
 
-    int CheckEmail(const string &email);
+    int checkEmail(const string &email);
 };
 #endif // MAINWINDOW_H
