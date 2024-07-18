@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>532</width>
+    <height>382</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QLabel" name="label_username">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>140</y>
+      <width>71</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Username  :</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_password">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>190</y>
+      <width>71</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Password   :</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="profile_input_username">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>140</y>
+      <width>110</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="placeholderText">
+     <string>username</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="profile_input_password">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>190</y>
+      <width>110</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="echoMode">
+     <enum>QLineEdit::Password</enum>
+    </property>
+    <property name="placeholderText">
+     <string>password</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="profile_button_deleteaccount">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>310</y>
+      <width>131</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Delete account</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_email">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>90</y>
+      <width>71</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Email:</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="profile_input_email">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>90</y>
+      <width>110</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="placeholderText">
+     <string>email address</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="button_signout">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>260</y>
+      <width>90</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Sign out</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="profile_button_changepassword">
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>190</y>
+      <width>90</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Change</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="profile_button_changeusername">
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>140</y>
+      <width>90</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Change</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="profile_button_changeemail">
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>90</y>
+      <width>90</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Change</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="button_back">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>310</y>
+      <width>90</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Back</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="button_activitylog">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>310</y>
+      <width>131</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Activity Log</string>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

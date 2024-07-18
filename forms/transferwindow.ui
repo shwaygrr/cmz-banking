@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>532</width>
+    <height>382</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QLabel" name="label_to">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>180</y>
+      <width>21</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>To:</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="button_transfer">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>290</y>
+      <width>130</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Transfer</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_from">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>130</y>
+      <width>41</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>From:</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="button_back">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>290</y>
+      <width>130</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Back</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="from">
+    <property name="geometry">
+     <rect>
+      <x>190</x>
+      <y>130</y>
+      <width>241</width>
+      <height>24</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="to">
+    <property name="geometry">
+     <rect>
+      <x>190</x>
+      <y>180</y>
+      <width>241</width>
+      <height>24</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_amount">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>240</y>
+      <width>61</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Amount:</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="amount">
+    <property name="geometry">
+     <rect>
+      <x>190</x>
+      <y>240</y>
+      <width>241</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="placeholderText">
+     <string>$0.00</string>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
