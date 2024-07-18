@@ -86,9 +86,9 @@ void User::transferMoney(float amount, BankAccount &sender, BankAccount &receive
 
 void User::sendMoney(float amount, BankAccount sendAccount, User receiver)
 {
-    sendAccount.send(amount, receiver.accounts[0]);
-    this->addToActivityLog("Sent " + to_string(amount) + " from account " + to_string(sendAccount.getNumber()) + " to user " + receiver.getUsername()); //send money to first account in receiver's list
-    receiver.addToActivityLog("Received " + to_string(amount) + " from user " + this->getUsername());
+    // sendAccount.send(amount, receiver.accounts[0]);
+    // this->addToActivityLog("Sent " + to_string(amount) + " from account " + to_string(sendAccount.getNumber()) + " to user " + receiver.getUsername()); //send money to first account in receiver's list
+    // receiver.addToActivityLog("Received " + to_string(amount) + " from user " + this->getUsername());
 }
 
 void User::createBankAccount(int accNum, string type, float balance)
@@ -98,13 +98,13 @@ void User::createBankAccount(int accNum, string type, float balance)
 
 void User::deleteBankAccount(int accNum)
 {
-    for (int i=0; i < (int)this->accounts.size(); i++) {
-        if (accNum == this->accounts[i].getNumber()) {
-            this->accounts.erase(accounts.begin() + i);
-            this->addToActivityLog("Closed account #" + to_string(accNum));
-            qDebug() << "User " << this->getUsername() << " closed account #" << to_string(accNum);
-        }
-    }
+    // for (int i=0; i < (int)this->accounts.size(); i++) {
+    //     if (accNum == this->accounts[i].getNumber()) {
+    //         this->accounts.erase(accounts.begin() + i);
+    //         this->addToActivityLog("Closed account #" + to_string(accNum));
+    //         qDebug() << "User " << this->getUsername() << " closed account #" << to_string(accNum);
+    //     }
+    // }
 }
 
 BankAccount* User::findBankAccount(int num)

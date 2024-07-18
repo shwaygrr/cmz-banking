@@ -14,7 +14,7 @@ using namespace std;
 
 class User {
     private:
-        string username, password, email;
+        string password, email;
         vector<string> activityLog;
         vector<BankAccount> accounts;
         vector<BankWidget*> widgets;
@@ -50,7 +50,6 @@ class User {
         QString full_name, username, created_at;
         int user_id;
     public:
-        User();
         User(int user_id_, QString full_name_, QString username_, QString created_at);
 
         friend QDebug operator << (QDebug dbg, const User& user);

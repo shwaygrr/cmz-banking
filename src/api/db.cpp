@@ -154,7 +154,7 @@ User DB::getUserById(const int user_id) {
         int user_id = record.value("user_id").toInt();
         QString full_name = record.value("full_name").toString();
         QString username = record.value("username").toString();
-        QString created_at = record.value("created_at").toString("dd-MM-yyyy:HH-mm-ss");
+        QString created_at = record.value("created_at").toString();
 
         return User(user_id, full_name, username, created_at);
     } else {
