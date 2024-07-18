@@ -1,5 +1,6 @@
 #include "user.h"
 #include "BankWidget.h"
+#include "transaction.h"
 #include <vector>
 #include <QDebug>
 #include <string>
@@ -81,14 +82,15 @@ void User::transferMoney(float amount, BankAccount &sender, BankAccount &receive
 {
     sender.send(amount, receiver);
     QString strNumber = QString::number(amount, 'f', 2);
-    this->addToActivityLog("Transferred $" + strNumber.toStdString() + " from account " + to_string(sender.getNumber()) + " to account " + to_string(receiver.getNumber()));
+
+    this->addToActivityLog(Transaction(sender.getNumber(), receiver.getNumber(), amount, time(0)).transferLogEntry());
 }
 
 void User::sendMoney(float amount, BankAccount sendAccount, User receiver)
 {
-    // sendAccount.send(amount, receiver.accounts[0]);
-    // this->addToActivityLog("Sent " + to_string(amount) + " from account " + to_string(sendAccount.getNumber()) + " to user " + receiver.getUsername()); //send money to first account in receiver's list
-    // receiver.addToActivityLog("Received " + to_string(amount) + " from user " + this->getUsername());
+    // sendAccount.send(amount, receiver.accounts[0]);   //send money to first account in receiver's list
+    // this->addToActivityLog(Transaction(this->getUsername().toStdString(), sendAccount.getNumber(), receiver.getUsername().toStdString(), receiver.getBankAccounts()[0].getNumber(), amount, time(0)).senderLogEntry());
+    // receiver.addToActivityLog(Transaction(this->getUsername().toStdString(), sendAccount.getNumber(), receiver.getUsername().toStdString(), receiver.getBankAccounts()[0].getNumber(), amount, time(0)).receiverLogEntry());
 }
 
 void User::createBankAccount(int accNum, string type, float balance)
