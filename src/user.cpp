@@ -4,57 +4,51 @@
 #include <QDebug>
 #include <string>
 
-
-User::User()
-{
-    username = "DEFAULT_NAME";
-    password = "DEFAULT_PASSWORD";
-    email = "DEFAULT_EMAIL@w.com";
-    vector<string> activityLog;
-    vector<BankAccount> accounts;
+User::User() {
+    user_id = 0;
+    full_name = "";
+    username = "";
+    created_at = "";
 }
 
-User::User(string u, string p, string e)
-{
-    username = u;
-    password = p;
-    email = e;
-    vector<string> activityLog;
-    vector<BankAccount> accounts;
+User::User(int user_id_, QString full_name_, QString username_, QString created_at_) {
+    user_id = user_id_;
+    full_name = full_name_;
+    username = username_;
+    created_at = created_at;
 }
 
-User::User(string u, string p, string e, vector<string> l, vector<BankAccount> a)
-{
-    username = u;
-    password = p;
-    email = e;
-    vector<string> activityLog = l;
-    vector<BankAccount> accounts = a;
+QDebug operator << (QDebug dbg, const User& user) {
+    QDebugStateSaver saver(dbg);
+    dbg.nospace();
+
+    if (user.getUserId() == 0) {
+        dbg << "Invalid User -- User undefined";
+    } else {
+        dbg << "User ID: " << user.getUserId() << "\n"
+            << "Full Name: " << user.getFullName() << "\n"
+            << "Username: " << user.getUsername() << "\n"
+            << "Created At: " << user.getCreatedAt();
+    }
+    return dbg;
 }
 
-void User::setUsername(string s)
-{
-    username = s;
+
+//add security levels and error handling to getters later
+int User::getUserId() const {
+    return user_id;
 }
-void User::setPassword(string s)
-{
-    password = s;
+
+QString User::getFullName() const {
+    return full_name;
 }
-void User::setEmail(string s)
-{
-    email = s;
-}
-string User::getUsername()
-{
+
+QString User::getUsername() const {
     return username;
 }
-string User::getPassword()
-{
-    return password;
-}
-string User::getEmail()
-{
-    return email;
+
+QString User::getCreatedAt() const {
+    return created_at;
 }
 
 vector<string> User::getActivityLog()

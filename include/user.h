@@ -7,11 +7,12 @@
 #include <string>
 #include <vector>
 
+#include <QDebug>
 using namespace std;
 
 //this is where you put helper function declarations
 
-class User{
+class User {
     private:
         string username, password, email;
         vector<string> activityLog;
@@ -46,6 +47,18 @@ class User{
 
         vector<string> getActivityLog();
         vector<BankAccount> getBankAccounts();
+        QString full_name, username, created_at;
+        int user_id;
+    public:
+        User();
+        User(int user_id_, QString full_name_, QString username_, QString created_at);
+
+        friend QDebug operator << (QDebug dbg, const User& user);
+
+        int getUserId() const;
+        QString getFullName() const;
+        QString getUsername() const;
+        QString getCreatedAt() const;
 };
 
 #endif // USER_H

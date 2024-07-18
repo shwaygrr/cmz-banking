@@ -69,13 +69,13 @@ void MainWindow::loadUI(const QString &uiFile)
 
 bool MainWindow::checkForUser(string username)
 {
-    for(int i = 0; i < (int)users.size(); i++)
-    {
-        if(users.at(i).getUsername() == username)
-        {
-            return true;
-        }
-    }
+    // for(int i = 0; i < (int)users.size(); i++)
+    // {
+    //     if(users.at(i).getUsername() == username)
+    //     {
+    //         return true;
+    //     }
+    // }
     return false;
 }
 
@@ -147,13 +147,13 @@ bool MainWindow::checkPassword(string password)
 
 int MainWindow::checkEmail(const string &email)
 {
-    for(int i = 0; i < (int)users.size(); i++)
-    {
-        if(users.at(i).getEmail() == email)
-        {
-            return 0;
-        }
-    }
+    // for(int i = 0; i < (int)users.size(); i++)
+    // {
+    //     if(users.at(i).getEmail() == email)
+    //     {
+    //         return 0;
+    //     }
+    // }
 
     const regex pattern(R"((^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$))");
     if(!regex_match(email, pattern))
@@ -199,9 +199,8 @@ void MainWindow::createUser()
         qDebug() << "Password does not meet the requirements.";
         return;
     }
-
-    users.push_back(User(username, password, email));
-    users.end()->addToActivityLog("Successfully created user...Welcome" + username + "!");
+    // User newUser = User(username, password, email);
+    // users.push_back(newUser);
     qDebug() << "Successfully created user...Welcome" << username << "!";
 
     loadUI("mainwindow.ui");
@@ -247,6 +246,9 @@ void MainWindow::loadAllAccounts()
         QString strNumber = QString::number(userAccount.getBalance(), 'f', 2);
 
         scrollWidget->findChild<QVBoxLayout*>()->addWidget(loadAccount(to_string(userAccount.getNumber()), userAccount.getType(), strNumber.toStdString()));
+
+        connect(main_button_login, &QPushButton::clicked, this, [this]() { login(); });
+
     }
 }
 
@@ -518,6 +520,7 @@ void MainWindow::setupButtonConnections()
         {
             connect(goto_activitylog, &QPushButton::clicked, this, [this]() { loadUI("activitylogwindow.ui"); });
         }
+        connect(create_button_createaccount, &QPushButton::clicked, this, [this]() { createUser(); });
     }
 
     // Activity Elements
