@@ -48,6 +48,8 @@ void MainWindow::loadUI(const QString &uiFile) {
     username = "";
     password = "";
 
+    qDebug() << "Attempting to navigate to" << ui;
+
     QFile file(ui);
     file.open(QFile::ReadOnly);
     QWidget *widget = loader.load(&file, this);
@@ -77,7 +79,7 @@ void MainWindow::login(const QString& username_, const QString& password_) {
     qDebug() << "Attempting to login...";
 
     if(db.authenticate(username_, password_))
-        qDebug() << "loggd in";
+        // qDebug() << "logged in";
         loadUI("dashboardwindow.ui"); //Mark: not sure how loading next window should work -- app crashes here
 }
 
@@ -94,6 +96,7 @@ void MainWindow::createUser(QString& full_name_, QString& username_, QString& pa
     qDebug() << "Successfully created user...Welcome" << username_ << "!";
     loadUI("mainwindow.ui");
 }
+
 
 bool MainWindow::verifyAction()
 {
