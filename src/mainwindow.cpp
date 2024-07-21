@@ -65,17 +65,18 @@ void MainWindow::loadUI(const QString &uiFile) {
 }
 
 
-bool MainWindow::login(const QString username_, const QString password_) {
+void MainWindow::login(const QString& username_, const QString& password_) {
     DB db;
 
-    if(username.isEmpty() && password.isEmpty()) {
+    if(username_.isEmpty() && password_.isEmpty()) {
         qDebug() << "Username and Password field can't be empty";
-        return false;
+        return;
     };
 
     qDebug() << "Attempting to login...";
 
     if(db.authenticate(username_, password_))
+        qDebug() << "loggd in";
         loadUI("dashboardwindow.ui"); //Mark: not sure how loading next window should work -- app crashes here
 }
 
@@ -173,13 +174,11 @@ ActivityWidget* MainWindow::createActivity(string activity, string time)
     return widget;
 }
 
-void MainWindow::deleteAccount(string accountNumber)
-{
+void MainWindow::deleteAccount(string accountNumber) {
     currentUser->deleteBankAccount(stoi(accountNumber));
 
     loadAllAccounts();
 }
-
 
 void MainWindow::setupButtonConnections() {
     //Login

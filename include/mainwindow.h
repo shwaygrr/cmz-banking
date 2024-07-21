@@ -52,7 +52,7 @@ private:
 
     bool verifyAction();
 
-    bool login(const QString username_, const QString password_);
+    void login(const QString& username_, const QString& password_);
     void createUser(QString& full_name_, QString& username_, QString& password_);
 };
 #endif // MAINWINDOW_H

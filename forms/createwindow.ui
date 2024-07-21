@@ -72,7 +72,7 @@
      <string>password</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="create_button_createaccount">
+   <widget class="QPushButton" name="create_button_create_account">
     <property name="geometry">
      <rect>
       <x>200</x>
@@ -191,7 +191,7 @@
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
     </property>
    </widget>
-   <widget class="QPushButton" name="create_button_backtologin">
+   <widget class="QPushButton" name="create_button_back_to_login">
     <property name="geometry">
      <rect>
       <x>50</x>
