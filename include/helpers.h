@@ -4,7 +4,7 @@
 #include "crypto/bigint.h"
 #include <iostream>
 #include <bitset>
-
+#include <regex>
 
 /*******************************************CONVERSIONS************************************************/
 /*
@@ -108,11 +108,7 @@ std::string hexToText(std::string hex);
 std::string textToHex(std::string text);
 /*****************************************CONVERSIONS END*******************************************************/
 
-
-
-bool CheckForUser(std::string username);
-void Login(std::string username, std::string password);
-void CreateUser(std::string username, std::string password);
-
+bool checkPasswordFormat(const std::string& password);
+bool checkEmailFormat(const std::string& email);
 
 #endif // HELPERS_H

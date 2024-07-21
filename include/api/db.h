@@ -8,26 +8,20 @@
 #include <vector>
 
 #include "user.h"
+#include "crypto/hash.h"
+
 class DB {
 public:
     DB();
     ~DB();
-    //user table
-    bool createUser(const QString& full_name, const QString& username, const QString& password_hash); //create user
-    User getUserById(const int user_id); //get user data by id
 
     //sign up
     void signUp();
 
-    //sign out
-
-    //create bank account
-    //delete bank account
-
-    //transfer money
-    //send money
-
-    //bank log
+    //auth
+    void createUser(const QString& full_name, const QString& username, const QString& password_hash);
+    User getUserById(const int user_id); //get user data by id
+    bool authenticate(const QString& username, const QString& password);
 
 
 private:
@@ -36,10 +30,8 @@ private:
     //initialize database
     std::string dbPath();
     void createTables();
-    //user table operations
-    //create user
 
-    //get user
+    bool credIsUnique(const QString& credential_type, const QString& credential);
 
 
 };
