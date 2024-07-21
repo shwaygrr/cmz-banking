@@ -47,3 +47,24 @@ std::string hexToText(std::string hex) {
     //turn every two to decimal and get ascii rep
     return result;
 }
+
+
+//Check Password Format
+bool checkPasswordFormat(const std::string& password) {
+    // Check if the password is at least 8 characters long
+    if (password.size() < 8) return false;
+
+    // - at least one digit
+    // - at least one uppercase letter
+    // - at least one special character
+    std::regex passwordRegex("^(?=.*[0-9])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$");
+
+    return std::regex_match(password, passwordRegex);
+}
+
+//Check email format -- rememeber to change return type
+bool checkEmailFormat(const std::string &email) {
+    const std::regex emailRegex(R"((^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$))");
+
+    return std::regex_match(email, emailRegex);
+}

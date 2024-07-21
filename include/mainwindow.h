@@ -10,7 +10,8 @@
 #include <QFile>
 #include <QPushButton>
 
-#include <user.h>
+#include "user.h"
+#include "api/db.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {class MainWindow;}
@@ -40,8 +41,6 @@ private:
     void loadUI(const QString &uiFile);
     void setupButtonConnections();
 
-    void login();
-    void createUser();
     void saveUser();
     void deleteAllAccountsUI();
     void loadAllAccounts();
@@ -51,11 +50,9 @@ private:
     ActivityWidget* createActivity(string activity, string time);
     void deleteAccount(string accountNumber);
 
-    bool checkForUser(string username);
-    bool checkPassword(string password);
-
     bool verifyAction();
 
-    int checkEmail(const string &email);
+    bool login(const QString username_, const QString password_);
+    void createUser(QString& full_name_, QString& username_, QString& password_);
 };
 #endif // MAINWINDOW_H
