@@ -25,7 +25,6 @@ SOURCES += \
     src/api/db.cpp
 
 
-
 HEADERS += \
     include/crypto/aes.h \
     include/crytpo/bigint.h \
@@ -36,9 +35,8 @@ HEADERS += \
     include/hash.h \
     include/transaction.h \
     include/bankwidget.h \
-    include/activitywidget.h
+    include/activitywidget.h \
     include/api/db.h
-
 
 FORMS += \
     forms/mainwindow.ui \

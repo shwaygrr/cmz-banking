@@ -85,7 +85,7 @@
      <string>Login</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="main_button_createaccount">
+   <widget class="QPushButton" name="main_button_create_account">
     <property name="geometry">
      <rect>
       <x>200</x>
