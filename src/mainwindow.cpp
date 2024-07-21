@@ -35,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent)
     loadUI("mainwindow.ui");
 }
 
+
 MainWindow::~MainWindow() {
     delete ui;
 }
