@@ -1,5 +1,5 @@
 #include "user.h"
-#include "BankWidget.h"
+#include "widgets/BankWidget.h"
 #include "transaction.h"
 #include <vector>
 #include <QDebug>

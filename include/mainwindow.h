@@ -1,8 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "BankWidget.h"
-#include "ActivityWidget.h"
+#include "widgets/BankWidget.h"
+#include "widgets/ActivityWidget.h"
 #include <QMainWindow>
 #include <QWidget>
 #include <QUiLoader>

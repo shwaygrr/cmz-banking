@@ -1,6 +1,6 @@
 #include "mainwindow.h"
-#include "BankWidget.h"
-#include "ActivityWidget.h"
+#include "widgets/BankWidget.h"
+#include "widgets/ActivityWidget.h"
 #include "qscrollarea.h"
 #include "ui_mainwindow.h"
 

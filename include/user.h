@@ -1,7 +1,7 @@
 #ifndef USER_H
 #define USER_H
 
-#include "BankWidget.h"
+#include "widgets/BankWidget.h"
 #include "bankaccount.h"
 #include <iostream>
 #include <string>
