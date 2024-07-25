@@ -1,31 +1,37 @@
 #ifndef BANKACCOUNT_H
 #define BANKACCOUNT_H
 
-#include <iostream>
-#include <string>
+#include <QString>
+#include <QDebug>
+#include <random>
 
-using namespace std;
-
-class BankAccount
-{
+class BankAccount {
 private:
-    int number;
+    int account_id, user_id;
     float balance;
-    string type;
+    QString account_number, account_type, created_at;
+
+    QString generateAccountNumber();
 
 public:
-    BankAccount(int n, string t, float b);
+    BankAccount();
+    BankAccount(int user_id, QString account_type_, float balance_);
+    BankAccount(int account_id_, int user_id_, QString account_number_, QString account_type_, float balance_, QString created_at_);
+    void setAccountType(QString account_type);
+    void setBalance(float balance);
 
-    void setNumber(int n);
-    void setType(string t);
-    void setBalance(float b);
-
-    int getNumber();
-    string getType();
-    float getBalance();
+    QString getAccountNumber() const;
+    int getAccountId() const;
+    int getAccountUserId() const;
+    QString getAccountType() const;
+    float getBalance() const;
+    QString getCreatedAt() const;
 
     void send(float amount, BankAccount &receiver);
     void receive(float amount);
+
+    friend QDebug operator << (QDebug dbg, const BankAccount& account);
+
 };
 
 #endif // BANKACCOUNT_H
