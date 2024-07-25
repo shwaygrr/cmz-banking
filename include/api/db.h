@@ -32,6 +32,9 @@ public:
     User* getUserByUsername(const QString& username);
 
 
+    //update
+    bool updateUserById(const int id, const QString &field, const QString &new_data);
+
     //create
     bool createBankAccount(const BankAccount& new_bank_account);
     void createTransaction(Transaction new_transaction);

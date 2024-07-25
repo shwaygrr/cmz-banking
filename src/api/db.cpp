@@ -193,6 +193,37 @@ void DB::createUser(const QString& full_name, const QString& username, const QSt
 }
 
 
+// bool DB::updateUserById(const int id, const QString &field, const QString &new_data) {
+//     QSqlQuery query;
+//     QString queryString;
+
+//     // Map user-friendly field names to database column names
+//     if (field = "full name" || field == "username" || field == "password") {
+//         queryString = "UPDATE Users SET " + field + " = :new_data WHERE user_id = :id";
+//     } else {
+//         qDebug() << "Invalid field name:" << field;
+//         return false;
+//     }
+
+//     query.prepare(queryString);
+//     query.bindValue(":new_data", new_data);
+//     query.bindValue(":id", id);
+
+//     if (!query.exec()) {
+//         qDebug() << "Error updating profile:" << query.lastError().text();
+//         return false;
+//     }
+
+//     if (query.numRowsAffected() > 0) {
+//         qDebug() << "Profile updated successfully.";
+//         return true;
+//     } else {
+//         qDebug() << "Profile with ID" << id << "not found or no changes made.";
+//         return false;
+//     }
+// }
+
+
 bool DB::authenticate(const QString& username, const QString& password) {
     QSqlQuery query;
     Hash hash;

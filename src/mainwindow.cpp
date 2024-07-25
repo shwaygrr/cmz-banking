@@ -121,8 +121,7 @@ bool MainWindow::verifyAction()
     // return false;
 }
 
-void MainWindow::deleteAllAccountsUI()
-{
+void MainWindow::deleteAllAccountsUI() {
     QScrollArea *scrollArea = centralWidget->findChild<QScrollArea*>("scrollArea");
     QWidget *scrollWidget = scrollArea->findChild<QWidget*>("contents");
     QVBoxLayout *qvLayout = scrollWidget->findChild<QVBoxLayout*>();
@@ -173,8 +172,7 @@ void MainWindow::createAccount(const QString& account_type, const float account_
     }
 }
 
-ActivityWidget* MainWindow::createActivity(string activity, string time)
-{
+ActivityWidget* MainWindow::createActivity(string activity, string time) {
     ActivityWidget *widget = new ActivityWidget(this);
 
     widget->setActivity(activity);
@@ -372,22 +370,17 @@ void MainWindow::setupButtonConnections() {
     else if(currentwindow == "profilewindow.ui") {
         QPushButton *goto_dashboard = centralWidget->findChild<QPushButton*>("button_back");
         if(goto_dashboard)
-        {
             connect(goto_dashboard, &QPushButton::clicked, this, [this]() { loadUI("dashboardwindow.ui"); });
-        }
+
         QPushButton *signout = centralWidget->findChild<QPushButton*>("button_signout");
         if(signout)
-        {
-            connect(signout, &QPushButton::clicked, this, [this]()
-                    {
-                        loadUI("mainwindow.ui");
-                    });
-        }
+            connect(signout, &QPushButton::clicked, this, [this]() {
+                loadUI("mainwindow.ui");
+            });
+
         QPushButton *goto_activitylog = centralWidget->findChild<QPushButton*>("button_activitylog");
         if(goto_activitylog)
-        {
             connect(goto_activitylog, &QPushButton::clicked, this, [this]() { loadUI("activitylogwindow.ui"); });
-        }
     }
 
     // Activity Elements
