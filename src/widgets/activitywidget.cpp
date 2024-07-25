@@ -1,4 +1,4 @@
-#include "ActivityWidget.h"
+#include "widgets/ActivityWidget.h"
 
 ActivityWidget::ActivityWidget(QWidget *parent)
     : QWidget(parent)
