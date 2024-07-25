@@ -1,4 +1,4 @@
-#include "BankWidget.h"
+#include "widgets/BankWidget.h"
 
 BankWidget::BankWidget(QWidget *parent)
     : QWidget(parent)
@@ -20,33 +20,32 @@ BankWidget::BankWidget(QWidget *parent)
     setLayout(layout);
 }
 
-void BankWidget::setAccountNumber(string &accountNumber)
-{
-    numberLabel->setText(QString::fromStdString(accountNumber));
-}
-void BankWidget::setAccountType(string &accountType)
-{
-    typeLabel->setText(QString::fromStdString(accountType));
-}
-void BankWidget::setAccountBalance(string &accountBalance)
-{
-    balanceLabel->setText("$" + QString::fromStdString(accountBalance));
+void BankWidget::setAccountNumber(QString &accountNumber) {
+    numberLabel->setText(accountNumber);
 }
 
-string BankWidget::getAccountNumber()
-{
-    return numberLabel->text().toStdString();
-}
-string BankWidget::getAccountType()
-{
-    return typeLabel->text().toStdString();
-}
-string BankWidget::getAccountBalance()
-{
-    return balanceLabel->text().toStdString();
+void BankWidget::setAccountType(QString &accountType) {
+    typeLabel->setText(accountType);
 }
 
-QPushButton* BankWidget::getTrashButton()
-{
+void BankWidget::setAccountBalance(QString &accountBalance) {
+    balanceLabel->setText("$" + accountBalance);
+}
+
+QString BankWidget::getAccountNumber() {
+    return numberLabel->text();
+}
+
+QString BankWidget::getAccountType() {
+    return typeLabel->text();
+}
+
+QString BankWidget::getAccountBalance() {
+    return balanceLabel->text();
+}
+
+
+
+QPushButton* BankWidget::getTrashButton() {
     return trashButton;
 }

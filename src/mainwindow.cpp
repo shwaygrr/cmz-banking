@@ -78,11 +78,20 @@ void MainWindow::login(const QString& username_, const QString& password_) {
 
     qDebug() << "Attempting to login...";
 
-    if(db.authenticate(username_, password_))
-        // qDebug() << "logged in";
-        loadUI("dashboardwindow.ui"); //Mark: not sure how loading next window should work -- app crashes here
+    if(db.authenticate(username_, password_)) {
+        currentUser = db.getUserByUsername(username_);
+        fetchUserData(currentUser->getUserId());
+        loadUI("dashboardwindow.ui");
+    }
 }
 
+
+User MainWindow::fetchUserData(const int id) {
+    //get all logs by username -- not sure about this yet
+
+    //get all transactions by username
+    return User();
+}
 
 void MainWindow::createUser(QString& full_name_, QString& username_, QString& password_) {
     DB db; //need to make db global
@@ -126,23 +135,24 @@ void MainWindow::deleteAllAccountsUI()
     }
 }
 
-void MainWindow::loadAllAccounts()
-{
+void MainWindow::loadAllAccounts() {
     deleteAllAccountsUI();
     QScrollArea *scrollArea = centralWidget->findChild<QScrollArea*>("scrollArea");
     QWidget *scrollWidget = scrollArea->findChild<QWidget*>("contents");
 
-    for(int i = 0; i < (int)currentUser->getBankAccounts().size(); i++)
-    {
-        BankAccount userAccount = currentUser->getBankAccounts().at(i);
-        QString strNumber = QString::number(userAccount.getBalance(), 'f', 2);
+    DB db;
+    QList user_bank_accounts_from_db = db.getAllBankAccountsByUserId(currentUser->getUserId());
+    currentUser->setBankAccounts(user_bank_accounts_from_db);
 
-        scrollWidget->findChild<QVBoxLayout*>()->addWidget(loadAccount(to_string(userAccount.getNumber()), userAccount.getType(), strNumber.toStdString()));
+    for(const BankAccount& account : currentUser->getBankAccounts()) {
+        BankAccount user_account = account;
+        QString strNumber = QString::number(user_account.getBalance(), 'f', 2);
+
+        scrollWidget->findChild<QVBoxLayout*>()->addWidget(loadAccount(user_account.getAccountNumber(), user_account.getAccountType(), strNumber));
     }
 }
 
-BankWidget* MainWindow::loadAccount(string accountNumber, string accountType, string accountBalance)
-{
+BankWidget* MainWindow::loadAccount(QString accountNumber, QString accountType, QString accountBalance) {
     BankWidget *widget = new BankWidget(this);
 
     widget->setAccountNumber(accountNumber);
@@ -154,18 +164,13 @@ BankWidget* MainWindow::loadAccount(string accountNumber, string accountType, st
     return widget;
 }
 
-BankWidget* MainWindow::createAccount(string accountNumber, string accountType, string accountBalance)
-{
-    BankWidget *widget = new BankWidget(this);
-
-    widget->setAccountNumber(accountNumber);
-    widget->setAccountType(accountType);
-    widget->setAccountBalance(accountBalance);
-
-    currentUser->addToActivityLog("Added a new account | Account Number: " + accountNumber + ", Account Type: " + accountType + ", Account Balance: $" + accountBalance);
-    currentUser->createBankAccount(stoi(accountNumber), accountType, stof(accountBalance));
-
-    return widget;
+void MainWindow::createAccount(const QString& account_type, const float account_balance) {
+    if(currentUser->createBankAccount(account_type, account_balance)) {
+        currentUser->addToActivityLog("Added a new " + account_type.toStdString() + " account with an initial balance $" + std::to_string(account_balance));
+        loadAllAccounts();
+    } else {
+        currentUser->addToActivityLog("Failed to add a bank account");
+    }
 }
 
 ActivityWidget* MainWindow::createActivity(string activity, string time)
@@ -178,10 +183,12 @@ ActivityWidget* MainWindow::createActivity(string activity, string time)
     return widget;
 }
 
-void MainWindow::deleteAccount(string accountNumber) {
-    currentUser->deleteBankAccount(stoi(accountNumber));
-
-    loadAllAccounts();
+void MainWindow::deleteAccount(const QString& account_number) {
+    if(currentUser->deleteBankAccount(account_number)) {
+        loadAllAccounts();
+    } else {
+        currentUser->addToActivityLog("Failed to delete a bank account");
+    }
 }
 
 void MainWindow::setupButtonConnections() {
@@ -274,21 +281,7 @@ void MainWindow::setupButtonConnections() {
                     QScrollArea *scrollArea = centralWidget->findChild<QScrollArea*>("scrollArea");
                     QWidget *scrollWidget = scrollArea->findChild<QWidget*>("contents");
 
-                    random_device rd;
-                    mt19937 gen(rd());
-
-                    int min = 100000000;
-                    int max = 999999999;
-
-                    uniform_int_distribution<> distr(min, max);
-
-                    int randomInt = distr(gen);
-
-                    BankWidget *newAccount = createAccount(QString::number(randomInt).toStdString(), "Checking", "420.69");
-
-                    connect(newAccount->getTrashButton(), &QPushButton::clicked, this, [this, newAccount]() { deleteAccount(newAccount->getAccountNumber()); });
-
-                    scrollWidget->findChild<QVBoxLayout*>()->addWidget(newAccount);
+                    createAccount("Checking", 420.69);
                 });
         //Load user bank accounts
         loadAllAccounts();
@@ -300,12 +293,12 @@ void MainWindow::setupButtonConnections() {
 
         amountToTransfer = 0;
 
-        for(int i = 0; i < (int)currentUser->getBankAccounts().size(); i++)
-        {
-            BankAccount userAccount = currentUser->getBankAccounts().at(i);
-            QString strNumber = QString::number(userAccount.getBalance(), 'f', 2);
-            accounts.push_back(QString::fromStdString(to_string(userAccount.getNumber()) + "     " + userAccount.getType() + "     $" + strNumber.toStdString()));
-        }
+        // for(int i = 0; i < (int)currentUser->getBankAccounts().size(); i++)
+        // {
+        //     BankAccount userAccount = currentUser->getBankAccounts().at(i);
+        //     QString strNumber = QString::number(userAccount.getBalance(), 'f', 2);
+        //     accounts.push_back(QString::fromStdString(to_string(userAccount.getAccountNumber()) + "     " + userAccount.getAccountType() + "     $" + strNumber.toStdString()));
+        // }
 
         from = centralWidget->findChild<QComboBox*>("from");
         if(from)
@@ -338,39 +331,39 @@ void MainWindow::setupButtonConnections() {
         {
             connect(transfer, &QPushButton::clicked, this, [this]()
                     {
-                        if(from->currentIndex() == to->currentIndex()) { return; }
+                        // if(from->currentIndex() == to->currentIndex()) { return; }
 
-                        from_index = from->currentIndex();
-                        to_index = to->currentIndex();
+                        // from_index = from->currentIndex();
+                        // to_index = to->currentIndex();
 
-                        QString from_text = from->currentText();
-                        QString to_text = to->currentText();
+                        // QString from_text = from->currentText();
+                        // QString to_text = to->currentText();
 
-                        BankAccount *from_account = currentUser->findBankAccount(from_text.left(11).toInt());
-                        BankAccount *to_account = currentUser->findBankAccount(to_text.left(11).toInt());
+                        // BankAccount *from_account = currentUser->findBankAccount(from_text.left(11).toInt());
+                        // BankAccount *to_account = currentUser->findBankAccount(to_text.left(11).toInt());
 
-                        QList<QString> accounts;
+                        // QList<QString> accounts;
 
-                        currentUser->transferMoney(amountToTransfer, *from_account, *to_account);
+                        // currentUser->transferMoney(amountToTransfer, *from_account, *to_account);
 
-                        for(int i = 0; i < (int)currentUser->getBankAccounts().size(); i++)
-                        {
-                            BankAccount userAccount = currentUser->getBankAccounts().at(i);
-                            QString strNumber = QString::number(userAccount.getBalance(), 'f', 2);
-                            accounts.push_back(QString::fromStdString(to_string(userAccount.getNumber()) + "     " + userAccount.getType() + "     $" + strNumber.toStdString()));
-                        }
+                        // for(int i = 0; i < (int)currentUser->getBankAccounts().size(); i++)
+                        // {
+                        //     BankAccount userAccount = currentUser->getBankAccounts().at(i);
+                        //     QString strNumber = QString::number(userAccount.getBalance(), 'f', 2);
+                        //     accounts.push_back(userAccount.getAccountNumber()) + "     " + userAccount.getAccountType() + "     $" + strNumber.toStdString()));
+                        // }
 
-                        from = centralWidget->findChild<QComboBox*>("from");
-                        to = centralWidget->findChild<QComboBox*>("to");
+                        // from = centralWidget->findChild<QComboBox*>("from");
+                        // to = centralWidget->findChild<QComboBox*>("to");
 
-                        from->clear();
-                        to->clear();
+                        // from->clear();
+                        // to->clear();
 
-                        from->addItems(accounts);
-                        to->addItems(accounts);
+                        // from->addItems(accounts);
+                        // to->addItems(accounts);
 
-                        from->setCurrentIndex(from_index);
-                        to->setCurrentIndex(to_index);
+                        // from->setCurrentIndex(from_index);
+                        // to->setCurrentIndex(to_index);
                     });
         }
     }

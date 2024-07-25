@@ -6,58 +6,52 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <QList>
 
 #include <QDebug>
 using namespace std;
 
-//this is where you put helper function declarations
-
 class User {
     private:
-        string password, email;
+        int user_id;
+        QString full_name, username, created_at;
         vector<string> activityLog;
-        vector<BankAccount> accounts;
+        QList<BankAccount> bank_accounts;
         vector<BankWidget*> widgets;
 
     public:
         User();
-        User(string u, string p, string e);
-        User(string u, string p, string e, vector<string> l, vector<BankAccount> a);
+        User(int user_id_, QString full_name_, QString username_, QString created_at_);
 
-        void setUsername(string s);
-        void setPassword(string s);
-        void setEmail(string s);
-        void addToActivityLog(string s);
-
-        BankAccount* findBankAccount(int num);
-
-        void addBankWidget(BankWidget *widget);
-
-        void setActivityLog(vector<string> s);
-        void setBankAccounts(vector<BankAccount> a);
-
-        void createBankAccount(int accNum, string type, float balance=0);
-        void deleteBankAccount(int accNum);
-        void transferMoney(float amount, BankAccount &sender, BankAccount &receiver);
-        void sendMoney(float amount, BankAccount sendAccount, User receiver);
-
-        string getUsername();
-        string getPassword();
-        string getEmail();
-
-        vector<string> getActivityLog();
-        vector<BankAccount> getBankAccounts();
-        QString full_name, username, created_at;
-        int user_id;
-    public:
-        User(int user_id_, QString full_name_, QString username_, QString created_at);
-
+        //ostream overload
         friend QDebug operator << (QDebug dbg, const User& user);
 
+        //setters
+        void setUsername(const QString& username_);
+        void setFullName(const QString& full_name_);
+        void setActivityLog(vector<string> s);
+        void setBankAccounts(QList<BankAccount> bank_accounts_);
+
+        //getters
         int getUserId() const;
         QString getFullName() const;
         QString getUsername() const;
         QString getCreatedAt() const;
+        vector<string> getActivityLog();
+        QList<BankAccount> getBankAccounts();
+
+        //others
+        BankAccount* findBankAccount(int num);
+        void addBankWidget(BankWidget *widget);
+
+
+
+        //actions
+        void addToActivityLog(string s);
+        void transferMoney(float amount, BankAccount &sender, BankAccount &receiver);
+        void sendMoney(float amount, BankAccount sendAccount, User receiver);
+        bool createBankAccount(const QString& type, const float balance = 0);
+        bool deleteBankAccount(const QString& account_number);
 };
 
 #endif // USER_H

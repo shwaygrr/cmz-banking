@@ -221,31 +221,108 @@ bool DB::authenticate(const QString& username, const QString& password) {
     }
 }
 
-// User DB::getUserById(const int user_id) {
-//     QSqlQuery query;
+User* DB::getUserByUsername(const QString& username) {
+    QSqlQuery query;
 
-//     // Prepare the SQL query to select a user by ID
-//     query.prepare("SELECT user_id, full_name, username, password_hash, created_at FROM Users WHERE user_id = :user_id");
-//     query.bindValue(":user_id", user_id);
+    query.prepare("SELECT user_id, full_name, username, password_hash, created_at FROM Users WHERE username = :username");
+    query.bindValue(":username", username);
 
-//     // Execute the query and check for errors
-//     if (!query.exec()) {
-//         qDebug() << "Error retrieving user:" << query.lastError().text();
-//         return User(); // Return an empty user object if there's an error
-//     }
+    if (!query.exec()) {
+        qDebug() << "Error retrieving user:" << query.lastError().text();
+        return nullptr;
+    }
 
-//     // Process the query result
-//     if (query.next()) {
-//         QSqlRecord record = query.record();
+    if (query.next()) {
+        QSqlRecord record = query.record();
 
-//         int user_id = record.value("user_id").toInt();
-//         QString full_name = record.value("full_name").toString();
-//         QString username = record.value("username").toString();
-//         QString created_at = record.value("created_at").toString();
+        int user_id = record.value("user_id").toInt();
+        QString full_name = record.value("full_name").toString();
+        QString username = record.value("username").toString();
+        QString created_at = record.value("created_at").toDateTime().toString();
 
-//         return User(user_id, full_name, username, created_at);
-//     } else {
-//         qDebug() << "User not found";
-//         return User();
-//     }
-// }
+
+        return new User(user_id, full_name, username, created_at);
+    } else {
+        qDebug() << "User not found";
+        return nullptr;
+    }
+}
+
+
+QList<BankAccount> DB::getAllBankAccountsByUserId(const int user_id) {
+    QList<BankAccount> accounts;
+
+    QSqlQuery query;
+    query.prepare("SELECT account_id, user_id, account_number, account_type, balance, created_at, updated_at FROM BankAccounts WHERE user_id = :user_id");
+    query.bindValue(":user_id", user_id);
+
+    if (!query.exec()) {
+        qDebug() << "Error retrieving bank accounts:" << query.lastError().text();
+        return accounts;
+    }
+
+    while (query.next()) {
+        QSqlRecord record = query.record();
+
+        int account_id = record.value("account_id").toInt();
+        int user_id = record.value("user_id").toInt();
+        QString account_number = record.value("account_number").toString();
+        QString account_type = record.value("account_type").toString();
+        float balance = record.value("balance").toFloat();
+        QString created_at = record.value("created_at").toString();
+
+        accounts.append(BankAccount(account_id, user_id, account_number, account_type, balance, created_at));
+    }
+
+    return accounts;
+}
+
+
+bool DB::createBankAccount(const BankAccount& new_bank_account) {
+    QSqlQuery query;
+
+    if(new_bank_account.getAccountUserId() == 0) {
+        qDebug() << "Error creating bank account: User id is required";
+        return false;
+    }
+
+    if(new_bank_account.getAccountType() != "Checking" && new_bank_account.getAccountType() != "Saving") {
+        qDebug() << "Error creating bank account: Invalid account type";
+        return false;
+    }
+
+    query.prepare("INSERT INTO BankAccounts (user_id, account_number, account_type, balance, created_at, updated_at) "
+                  "VALUES (:user_id, :account_number, :account_type, :balance, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)");
+    query.bindValue(":user_id", new_bank_account.getAccountUserId());
+    query.bindValue(":account_number", new_bank_account.getAccountNumber());
+    query.bindValue(":account_type", new_bank_account.getAccountType());
+    query.bindValue(":balance", new_bank_account.getBalance());
+
+    if (!query.exec()) {
+        qDebug() << "Error inserting new bank account:" << query.lastError().text();
+        return false;
+    } else {
+        qDebug() << "New bank account created successfully.";
+        return true;
+    }
+}
+
+bool DB::deleteBankAccountByNumber(const QString& account_number) {
+    QSqlQuery query;
+
+    query.prepare("DELETE FROM BankAccounts WHERE account_number = :account_number");
+    query.bindValue(":account_number", account_number);
+
+    if (!query.exec()) {
+        qDebug() << "Error deleting bank account:" << query.lastError().text();
+        return false;
+    }
+
+    if (query.numRowsAffected() > 0) {
+        qDebug() << "Bank account deleted successfully.";
+        return true;
+    } else {
+        qDebug() << "Bank account with ID" << account_number << "not found.";
+        return false;
+    }
+}

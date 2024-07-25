@@ -6,6 +6,7 @@
 #include <QLabel>
 #include <QHBoxLayout>
 #include <QRadioButton>
+#include <QString>
 
 
 using namespace std;
@@ -16,13 +17,13 @@ class BankWidget : public QWidget
 public:
     BankWidget(QWidget *parent = 0);
 
-    void setAccountNumber(string &accountNumber);
-    void setAccountType(string &accountType);
-    void setAccountBalance(string &accountBalance);
+    void setAccountNumber(QString& accountNumber);
+    void setAccountType(QString& accountType);
+    void setAccountBalance(QString& accountBalance);
 
-    string getAccountNumber();
-    string getAccountType();
-    string getAccountBalance();
+    QString getAccountNumber();
+    QString getAccountType();
+    QString getAccountBalance();
 
     QPushButton* getTrashButton();
 

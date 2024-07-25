@@ -4,6 +4,7 @@
 #include <vector>
 #include <QDebug>
 #include <string>
+#include "api/db.h"
 
 User::User() {
     user_id = 0;
@@ -16,7 +17,7 @@ User::User(int user_id_, QString full_name_, QString username_, QString created_
     user_id = user_id_;
     full_name = full_name_;
     username = username_;
-    created_at = created_at;
+    created_at = created_at_;
 }
 
 QDebug operator << (QDebug dbg, const User& user) {
@@ -57,9 +58,9 @@ vector<string> User::getActivityLog()
     return activityLog;
 }
 
-vector<BankAccount> User::getBankAccounts()
+QList<BankAccount> User::getBankAccounts()
 {
-    return accounts;
+    return bank_accounts;
 }
 
 void User::setActivityLog(vector<string> s)
@@ -67,13 +68,9 @@ void User::setActivityLog(vector<string> s)
     activityLog = s;
 }
 
-void User::setBankAccounts(vector<BankAccount> a)
-{
-    accounts = a;
-}
+void User::setBankAccounts(QList<BankAccount> bank_accounts_) { bank_accounts = bank_accounts_; }
 
-void User::addToActivityLog(string s)
-{
+void User::addToActivityLog(string s) {
     qDebug() << s;
     this->activityLog.push_back(s);
 }
@@ -83,7 +80,7 @@ void User::transferMoney(float amount, BankAccount &sender, BankAccount &receive
     sender.send(amount, receiver);
     QString strNumber = QString::number(amount, 'f', 2);
 
-    this->addToActivityLog(Transaction(sender.getNumber(), receiver.getNumber(), amount, time(0)).transferLogEntry());
+    // this->addToActivityLog(Transaction(sender.getAccountNumber(), receiver.getAccountNumber(), amount, time(0)).transferLogEntry());
 }
 
 void User::sendMoney(float amount, BankAccount sendAccount, User receiver)
@@ -93,30 +90,25 @@ void User::sendMoney(float amount, BankAccount sendAccount, User receiver)
     // receiver.addToActivityLog(Transaction(this->getUsername().toStdString(), sendAccount.getNumber(), receiver.getUsername().toStdString(), receiver.getBankAccounts()[0].getNumber(), amount, time(0)).receiverLogEntry());
 }
 
-void User::createBankAccount(int accNum, string type, float balance)
-{
-    this->accounts.push_back(BankAccount(accNum, type, balance)); //create new bank account with $0
+bool User::createBankAccount(const QString& account_type, const float balance) {
+    DB db;
+    BankAccount account(user_id, account_type, balance);
+    return db.createBankAccount(account);
 }
 
-void User::deleteBankAccount(int accNum)
-{
-    // for (int i=0; i < (int)this->accounts.size(); i++) {
-    //     if (accNum == this->accounts[i].getNumber()) {
-    //         this->accounts.erase(accounts.begin() + i);
-    //         this->addToActivityLog("Closed account #" + to_string(accNum));
-    //         qDebug() << "User " << this->getUsername() << " closed account #" << to_string(accNum);
-    //     }
-    // }
+bool User::deleteBankAccount(const QString& account_number) {
+    DB db;
+    db.deleteBankAccountByNumber(account_number);
 }
 
 BankAccount* User::findBankAccount(int num)
 {
-    for(int i = 0; i < (int)accounts.size(); i++)
-    {
-        if(accounts.at(i).getNumber() == num)
-        {
-            return &accounts.at(i);
-        }
-    }
+    // for(int i = 0; i < (int)accounts.size(); i++)
+    // {
+    //     if(accounts.at(i).getAccountNumber() == num)
+    //     {
+    //         return &accounts.at(i);
+    //     }
+    // }
     qDebug() << "Couldn't find account";
 }
