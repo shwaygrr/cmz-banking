@@ -258,6 +258,27 @@ bool DB::updateUserById(const int id, const QString &field, const QString &new_d
     }
 }
 
+bool DB::deleteUserById(const int user_id) {
+    QSqlQuery query;
+
+    query.prepare("DELETE FROM Users WHERE user_id = :user_id");
+    query.bindValue(":user_id", user_id);
+
+    if (!query.exec()) {
+        qDebug() << "Error deleting user:" << query.lastError().text();
+        return false;
+    }
+
+    if (query.numRowsAffected() == 0) {
+        qDebug() << "No user found with the provided ID.";
+        return false;
+    }
+
+    qDebug() << "User with ID" << user_id << "was successfully deleted.";
+    return true;
+}
+
+
 
 bool DB::authenticate(const QString& username, const QString& password) {
     QSqlQuery query;

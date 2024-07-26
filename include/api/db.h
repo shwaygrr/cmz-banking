@@ -41,6 +41,8 @@ public:
 
     //delete
     bool deleteBankAccountByNumber(const QString& account_number);
+    bool deleteUserById(const int user_id);
+
 private:
     QSqlDatabase db;
 
