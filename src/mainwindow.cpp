@@ -381,6 +381,14 @@ void MainWindow::setupButtonConnections() {
                 loadUI("mainwindow.ui");
             });
 
+        QPushButton *delete_account = centralWidget->findChild<QPushButton*>("profile_button_deleteaccount");
+        if(delete_account)
+            connect(delete_account, &QPushButton::clicked, this, [this]() {
+                db.deleteUserById(currentUser->getUserId());
+                loadUI("mainwindow.ui");
+                delete currentUser;
+            });
+
         QPushButton *goto_activitylog = centralWidget->findChild<QPushButton*>("button_activitylog");
         if(goto_activitylog)
             connect(goto_activitylog, &QPushButton::clicked, this, [this]() { loadUI("activitylogwindow.ui"); });
