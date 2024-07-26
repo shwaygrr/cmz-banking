@@ -9,6 +9,7 @@ int main(int argc, char *argv[]) {
 
     DB db;
 
+    // db.updateUserById(3, "password_hash", "1234");
     // User* user = db.getUserByUsername("Ben");
 
     // BankAccount bank(1 ,"Checking", 10.29);
