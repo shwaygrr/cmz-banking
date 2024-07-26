@@ -47,7 +47,7 @@ private:
     //initialize database
     std::string dbPath();
     void createTables();
-
+    void createTriggers();
     bool credIsUnique(const QString& credential_type, const QString& credential);
 };
 

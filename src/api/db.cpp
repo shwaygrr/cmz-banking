@@ -53,6 +53,7 @@ DB::DB() {
         qDebug() << "Error:" << e.what();
     }
     createTables();
+    createTriggers();
 }
 
 
@@ -117,6 +118,41 @@ void DB::createTables() {
     }
 
     // db.close();
+}
+
+void DB::createTriggers() {
+    QSqlQuery query;
+
+    QString createBankAccountsTrigger = R"(
+        CREATE TRIGGER IF NOT EXISTS update_bankaccounts_updated_at
+        AFTER UPDATE ON BankAccounts
+        FOR EACH ROW
+        BEGIN
+            UPDATE BankAccounts
+            SET updated_at = CURRENT_TIMESTAMP
+            WHERE account_id = OLD.account_id;
+        END;
+    )";
+
+    if (!query.exec(createBankAccountsTrigger)) {
+        qDebug() << "Failed to create trigger for BankAccounts:" << query.lastError().text();
+    }
+
+    // Trigger for Users table
+    QString createUsersTrigger = R"(
+        CREATE TRIGGER IF NOT EXISTS update_users_updated_at
+        AFTER UPDATE ON Users
+        FOR EACH ROW
+        BEGIN
+            UPDATE Users
+            SET updated_at = CURRENT_TIMESTAMP
+            WHERE user_id = OLD.user_id;
+        END;
+    )";
+
+    if (!query.exec(createUsersTrigger)) {
+        qDebug() << "Failed to create trigger for Users:" << query.lastError().text();
+    }
 }
 
 
@@ -193,35 +229,34 @@ void DB::createUser(const QString& full_name, const QString& username, const QSt
 }
 
 
-// bool DB::updateUserById(const int id, const QString &field, const QString &new_data) {
-//     QSqlQuery query;
-//     QString queryString;
+bool DB::updateUserById(const int id, const QString &field, const QString &new_data) {
+    QSqlQuery query;
+    QString queryString;
 
-//     // Map user-friendly field names to database column names
-//     if (field = "full name" || field == "username" || field == "password") {
-//         queryString = "UPDATE Users SET " + field + " = :new_data WHERE user_id = :id";
-//     } else {
-//         qDebug() << "Invalid field name:" << field;
-//         return false;
-//     }
+    if (field == "full_name" || field == "username" || field == "password_hash") {
+        queryString = "UPDATE Users SET " + field + " = :new_data WHERE user_id = :id";
+    } else {
+        qDebug() << "Invalid field name:" << field;
+        return false;
+    }
 
-//     query.prepare(queryString);
-//     query.bindValue(":new_data", new_data);
-//     query.bindValue(":id", id);
+    query.prepare(queryString);
+    query.bindValue(":new_data", new_data);
+    query.bindValue(":id", id);
 
-//     if (!query.exec()) {
-//         qDebug() << "Error updating profile:" << query.lastError().text();
-//         return false;
-//     }
+    if (!query.exec()) {
+        qDebug() << "Error updating profile:" << query.lastError().text();
+        return false;
+    }
 
-//     if (query.numRowsAffected() > 0) {
-//         qDebug() << "Profile updated successfully.";
-//         return true;
-//     } else {
-//         qDebug() << "Profile with ID" << id << "not found or no changes made.";
-//         return false;
-//     }
-// }
+    if (query.numRowsAffected() > 0) {
+        qDebug() << "Profile updated successfully.";
+        return true;
+    } else {
+        qDebug() << "Profile with ID" << id << "not found or no changes made.";
+        return false;
+    }
+}
 
 
 bool DB::authenticate(const QString& username, const QString& password) {
@@ -337,6 +372,7 @@ bool DB::createBankAccount(const BankAccount& new_bank_account) {
         return true;
     }
 }
+
 
 bool DB::deleteBankAccountByNumber(const QString& account_number) {
     QSqlQuery query;

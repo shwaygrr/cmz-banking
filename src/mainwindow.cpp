@@ -368,6 +368,9 @@ void MainWindow::setupButtonConnections() {
 
     // Profile Elements
     else if(currentwindow == "profilewindow.ui") {
+        static QString new_full_name, new_username, new_password;
+        static DB db;
+
         QPushButton *goto_dashboard = centralWidget->findChild<QPushButton*>("button_back");
         if(goto_dashboard)
             connect(goto_dashboard, &QPushButton::clicked, this, [this]() { loadUI("dashboardwindow.ui"); });
@@ -381,6 +384,40 @@ void MainWindow::setupButtonConnections() {
         QPushButton *goto_activitylog = centralWidget->findChild<QPushButton*>("button_activitylog");
         if(goto_activitylog)
             connect(goto_activitylog, &QPushButton::clicked, this, [this]() { loadUI("activitylogwindow.ui"); });
+
+        //name field and button
+        QLineEdit *profile_input_fullname = centralWidget->findChild<QLineEdit*>("profile_input_fullname");
+        if(profile_input_fullname)
+            connect(profile_input_fullname, &QLineEdit::textChanged, this, [](const QString &text) { new_full_name = text; });
+
+        QPushButton *change_full_name_button = centralWidget->findChild<QPushButton*>("profile_button_changefullname");
+        if(change_full_name_button)
+            connect(change_full_name_button, &QPushButton::clicked, this, [this]() {
+                db.updateUserById(currentUser->getUserId(), "full_name", new_full_name);
+            });
+
+        //username field and button
+        QLineEdit *profile_input_username = centralWidget->findChild<QLineEdit*>("profile_input_username");
+        if(profile_input_username)
+            connect(profile_input_username, &QLineEdit::textChanged, this, [](const QString &text) { new_username = text; });
+
+        QPushButton *change_username_button = centralWidget->findChild<QPushButton*>("profile_button_changeusername");
+        if(change_username_button)
+            connect(change_username_button, &QPushButton::clicked, this, [this]() {
+                db.updateUserById(currentUser->getUserId(), "username", new_username);
+            });
+
+        //password field and button
+        QLineEdit *profile_input_password= centralWidget->findChild<QLineEdit*>("profile_input_password");
+        if(profile_input_password)
+            connect(profile_input_password, &QLineEdit::textChanged, this, [](const QString &text) { new_password = text; });
+
+        QPushButton *change_password_button = centralWidget->findChild<QPushButton*>("profile_button_changepassword");
+        if(change_password_button)
+            connect(change_password_button, &QPushButton::clicked, this, [this]() {
+                Hash hash;
+                db.updateUserById(currentUser->getUserId(), "password_hash", QString::fromStdString(hash.hash(new_password.toStdString())));
+            });
     }
 
     // Activity Elements

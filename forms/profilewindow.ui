@@ -50,7 +50,7 @@
      </rect>
     </property>
     <property name="placeholderText">
-     <string>username</string>
+     <string>Change Username</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="profile_input_password">
@@ -69,7 +69,7 @@
      <enum>QLineEdit::Password</enum>
     </property>
     <property name="placeholderText">
-     <string>password</string>
+     <string>Change Password</string>
     </property>
    </widget>
    <widget class="QPushButton" name="profile_button_deleteaccount">
@@ -85,7 +85,7 @@
      <string>Delete account</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_email">
+   <widget class="QLabel" name="label_full_name">
     <property name="geometry">
      <rect>
       <x>140</x>
@@ -95,10 +95,10 @@
      </rect>
     </property>
     <property name="text">
-     <string>Email:</string>
+     <string>Full Name</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="profile_input_email">
+   <widget class="QLineEdit" name="profile_input_fullname">
     <property name="geometry">
      <rect>
       <x>220</x>
@@ -108,7 +108,7 @@
      </rect>
     </property>
     <property name="placeholderText">
-     <string>email address</string>
+     <string>Change Name</string>
     </property>
    </widget>
    <widget class="QPushButton" name="button_signout">
@@ -150,7 +150,7 @@
      <string>Change</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="profile_button_changeemail">
+   <widget class="QPushButton" name="profile_button_changefullname">
     <property name="geometry">
      <rect>
       <x>350</x>
