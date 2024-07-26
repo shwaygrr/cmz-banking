@@ -95,7 +95,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Email</string>
+     <string>Full Name</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="profile_input_fullname">
