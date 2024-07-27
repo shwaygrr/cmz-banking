@@ -24,6 +24,9 @@ User *currentUser;
 // int from_index, to_index;
 QString full_name, username, password; //set to main user after
 
+// For the create account window
+QString input_balance_text;
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow), layout(new QVBoxLayout), centralWidget(new QWidget(this))
 {
@@ -167,7 +170,6 @@ BankWidget* MainWindow::loadAccount(QString accountNumber, QString accountType, 
 void MainWindow::createAccount(const QString& account_type, const float account_balance) {
     if(currentUser->createBankAccount(account_type, account_balance)) {
         currentUser->addToActivityLog("Added a new " + account_type.toStdString() + " account with an initial balance $" + std::to_string(account_balance));
-        loadAllAccounts();
     } else {
         currentUser->addToActivityLog("Failed to add a bank account");
     }
@@ -278,10 +280,10 @@ void MainWindow::setupButtonConnections() {
         QPushButton *add_account = centralWidget->findChild<QPushButton*>("button_add_account");
         if(add_account)
             connect(add_account, &QPushButton::clicked, this, [this]() {
-                    QScrollArea *scrollArea = centralWidget->findChild<QScrollArea*>("scrollArea");
-                    QWidget *scrollWidget = scrollArea->findChild<QWidget*>("contents");
+                QScrollArea *scrollArea = centralWidget->findChild<QScrollArea*>("scrollArea");
+                QWidget *scrollWidget = scrollArea->findChild<QWidget*>("contents");
 
-                    createAccount("Checking", 420.69);
+                loadUI("createaccountwindow.ui");
                 });
         //Load user bank accounts
         loadAllAccounts();
@@ -368,6 +370,7 @@ void MainWindow::setupButtonConnections() {
         QPushButton *delete_account = centralWidget->findChild<QPushButton*>("profile_button_deleteaccount");
         if(delete_account)
             connect(delete_account, &QPushButton::clicked, this, [this]() {
+                DB db;
                 db.deleteUserById(currentUser->getUserId());
                 loadUI("mainwindow.ui");
                 delete currentUser;
@@ -385,6 +388,7 @@ void MainWindow::setupButtonConnections() {
         QPushButton *change_full_name_button = centralWidget->findChild<QPushButton*>("profile_button_changefullname");
         if(change_full_name_button)
             connect(change_full_name_button, &QPushButton::clicked, this, [this]() {
+                DB db;
                 db.updateUserById(currentUser->getUserId(), "full_name", new_full_name);
             });
 
@@ -396,6 +400,7 @@ void MainWindow::setupButtonConnections() {
         QPushButton *change_username_button = centralWidget->findChild<QPushButton*>("profile_button_changeusername");
         if(change_username_button)
             connect(change_username_button, &QPushButton::clicked, this, [this]() {
+                DB db;
                 db.updateUserById(currentUser->getUserId(), "username", new_username);
             });
 
@@ -407,6 +412,7 @@ void MainWindow::setupButtonConnections() {
         QPushButton *change_password_button = centralWidget->findChild<QPushButton*>("profile_button_changepassword");
         if(change_password_button)
             connect(change_password_button, &QPushButton::clicked, this, [this]() {
+                DB db;
                 Hash hash;
                 db.updateUserById(currentUser->getUserId(), "password_hash", QString::fromStdString(hash.hash(new_password.toStdString())));
             });
@@ -428,6 +434,31 @@ void MainWindow::setupButtonConnections() {
         if(goto_profile)
             connect(goto_profile, &QPushButton::clicked, this, [this]() {
                 loadUI("profilewindow.ui");
+            });
+    }
+
+    // Dashboard Elements
+    else if(currentwindow == "createaccountwindow.ui") {
+
+        QComboBox *combo_box = centralWidget->findChild<QComboBox*>("comboBox_type");
+
+        QLineEdit *input_balance = centralWidget->findChild<QLineEdit*>("input_balance");
+        if(input_balance)
+            connect(input_balance, &QLineEdit::textChanged, this, [](const QString &text) { input_balance_text = text; });
+
+        QPushButton *confirm = centralWidget->findChild<QPushButton*>("button_confirm");
+        if(confirm)
+            connect(confirm, &QPushButton::clicked, this, [this, combo_box, input_balance]() {
+                //Create the account
+                if(input_balance->text().toFloat() < 0){return;}
+                createAccount(combo_box->currentText(), input_balance->text().toFloat());
+
+                loadUI("dashboardwindow.ui");
+            });
+        QPushButton *cancel = centralWidget->findChild<QPushButton*>("button_cancel");
+        if(cancel)
+            connect(cancel, &QPushButton::clicked, this, [this]() {
+                loadUI("dashboardwindow.ui");
             });
     }
 }

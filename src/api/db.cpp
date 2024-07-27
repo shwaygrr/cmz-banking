@@ -373,7 +373,7 @@ bool DB::createBankAccount(const BankAccount& new_bank_account) {
         return false;
     }
 
-    if(new_bank_account.getAccountType() != "Checking" && new_bank_account.getAccountType() != "Saving") {
+    if(new_bank_account.getAccountType() != "Checking" && new_bank_account.getAccountType() != "Savings") {
         qDebug() << "Error creating bank account: Invalid account type";
         return false;
     }

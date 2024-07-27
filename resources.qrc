@@ -7,5 +7,6 @@
         <file>forms/profilewindow.ui</file>
         <file>forms/transferwindow.ui</file>
         <file>forms/activitylogwindow.ui</file>
+        <file>forms/createaccountwindow.ui</file>
     </qresource>
 </RCC>
