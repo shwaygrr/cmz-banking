@@ -41,7 +41,7 @@ class User {
         QList<BankAccount> getBankAccounts();
 
         //others
-        BankAccount* findBankAccount(int num);
+        BankAccount* findBankAccount(const QString& account_number);
         void addBankWidget(BankWidget *widget);
 
 
