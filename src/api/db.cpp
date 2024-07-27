@@ -414,3 +414,130 @@ bool DB::deleteBankAccountByNumber(const QString& account_number) {
         return false;
     }
 }
+
+BankAccount DB::getBankAccountById(const int account_id) {
+    QSqlQuery query;
+    query.prepare("SELECT * FROM BankAccounts WHERE account_id = :account_id");
+    query.bindValue(":account_id", account_id);
+
+    if (!query.exec()) {
+        qDebug() << "Error retrieving bank account:" << query.lastError().text();
+        return BankAccount(); // Return a default BankAccount object in case of error
+    }
+
+    if (query.next()) {
+        QSqlRecord record = query.record();
+
+        int account_id = record.value("account_id").toInt();
+        int user_id = record.value("user_id").toInt();
+        QString account_number = record.value("account_number").toString();
+        QString account_type = record.value("account_type").toString();
+        float balance = record.value("balance").toFloat();
+        QString created_at = record.value("created_at").toString();
+
+        return BankAccount(account_id, user_id, account_number, account_type, balance, created_at);
+    } else {
+        qDebug() << "Bank account not found";
+        return BankAccount();
+    }
+}
+
+bool DB::updateBankAccountBalance(const int account_id, const float new_balance) {
+    QSqlQuery query;
+
+    query.prepare("UPDATE BankAccounts SET balance = :new_balance, updated_at = CURRENT_TIMESTAMP WHERE account_id = :account_id");
+    query.bindValue(":new_balance", new_balance);
+    query.bindValue(":account_id", account_id);
+
+    if (!query.exec()) {
+        qDebug() << "Error updating bank account balance:" << query.lastError().text();
+        return false;
+    }
+
+    return true;
+}
+
+
+bool DB::createTransaction(const Transaction& new_transaction) {
+    QSqlQuery query;
+
+    BankAccount from_account = getBankAccountById(new_transaction.getSenderId());
+
+    float transaction_amount = new_transaction.getAmount();
+
+    if (from_account.getBalance() < transaction_amount) {
+        qDebug() << "Insufficient funds in the sender's account.";
+        return false;
+    }
+
+    BankAccount to_account = getBankAccountById(new_transaction.getReceiverId());
+
+    if (to_account.getAccountId() == 0) {
+        qDebug() << "Error: receiver account doesn't exist";
+        return false;
+    }
+
+    QString transfer_type =  from_account.getAccountUserId() == to_account.getAccountUserId() ? "transfer" : "send";
+
+    if (!updateBankAccountBalance(from_account.getAccountId(), from_account.getBalance() - transaction_amount)) {
+        qDebug() << "Error updating sender's account balance.";
+        return false;
+    }
+
+    if (!updateBankAccountBalance(to_account.getAccountId(), to_account.getBalance() + transaction_amount)) {
+        qDebug() << "Error updating receiver's account balance.";
+        return false;
+    }
+
+    query.prepare(R"(
+        INSERT INTO Transactions (sender_account_id, receiver_account_id, transaction_type, amount, description, transaction_date)
+        VALUES (:sender_account_id, :receiver_account_id, :transaction_type, :amount, :description, CURRENT_TIMESTAMP)
+    )");
+    query.bindValue(":sender_account_id", new_transaction.getSenderId());
+    query.bindValue(":receiver_account_id", new_transaction.getReceiverId());
+    query.bindValue(":transaction_type", transfer_type);
+    query.bindValue(":amount", new_transaction.getAmount());
+    query.bindValue(":description", new_transaction.getDescription());
+
+    if (!query.exec()) {
+        qDebug() << "Error inserting transaction into the database:" << query.lastError().text();
+        return false;
+    }
+
+    return true;
+}
+
+
+Transaction DB::getTransactionById(const int transaction_id) {
+    QSqlQuery query;
+
+    query.prepare(R"(
+        SELECT transaction_id, sender_account_id, receiver_account_id, transaction_type, amount, description, transaction_date
+        FROM Transactions
+        WHERE transaction_id = :transaction_id
+    )");
+
+    query.bindValue(":transaction_id", transaction_id);
+
+    if (!query.exec()) {
+        qDebug() << "Error retrieving transaction:" << query.lastError().text();
+        return Transaction();
+    }
+
+    if (query.next()) {
+        QSqlRecord record = query.record();
+
+        int transaction_id = record.value("transaction_id").toInt();
+        int sender_id = record.value("sender_account_id").toInt();
+        int receiver_id = record.value("receiver_account_id").toInt();
+        QString transaction_type = record.value("transaction_type").toString();
+        float amount = record.value("amount").toFloat();
+        QString description = record.value("description").toString();
+        QString created_at = record.value("transaction_date").toString();
+
+        return Transaction(transaction_id, transaction_type, description, sender_id, receiver_id, amount, created_at);
+    } else {
+        qDebug() << "Transaction not found";
+        return Transaction();  // Return an empty transaction object if no transaction found
+    }
+}

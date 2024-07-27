@@ -101,14 +101,14 @@ bool User::deleteBankAccount(const QString& account_number) {
     db.deleteBankAccountByNumber(account_number);
 }
 
-BankAccount* User::findBankAccount(int num)
-{
-    // for(int i = 0; i < (int)accounts.size(); i++)
-    // {
-    //     if(accounts.at(i).getAccountNumber() == num)
-    //     {
-    //         return &accounts.at(i);
-    //     }
-    // }
+BankAccount* User::findBankAccount(const QString& account_number) {
+    for (BankAccount& bank_account : bank_accounts) {
+        if (bank_account.getAccountNumber() == account_number) {
+            return &bank_account;
+        }
+    }
+
     qDebug() << "Couldn't find account";
+    return nullptr;
 }
+
