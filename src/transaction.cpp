@@ -1,35 +1,81 @@
 #include "transaction.h"
+#include <QDateTime>
 
-//used for transactions between users
-Transaction::Transaction(string sender_name, int sender_account, string receiver_name, int receiver_account, float amount_transferred, time_t time) {
-    sender = sender_name;
-    sender_acc = sender_account;
-    receiver = receiver_name;
-    receiver_acc = receiver_account;
-    amount = amount_transferred;
-    created_at = ctime(&time);
+Transaction::Transaction()
+    : transaction_type(""),
+    description(""), transaction_id(0), sender_id(0), receiver_id(0), amount(0.0) {}
+
+Transaction::Transaction(const QString& description_, int sender_id_, int receiver_id_, float amount_)
+    : description(description_), transaction_id(0), sender_id(sender_id_), receiver_id(receiver_id_), amount(amount_) {}
+
+Transaction::Transaction(int transaction_id_, const QString& transaction_type_, const QString& description_, int sender_id_, int receiver_id_, float amount_, const QString& created_at_)
+    : transaction_type(transaction_type_), description(description_), transaction_id(transaction_id_), sender_id(sender_id_), receiver_id(receiver_id_), amount(amount_), created_at(created_at_) {}
+
+
+QString Transaction::getDescription() const {
+    return description;
 }
 
-//used for transfers between accounts of the same user
-Transaction::Transaction(int sender_account, int receiver_account, float amount_transferred, time_t time) {
-    sender_acc = sender_account;
-    receiver_acc = receiver_account;
-    amount = amount_transferred;
-    created_at = ctime(&time);
+QString Transaction::getTransactionType() const {
+    return transaction_type;
 }
 
-//default constructor
-Transaction::Transaction() {
+QString Transaction::getCreatedAt() const {
+    return created_at;
 }
 
-string Transaction::transferLogEntry() {
-    return("Transferred " + to_string(amount) + " from account " + to_string(sender_acc) + " to account " + to_string(receiver_acc) + "at" + created_at);
+float Transaction::getAmount() const {
+    return amount;
 }
 
-string Transaction::senderLogEntry() {
-    return("Sent " + to_string(amount) + " from account " + to_string(sender_acc) + " to user " + receiver + " at " + created_at);
+int Transaction::getSenderId() const {
+    return sender_id;
 }
 
-string Transaction::receiverLogEntry() {
-    return("Received" + to_string(amount) + "from user " + sender + " at " + created_at);
+int Transaction::getReceiverId() const {
+    return receiver_id;
 }
+
+int Transaction::getTransactionId() const {
+    return transaction_id;
+}
+
+QString Transaction::getLogEntry() const {
+    QString logEntry;
+
+    if (transaction_type == "send") {
+        logEntry = QString("Sender ID: %1 sent $%2 to Receiver ID: %3")
+                       .arg(sender_id)
+                       .arg(amount)
+                       .arg(receiver_id);
+    } else if (transaction_type == "transfer") {
+        logEntry = QString("Sender ID: %1 transferred $%2 to Receiver ID: %3")
+                       .arg(sender_id)
+                       .arg(amount)
+                       .arg(receiver_id);
+    } else {
+        return "Transaction incomplete";
+    }
+
+    return logEntry;
+}
+
+QDebug operator << (QDebug dbg, const Transaction& transaction) {
+    QDebugStateSaver saver(dbg);
+    dbg.nospace();
+
+    if (transaction.getTransactionId() == 0) {
+        dbg << "Invalid Transaction -- Transaction undefined";
+    } else {
+    dbg << "Transaction ID: " << transaction.transaction_id << "\n"
+        << "Transaction Type: " << transaction.transaction_type << "\n"
+        << "Description: " << transaction.description << "\n"
+        << "Sender Account ID: " << transaction.sender_id << "\n"
+        << "Receiver Account ID: " << transaction.receiver_id << "\n"
+        << "Amount: " << transaction.amount << "\n"
+        << "Created At: " << transaction.created_at;
+    }
+
+    return dbg;
+}
+

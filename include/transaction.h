@@ -4,28 +4,33 @@
 #include <iostream>
 #include <string>
 #include <ctime>
+#include <QString>
 
 using namespace std;
 
-//Transaction will be user for transferring and sending money
-class Transaction
-{
+class Transaction {
 private:
-    string sender;
-    int sender_acc;
-    string receiver;
-    int receiver_acc;
+    QString transaction_type, created_at, description;
+    int transaction_id, sender_id, receiver_id;
     float amount;
-    string created_at;
 
+    bool updateBankAccountBalanceById(const int account_id, const float new_balance);
 public:
     Transaction();
-    Transaction(int sender_account, int receiver_account, float amount_transferred, time_t time);
-    Transaction(string sender_name, int sender_account, string receiver_name, int receiver_account, float amount_transferred, time_t time);
+    Transaction(const QString& description, int sender_id_, int reciever_id_, float amount_);
+    Transaction(int transaction_id_, const QString& transaction_type_, const QString& description_, int sender_id_, int receiver_id_, float amount_, const QString& created_at_);
 
-    string transferLogEntry();
-    string senderLogEntry();
-    string receiverLogEntry();
+    QString getTransactionType() const;
+    float getAmount() const;
+    QString getDescription() const;
+    QString getCreatedAt() const;
+    int getSenderId() const;
+    int getReceiverId() const;
+    int getTransactionId() const;
+
+    QString getLogEntry() const;
+
+    friend QDebug operator << (QDebug dbg, const Transaction& transaction);
 };
 
 #endif // TRANSACTION_H

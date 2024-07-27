@@ -16,11 +16,12 @@ string currentwindow;
 
 User *currentUser;
 
-float amountToTransfer;
+// float amountToTransfer;
+// QString desccription;
 
-QComboBox *from, *to;
-QButtonGroup *radioGroup;
-int from_index, to_index;
+
+// QButtonGroup *radioGroup;
+// int from_index, to_index;
 QString full_name, username, password; //set to main user after
 
 // For the create account window
@@ -193,6 +194,7 @@ void MainWindow::deleteAccount(const QString& account_number) {
 
 void MainWindow::setupButtonConnections() {
     //Login
+    static QString full_name, username, password;
     if (currentwindow == "mainwindow.ui") {
         QLineEdit *main_input_username = centralWidget->findChild<QLineEdit*>("main_input_username");
         if(main_input_username)
@@ -289,83 +291,65 @@ void MainWindow::setupButtonConnections() {
 
     // Transfer Elements
     else if(currentwindow == "transferwindow.ui") {
+        //need to move to and from variables --- Probably needs to be static
         QList<QString> accounts;
+        static int amountToTransfer = 0;
+        static QString description = "";
+        static QComboBox *from, *to;
+        static int from_index, to_index;
 
-        amountToTransfer = 0;
-
-        // for(int i = 0; i < (int)currentUser->getBankAccounts().size(); i++)
-        // {
-        //     BankAccount userAccount = currentUser->getBankAccounts().at(i);
-        //     QString strNumber = QString::number(userAccount.getBalance(), 'f', 2);
-        //     accounts.push_back(QString::fromStdString(to_string(userAccount.getAccountNumber()) + "     " + userAccount.getAccountType() + "     $" + strNumber.toStdString()));
-        // }
+        for(const BankAccount& account : currentUser->getBankAccounts()) {
+            QString strNumber = QString::number(account.getBalance(), 'f', 2);
+            accounts.push_back(account.getAccountNumber() + "     " + account.getAccountType() + "     $" + strNumber);
+        }
 
         from = centralWidget->findChild<QComboBox*>("from");
-        if(from)
-        {
-            from->addItems(accounts);
-        }
+        if(from) from->addItems(accounts);
 
         to = centralWidget->findChild<QComboBox*>("to");
-        if(to)
-        {
-            to->addItems(accounts);
-        }
+        if(to) to->addItems(accounts);
+
 
         QLineEdit *amount = centralWidget->findChild<QLineEdit*>("amount");
         if(amount)
-        {
-            connect(amount, &QLineEdit::textChanged, this, [](const QString &text)
-                    {
-                        amountToTransfer = stof(text.toStdString());
-                    });
-        }
+            connect(amount, &QLineEdit::textChanged, this, [](const QString &text) {
+                amountToTransfer = stof(text.toStdString());
+            });
+
+        QLineEdit *description_input = centralWidget->findChild<QLineEdit*>("description");
+        if(description_input)
+            connect(description_input, &QLineEdit::textChanged, this, [](const QString &text) {
+                description = text;
+            });
+
+        //buttons
         QPushButton *goto_dashboard = centralWidget->findChild<QPushButton*>("button_back");
         if(goto_dashboard)
-        {
             connect(goto_dashboard, &QPushButton::clicked, this, [this]() { loadUI("dashboardwindow.ui"); });
-        }
+
 
         QPushButton *transfer = centralWidget->findChild<QPushButton*>("button_transfer");
         if(transfer)
-        {
-            connect(transfer, &QPushButton::clicked, this, [this]()
-                    {
-                        // if(from->currentIndex() == to->currentIndex()) { return; }
+            connect(transfer, &QPushButton::clicked, this, [this]() {
+                DB db;
+                if(from->currentIndex() == to->currentIndex()) {
+                    //show error
+                    return;
+                }
 
-                        // from_index = from->currentIndex();
-                        // to_index = to->currentIndex();
+                from_index = from->currentIndex();
+                to_index = to->currentIndex();
 
-                        // QString from_text = from->currentText();
-                        // QString to_text = to->currentText();
+                QString from_text = from->currentText();
+                QString to_text = to->currentText();
 
-                        // BankAccount *from_account = currentUser->findBankAccount(from_text.left(11).toInt());
-                        // BankAccount *to_account = currentUser->findBankAccount(to_text.left(11).toInt());
+                BankAccount *from_account = currentUser->findBankAccount(from_text.left(10));
+                BankAccount *to_account = currentUser->findBankAccount(to_text.left(10));
 
-                        // QList<QString> accounts;
-
-                        // currentUser->transferMoney(amountToTransfer, *from_account, *to_account);
-
-                        // for(int i = 0; i < (int)currentUser->getBankAccounts().size(); i++)
-                        // {
-                        //     BankAccount userAccount = currentUser->getBankAccounts().at(i);
-                        //     QString strNumber = QString::number(userAccount.getBalance(), 'f', 2);
-                        //     accounts.push_back(userAccount.getAccountNumber()) + "     " + userAccount.getAccountType() + "     $" + strNumber.toStdString()));
-                        // }
-
-                        // from = centralWidget->findChild<QComboBox*>("from");
-                        // to = centralWidget->findChild<QComboBox*>("to");
-
-                        // from->clear();
-                        // to->clear();
-
-                        // from->addItems(accounts);
-                        // to->addItems(accounts);
-
-                        // from->setCurrentIndex(from_index);
-                        // to->setCurrentIndex(to_index);
-                    });
-        }
+                Transaction transaction("description", from_account->getAccountId(), to_account->getAccountId(), amountToTransfer);
+                db.createTransaction(transaction);
+                loadUI("dashboardwindow.ui");
+            });
     }
 
     // Profile Elements
