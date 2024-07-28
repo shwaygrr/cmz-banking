@@ -55,23 +55,6 @@ void User::setActivityLog(const QList<Activity>& activity_log_) { activity_log =
 
 void User::setBankAccounts(QList<BankAccount> bank_accounts_) { bank_accounts = bank_accounts_; }
 
-bool User::createBankAccount(const QString& account_type, const float balance) {
-    DB db;
-    BankAccount account(user_id, account_type, balance);
-    return db.createBankAccount(account);
-}
-
-bool User::deleteBankAccount(const QString& account_number) {
-    DB db;
-    if(db.deleteBankAccountByNumber(account_number)){
-        db.createActivity(Activity(user_id, "Account with account #: " + account_number + " deleted"));
-        return true;
-    } else {
-        db.createActivity(Activity(user_id, "Failed to open bank account"));
-        return false;
-    }
-}
-
 BankAccount* User::findBankAccount(const QString& account_number) {
     for (BankAccount& bank_account : bank_accounts) {
         if (bank_account.getAccountNumber() == account_number) {

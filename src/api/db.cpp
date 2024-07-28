@@ -241,7 +241,7 @@ bool DB::credIsUnique(const QString& credential_type, const QString& credential)
 }
 
 
-void DB::createUser(const QString& full_name, const QString& username, const QString& password) {
+bool DB::createUser(const QString& full_name, const QString& username, const QString& password) {
     QSqlQuery query;
     Hash hash;
 
@@ -253,11 +253,13 @@ void DB::createUser(const QString& full_name, const QString& username, const QSt
 
         if (!query.exec()) {
             qDebug() << "Error adding user:" << query.lastError().text();
-            return;
+            return false;
         }
         qDebug() << "User added successfully";
+        return true;
     } else {
         qDebug() << "Username already exists";
+        return false;
     }
 }
 
@@ -484,7 +486,7 @@ BankAccount DB::getBankAccountById(const int account_id) {
 bool DB::updateBankAccountBalance(const int account_id, const float new_balance) {
     QSqlQuery query;
 
-    query.prepare("UPDATE BankAccounts SET balance = :new_balance, d_at = CURRENT_TIMESTAMP WHERE account_id = :account_id");
+    query.prepare("UPDATE BankAccounts SET balance = :new_balance, created_at = CURRENT_TIMESTAMP WHERE account_id = :account_id");
     query.bindValue(":new_balance", new_balance);
     query.bindValue(":account_id", account_id);
 
