@@ -1,23 +1,20 @@
 #ifndef USER_H
 #define USER_H
 
+#include <QList>
+#include <QDebug>
+#include <vector>
 #include "widgets/BankWidget.h"
 #include "bankaccount.h"
-#include <iostream>
-#include <string>
-#include <vector>
-#include <QList>
-
-#include <QDebug>
-using namespace std;
+#include "activity.h"
 
 class User {
     private:
         int user_id;
         QString full_name, username, created_at;
-        vector<string> activityLog;
+        QList<Activity> activity_log;
         QList<BankAccount> bank_accounts;
-        vector<BankWidget*> widgets;
+        std::vector<BankWidget*> widgets;
 
     public:
         User();
@@ -29,7 +26,7 @@ class User {
         //setters
         void setUsername(const QString& username_);
         void setFullName(const QString& full_name_);
-        void setActivityLog(vector<string> s);
+        void setActivityLog(const QList<Activity>& activity_log_);
         void setBankAccounts(QList<BankAccount> bank_accounts_);
 
         //getters
@@ -37,8 +34,8 @@ class User {
         QString getFullName() const;
         QString getUsername() const;
         QString getCreatedAt() const;
-        vector<string> getActivityLog();
-        QList<BankAccount> getBankAccounts();
+        QList<Activity> getActivityLog() const;
+        QList<BankAccount> getBankAccounts() const;
 
         //others
         BankAccount* findBankAccount(const QString& account_number);
@@ -47,7 +44,6 @@ class User {
 
 
         //actions
-        void addToActivityLog(string s);
         void transferMoney(float amount, BankAccount &sender, BankAccount &receiver);
         void sendMoney(float amount, BankAccount sendAccount, User receiver);
         bool createBankAccount(const QString& type, const float balance = 0);

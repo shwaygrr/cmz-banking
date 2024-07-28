@@ -45,16 +45,14 @@ private:
     void deleteAllAccountsUI();
     void loadAllAccounts();
 
-    void createAccount(const QString& accoun_type, const float account_balance);
+    void createAccount(const QString& account_type, const float account_balance);
     BankWidget* loadAccount(QString account_number, QString account_type, QString account_balance);
-    ActivityWidget* createActivity(string activity, string time);
+    ActivityWidget* createActivityWidget(const Activity& activity);
     void deleteAccount(const QString& account_number);
-
-    bool verifyAction();
 
     void login(const QString& username_, const QString& password_);
     void createUser(QString& full_name_, QString& username_, QString& password_);
 
-    User fetchUserData(const int id);
+    void fetchUserData(const int id);
 };
 #endif // MAINWINDOW_H

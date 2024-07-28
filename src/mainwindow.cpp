@@ -16,12 +16,6 @@ string currentwindow;
 
 User *currentUser;
 
-// float amountToTransfer;
-// QString desccription;
-
-
-// QButtonGroup *radioGroup;
-// int from_index, to_index;
 QString full_name, username, password; //set to main user after
 
 // For the create account window
@@ -47,10 +41,6 @@ MainWindow::~MainWindow() {
 
 void MainWindow::loadUI(const QString &uiFile) {
     QString ui = ":/forms/" + uiFile;
-
-    full_name = "";
-    username = "";
-    password = "";
 
     qDebug() << "Attempting to navigate to" << ui;
 
@@ -90,11 +80,11 @@ void MainWindow::login(const QString& username_, const QString& password_) {
 }
 
 
-User MainWindow::fetchUserData(const int id) {
-    //get all logs by username -- not sure about this yet
+void MainWindow::fetchUserData(const int id) {
+    DB db;
 
-    //get all transactions by username
-    return User();
+    currentUser->setBankAccounts(db.getAllBankAccountsByUserId(id));
+    currentUser->setActivityLog(db.getActivitiesByUserId(id));
 }
 
 void MainWindow::createUser(QString& full_name_, QString& username_, QString& password_) {
@@ -108,21 +98,6 @@ void MainWindow::createUser(QString& full_name_, QString& username_, QString& pa
     db.createUser(full_name_, username_, password_);
     qDebug() << "Successfully created user...Welcome" << username_ << "!";
     loadUI("mainwindow.ui");
-}
-
-
-bool MainWindow::verifyAction()
-{
-    // username = currentUser->getUsername();
-
-    // for(int i = 0; i < (int)users.size(); i++)
-    // {
-    //     if(users[i].getUsername() == username)
-    //     {
-    //         return users[i].getPassword() == currentUser->getPassword();
-    //     }
-    // }
-    // return false;
 }
 
 void MainWindow::deleteAllAccountsUI() {
@@ -143,9 +118,7 @@ void MainWindow::loadAllAccounts() {
     QScrollArea *scrollArea = centralWidget->findChild<QScrollArea*>("scrollArea");
     QWidget *scrollWidget = scrollArea->findChild<QWidget*>("contents");
 
-    DB db;
-    QList user_bank_accounts_from_db = db.getAllBankAccountsByUserId(currentUser->getUserId());
-    currentUser->setBankAccounts(user_bank_accounts_from_db);
+    fetchUserData(currentUser->getUserId());
 
     for(const BankAccount& account : currentUser->getBankAccounts()) {
         BankAccount user_account = account;
@@ -162,34 +135,33 @@ BankWidget* MainWindow::loadAccount(QString accountNumber, QString accountType, 
     widget->setAccountType(accountType);
     widget->setAccountBalance(accountBalance);
 
-    connect(widget->getTrashButton(), &QPushButton::clicked, this, [this, widget]() { deleteAccount(widget->getAccountNumber()); });
+    connect(widget->getTrashButton(), &QPushButton::clicked, this, [this, widget]() {
+        deleteAccount(widget->getAccountNumber());
+    });
 
     return widget;
 }
 
 void MainWindow::createAccount(const QString& account_type, const float account_balance) {
     if(currentUser->createBankAccount(account_type, account_balance)) {
-        currentUser->addToActivityLog("Added a new " + account_type.toStdString() + " account with an initial balance $" + std::to_string(account_balance));
+        loadAllAccounts();
     } else {
-        currentUser->addToActivityLog("Failed to add a bank account");
+        qDebug() << "Error creating account";
     }
 }
 
-ActivityWidget* MainWindow::createActivity(string activity, string time) {
+ActivityWidget* MainWindow::createActivityWidget(const Activity& activity) {
     ActivityWidget *widget = new ActivityWidget(this);
 
-    widget->setActivity(activity);
-    widget->setTime(time);
+    widget->setDescription(activity.getDescription());
+    widget->setTime(activity.getCreatedAt());
 
     return widget;
 }
 
 void MainWindow::deleteAccount(const QString& account_number) {
-    if(currentUser->deleteBankAccount(account_number)) {
+    if(currentUser->deleteBankAccount(account_number))
         loadAllAccounts();
-    } else {
-        currentUser->addToActivityLog("Failed to delete a bank account");
-    }
 }
 
 void MainWindow::setupButtonConnections() {
@@ -347,7 +319,11 @@ void MainWindow::setupButtonConnections() {
                 BankAccount *to_account = currentUser->findBankAccount(to_text.left(10));
 
                 Transaction transaction("description", from_account->getAccountId(), to_account->getAccountId(), amountToTransfer);
-                db.createTransaction(transaction);
+
+                if(db.createTransaction(transaction)) {
+                    db.createActivity(Activity(currentUser->getUserId(), transaction));
+                };
+
                 loadUI("dashboardwindow.ui");
             });
     }
@@ -355,7 +331,6 @@ void MainWindow::setupButtonConnections() {
     // Profile Elements
     else if(currentwindow == "profilewindow.ui") {
         static QString new_full_name, new_username, new_password;
-        static DB db;
 
         QPushButton *goto_dashboard = centralWidget->findChild<QPushButton*>("button_back");
         if(goto_dashboard)
@@ -364,6 +339,8 @@ void MainWindow::setupButtonConnections() {
         QPushButton *signout = centralWidget->findChild<QPushButton*>("button_signout");
         if(signout)
             connect(signout, &QPushButton::clicked, this, [this]() {
+                DB db;
+                db.createActivity(Activity(currentUser->getUserId(), "Signed out"));
                 loadUI("mainwindow.ui");
             });
 
@@ -420,14 +397,15 @@ void MainWindow::setupButtonConnections() {
 
     // Activity Elements
     else if(currentwindow == "activitylogwindow.ui") {
+        fetchUserData(currentUser->getUserId());
         QScrollArea *scrollArea = centralWidget->findChild<QScrollArea*>("scrollArea");
         QWidget *scrollWidget = scrollArea->findChild<QWidget*>("contents");
         QVBoxLayout *scrollLayout = new QVBoxLayout(scrollWidget);
         scrollLayout->stretch(0);
 
-        for(int i = 0; i < (int)currentUser->getActivityLog().size(); i++) {
-            ActivityWidget *newAccount = createActivity(currentUser->getActivityLog().at(i), "5:00 pm");
-            scrollWidget->findChild<QVBoxLayout*>()->addWidget(newAccount);
+        for (const Activity& activity : currentUser->getActivityLog()) {
+            ActivityWidget *activity_widget = createActivityWidget(activity);
+            scrollWidget->findChild<QVBoxLayout*>()->addWidget(activity_widget);
         }
 
         QPushButton *goto_profile = centralWidget->findChild<QPushButton*>("button_profile");

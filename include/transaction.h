@@ -28,6 +28,8 @@ public:
     int getReceiverId() const;
     int getTransactionId() const;
 
+    void setTransactionType(QString transaction_type_);
+
     QString getLogEntry() const;
 
     friend QDebug operator << (QDebug dbg, const Transaction& transaction);

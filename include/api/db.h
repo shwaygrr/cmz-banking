@@ -10,7 +10,7 @@
 #include "user.h"
 #include "bankaccount.h"
 #include "transaction.h"
-
+#include "activity.h"
 #include "crypto/hash.h"
 
 class DB {
@@ -30,7 +30,7 @@ public:
     QList<BankAccount> getAllBankAccountsByUserId(const int user_id);
     std::vector<Transaction> getTransactionsByUserId(const int user_id);
     User* getUserByUsername(const QString& username);
-
+    QList<Activity> getActivitiesByUserId(const int user_id);
 
     //get
     BankAccount getBankAccountById(const int account_id);
@@ -43,6 +43,7 @@ public:
     //create
     bool createBankAccount(const BankAccount& new_bank_account);
     bool createTransaction(const Transaction& new_transaction);
+    bool createActivity(const Activity& new_activity);
 
     //delete
     bool deleteBankAccountByNumber(const QString& account_number);
@@ -53,6 +54,7 @@ private:
 
     //initialize database
     std::string dbPath();
+    bool checkAllTablesExist(const QStringList& tables);
     void createTables();
     void createTriggers();
     bool credIsUnique(const QString& credential_type, const QString& credential);
