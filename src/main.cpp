@@ -4,15 +4,17 @@
 #include "bankaccount.h"
 #include "transaction.h"
 #include "activity.h"
+#include "system.h"
 using namespace std;
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
-    DB db;
+    // DB db;
 
-    QList<Activity> activities = db.getActivitiesByUserId(7);
-
+    // db.updateBankAccountBalance(22, 300.00);
+    // qDebug() << db.getBankAccountById(34);
+    // System* system;
     // for(const Activity& activity : activities) {
     //     qDebug() << activity;
     //     qDebug() << "------------------------------------------";

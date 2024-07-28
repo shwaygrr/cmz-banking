@@ -40,14 +40,6 @@ class User {
         //others
         BankAccount* findBankAccount(const QString& account_number);
         void addBankWidget(BankWidget *widget);
-
-
-
-        //actions
-        void transferMoney(float amount, BankAccount &sender, BankAccount &receiver);
-        void sendMoney(float amount, BankAccount sendAccount, User receiver);
-        bool createBankAccount(const QString& type, const float balance = 0);
-        bool deleteBankAccount(const QString& account_number);
 };
 
 #endif // USER_H

@@ -14,7 +14,6 @@ private:
     int transaction_id, sender_id, receiver_id;
     float amount;
 
-    bool updateBankAccountBalanceById(const int account_id, const float new_balance);
 public:
     Transaction();
     Transaction(const QString& description, int sender_id_, int reciever_id_, float amount_);
