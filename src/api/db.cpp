@@ -52,7 +52,11 @@ DB::DB() {
     } catch (const std::exception& e) {
         qDebug() << "Error:" << e.what();
     }
-    createTables();
+
+    const QStringList tables = {"Users", "BankAccounts", "Transactions", "Activities"};
+
+    if(!checkAllTablesExist(tables)) createTables();
+
     createTriggers();
 }
 
@@ -63,6 +67,26 @@ DB::~DB() {
     }
 }
 
+bool DB::checkAllTablesExist(const QStringList& tables) {
+    QSqlQuery query;
+
+    for (const QString& table : tables) {
+        query.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name=:tableName;");
+        query.bindValue(":tableName", table);
+
+        if (!query.exec()) {
+            qDebug() << "Error executing query:" << query.lastError();
+            return false;
+        }
+
+        // If the table is not found
+        if (!query.next()) {
+            qDebug() << table << " does not exist:" << table;
+            return false;
+        }
+    }
+    return true;
+}
 
 void DB::createTables() {
     QSqlQuery query;
@@ -74,13 +98,12 @@ void DB::createTables() {
             username VARCHAR(255) UNIQUE NOT NULL,
             password_hash VARCHAR(255) NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            d_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     )";
 
-    if (!query.exec(createUsersTable)) {
+    if (!query.exec(createUsersTable))
         qDebug() << "Error creating Users table:" << query.lastError();
-    }
 
     QString createBankAccountsTable = R"(
         CREATE TABLE BankAccounts (
@@ -95,9 +118,8 @@ void DB::createTables() {
         );
     )";
 
-    if (!query.exec(createBankAccountsTable)) {
+    if (!query.exec(createBankAccountsTable))
         qDebug() << "Error creating BankAccounts table:" << query.lastError();
-    }
 
     QString createTransactionsTable = R"(
         CREATE TABLE Transactions (
@@ -113,10 +135,21 @@ void DB::createTables() {
         );
     )";
 
-    if (!query.exec(createTransactionsTable)) {
+    if (!query.exec(createTransactionsTable))
         qDebug() << "Error creating Transactions table:" << query.lastError();
-    }
 
+    QString createActivitiesTable = R"(
+        CREATE TABLE Activities (
+            activity_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            description VARCHAR(255),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES Users(user_id)
+        );
+    )";
+
+    if (!query.exec(createActivitiesTable))
+        qDebug() << "Error creating Activities table:" << query.lastError();
     // db.close();
 }
 
@@ -244,12 +277,15 @@ bool DB::updateUserById(const int id, const QString &field, const QString &new_d
     query.bindValue(":new_data", new_data);
     query.bindValue(":id", id);
 
+    QString field_name = field == "password_hash" ? "Password" : field == "username" ? "Username" : "Full Name";
     if (!query.exec()) {
+        createActivity(Activity(id, "Attempted and failed to update " + field_name));
         qDebug() << "Error updating profile:" << query.lastError().text();
         return false;
     }
 
     if (query.numRowsAffected() > 0) {
+        createActivity(Activity(id, field_name + " updated"));
         qDebug() << "Profile updated successfully.";
         return true;
     } else {
@@ -283,7 +319,7 @@ bool DB::deleteUserById(const int user_id) {
 bool DB::authenticate(const QString& username, const QString& password) {
     QSqlQuery query;
     Hash hash;
-    query.prepare("SELECT password_hash FROM Users WHERE username = :username");
+    query.prepare("SELECT user_id, password_hash FROM Users WHERE username = :username");
     query.bindValue(":username", username);
 
     if (!query.exec()) {
@@ -294,12 +330,14 @@ bool DB::authenticate(const QString& username, const QString& password) {
     if (query.next()) {
         QSqlRecord record = query.record();
         QString password_hash = record.value("password_hash").toString();
+        int user_id = record.value("user_id").toInt();
 
         if (password_hash.toStdString() == hash.hash(password.toStdString())) {
             qDebug() << "Authenticated!";
             return true;
         } else {
             qDebug() << "invalid password";
+            createActivity(Activity(user_id, "Unsuccessful login attempt"));
             return false;
         }
     } else {
@@ -327,7 +365,7 @@ User* DB::getUserByUsername(const QString& username) {
         QString username = record.value("username").toString();
         QString created_at = record.value("created_at").toDateTime().toString();
 
-
+        createActivity(Activity(user_id, "Successfully Logged in"));
         return new User(user_id, full_name, username, created_at);
     } else {
         qDebug() << "User not found";
@@ -389,6 +427,7 @@ bool DB::createBankAccount(const BankAccount& new_bank_account) {
         qDebug() << "Error inserting new bank account:" << query.lastError().text();
         return false;
     } else {
+        createActivity(Activity(new_bank_account.getAccountUserId(), "Added a new " + new_bank_account.getAccountType() + " account with an initial balance of $" + QString::number(new_bank_account.getBalance())));
         qDebug() << "New bank account created successfully.";
         return true;
     }
@@ -445,7 +484,7 @@ BankAccount DB::getBankAccountById(const int account_id) {
 bool DB::updateBankAccountBalance(const int account_id, const float new_balance) {
     QSqlQuery query;
 
-    query.prepare("UPDATE BankAccounts SET balance = :new_balance, updated_at = CURRENT_TIMESTAMP WHERE account_id = :account_id");
+    query.prepare("UPDATE BankAccounts SET balance = :new_balance, d_at = CURRENT_TIMESTAMP WHERE account_id = :account_id");
     query.bindValue(":new_balance", new_balance);
     query.bindValue(":account_id", account_id);
 
@@ -540,4 +579,53 @@ Transaction DB::getTransactionById(const int transaction_id) {
         qDebug() << "Transaction not found";
         return Transaction();  // Return an empty transaction object if no transaction found
     }
+}
+
+bool DB::createActivity(const Activity& new_activity) {
+    QSqlQuery query;
+
+    if (!db.isOpen()) {
+        qDebug() << "Error: Database is not open";
+        return false;
+    }
+    query.prepare(R"(
+        INSERT INTO Activities (user_id, description, created_at)
+        VALUES (:user_id, :description, CURRENT_TIMESTAMP)
+    )");
+
+    query.bindValue(":user_id", new_activity.getUserId());
+    query.bindValue(":description", new_activity.getDescription());
+
+    if (!query.exec()) {
+        qDebug() << "Error creating activity:" << query.lastError();
+        return false;
+    }
+
+    return true;
+}
+
+
+QList<Activity> DB::getActivitiesByUserId(const int user_id) {
+
+    QList<Activity> activities;
+    QSqlQuery query;
+    query.prepare("SELECT activity_id, user_id, description, created_at FROM Activities WHERE user_id = :user_id");
+    query.bindValue(":user_id", user_id);
+
+    if (!query.exec()) {
+        qDebug() << "Error retrieving activities:" << query.lastError();
+        return activities;
+    }
+
+    while (query.next()) {
+        int activity_id = query.value("activity_id").toInt();
+        QString description = query.value("description").toString();
+        QString created_at = query.value("created_at").toString();
+
+        Activity activity(activity_id, user_id, description, created_at);
+
+        activities.append(activity);
+    }
+
+    return activities;
 }

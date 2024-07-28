@@ -3,6 +3,7 @@
 #include <api/db.h>
 #include "bankaccount.h"
 #include "transaction.h"
+#include "activity.h"
 using namespace std;
 
 int main(int argc, char *argv[]) {
@@ -10,6 +11,18 @@ int main(int argc, char *argv[]) {
 
     DB db;
 
+    QList<Activity> activities = db.getActivitiesByUserId(7);
+
+    // for(const Activity& activity : activities) {
+    //     qDebug() << activity;
+    //     qDebug() << "------------------------------------------";
+    // }
+    // Transaction transaction("gas money", 1, 2, 10.00);
+    // transaction.setTransactionType("transfer");
+    // Activity activity(1, transaction);
+    // // qDebug() << activity;
+
+    // db.createActivity(t);
     // Transaction transaction("save some money", 1, 2, 2.00);
 
     // db.createTransaction(transaction);

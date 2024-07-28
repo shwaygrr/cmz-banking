@@ -11,6 +11,9 @@ Transaction::Transaction(const QString& description_, int sender_id_, int receiv
 Transaction::Transaction(int transaction_id_, const QString& transaction_type_, const QString& description_, int sender_id_, int receiver_id_, float amount_, const QString& created_at_)
     : transaction_type(transaction_type_), description(description_), transaction_id(transaction_id_), sender_id(sender_id_), receiver_id(receiver_id_), amount(amount_), created_at(created_at_) {}
 
+void Transaction::setTransactionType(QString transaction_type_) {
+     transaction_type = transaction_type_;
+}
 
 QString Transaction::getDescription() const {
     return description;
@@ -42,7 +45,7 @@ int Transaction::getTransactionId() const {
 
 QString Transaction::getLogEntry() const {
     QString logEntry;
-
+    //change to account numbers and username later
     if (transaction_type == "send") {
         logEntry = QString("Sender ID: %1 sent $%2 to Receiver ID: %3")
                        .arg(sender_id)

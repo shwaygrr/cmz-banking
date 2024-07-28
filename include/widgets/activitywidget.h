@@ -6,23 +6,22 @@
 #include <QHBoxLayout>
 #include <QCheckBox>
 
+#include "activity.h"
+
 using namespace std;
 
-class ActivityWidget : public QWidget
-{
-    Q_OBJECT
+class ActivityWidget : public QWidget {
+Q_OBJECT
 private:
-    QLabel *activityLabel;
-    QLabel *timeLabel;
+    QLabel *activity_label;
+    QLabel *time_label;
 
 
 
 public:
     ActivityWidget(QWidget *parent = 0);
-    void setActivity(string &activity);
-    void setTime(string &time);
-
-
+    void setDescription(const QString& description);
+    void setTime(const QString& time);
 };
 
 #endif // ACTIVITYWIDGET_H
