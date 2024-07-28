@@ -424,7 +424,7 @@ bool DB::createBankAccount(const BankAccount& new_bank_account) {
     query.bindValue(":balance", new_bank_account.getBalance());
 
     if (!query.exec()) {
-        qDebug() << "Error inserting new bank account:" << query.lastError().text();
+        qDebug() << "Error Creating new bank account:" << query.lastError().text();
         return false;
     } else {
         createActivity(Activity(new_bank_account.getAccountUserId(), "Added a new " + new_bank_account.getAccountType() + " account with an initial balance of $" + QString::number(new_bank_account.getBalance())));

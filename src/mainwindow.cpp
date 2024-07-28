@@ -143,11 +143,7 @@ BankWidget* MainWindow::loadAccount(QString accountNumber, QString accountType, 
 }
 
 void MainWindow::createAccount(const QString& account_type, const float account_balance) {
-    if(currentUser->createBankAccount(account_type, account_balance)) {
-        loadAllAccounts();
-    } else {
-        qDebug() << "Error creating account";
-    }
+    currentUser->createBankAccount(account_type, account_balance);
 }
 
 ActivityWidget* MainWindow::createActivityWidget(const Activity& activity) {
