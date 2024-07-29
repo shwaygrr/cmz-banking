@@ -68,3 +68,16 @@ bool checkEmailFormat(const std::string &email) {
 
     return std::regex_match(email, emailRegex);
 }
+
+
+std::string generateSalt(const int length) {
+    const std::string possibleCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    std::string salt;
+    srand(static_cast<unsigned int>(time(0))); // Seed the random number generator with current time
+
+    for (int i = 0; i < length; ++i) {
+        int index = rand() % possibleCharacters.length();
+        salt += possibleCharacters.at(index);
+    }
+    return salt;
+}

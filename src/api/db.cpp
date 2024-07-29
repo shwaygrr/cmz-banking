@@ -97,8 +97,9 @@ void DB::createTables() {
             full_name VARCHAR(255),
             username VARCHAR(255) UNIQUE NOT NULL,
             password_hash VARCHAR(255) NOT NULL,
+            salt VARCHAR(255) NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            d_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     )";
 
@@ -188,7 +189,6 @@ void DB::createTriggers() {
     }
 }
 
-
 User DB::getUserById(const int user_id) {
     QSqlQuery query;
     // Prepare the SQL query to select a user by ID
@@ -244,12 +244,14 @@ bool DB::credIsUnique(const QString& credential_type, const QString& credential)
 bool DB::createUser(const QString& full_name, const QString& username, const QString& password) {
     QSqlQuery query;
     Hash hash;
+    std::string salt = generateSalt();
 
     if (credIsUnique("username", username)) {
-        query.prepare("INSERT INTO Users (full_name, username, password_hash) VALUES (:full_name, :username, :password_hash)");
+        query.prepare("INSERT INTO Users (full_name, username, password_hash, salt) VALUES (:full_name, :username, :password_hash, :salt)");
         query.bindValue(":full_name", full_name);
         query.bindValue(":username", username);
-        query.bindValue(":password_hash", QString::fromStdString(hash.hash(password.toStdString())));
+        query.bindValue(":password_hash", QString::fromStdString(hash.hash(password.toStdString(), salt)));
+        query.bindValue(":salt", QString::fromStdString(salt));
 
         if (!query.exec()) {
             qDebug() << "Error adding user:" << query.lastError().text();
@@ -321,7 +323,7 @@ bool DB::deleteUserById(const int user_id) {
 bool DB::authenticate(const QString& username, const QString& password) {
     QSqlQuery query;
     Hash hash;
-    query.prepare("SELECT user_id, password_hash FROM Users WHERE username = :username");
+    query.prepare("SELECT user_id, salt, password_hash FROM Users WHERE username = :username");
     query.bindValue(":username", username);
 
     if (!query.exec()) {
@@ -332,9 +334,10 @@ bool DB::authenticate(const QString& username, const QString& password) {
     if (query.next()) {
         QSqlRecord record = query.record();
         QString password_hash = record.value("password_hash").toString();
+        std::string salt = record.value("salt").toString().toStdString();
         int user_id = record.value("user_id").toInt();
 
-        if (password_hash.toStdString() == hash.hash(password.toStdString())) {
+        if (password_hash.toStdString() == hash.hash(password.toStdString(), salt)) {
             qDebug() << "Authenticated!";
             return true;
         } else {
