@@ -110,5 +110,5 @@ std::string textToHex(std::string text);
 
 bool checkPasswordFormat(const std::string& password);
 bool checkEmailFormat(const std::string& email);
-
+std::string generateSalt(const int length = 16);
 #endif // HELPERS_H

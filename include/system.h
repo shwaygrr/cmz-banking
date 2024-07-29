@@ -29,6 +29,8 @@ public:
 private:
     DB* db;
     User* user;
+
+    QString generateSalt(const int length = 16);
 };
 
 #endif // SYSTEM_H

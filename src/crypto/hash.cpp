@@ -33,8 +33,8 @@ std::string Hash::pad(const std::string& input, const unsigned int bit_size) {
         - Input: Text that need to hashed
         - Output: Hashed text
 */
-std::string Hash::hash(const std::string& input) {
-    std::string input_hex_padded = pad(input, 128);
+std::string Hash::hash(const std::string& input, const std::string& salt) {
+    std::string input_hex_padded = pad(input + salt, 128);
 
     AES128 aes;
     std::string H = IV;

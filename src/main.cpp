@@ -10,8 +10,8 @@ using namespace std;
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
-    // DB db;
-
+    DB db;
+    // db.createUser("Josh", "Josh Joe", "1234");
     // db.updateBankAccountBalance(22, 300.00);
     // qDebug() << db.getBankAccountById(34);
     // System* system;

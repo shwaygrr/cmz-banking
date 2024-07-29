@@ -349,7 +349,8 @@ void MainWindow::setupButtonConnections() {
         if(change_password_button)
             connect(change_password_button, &QPushButton::clicked, this, [this]() {
                 Hash hash;
-                system->updateUser("password_hash", QString::fromStdString(hash.hash(new_password.toStdString())));
+                std::string salt = generateSalt();
+                system->updateUser("password_hash", QString::fromStdString(hash.hash(new_password.toStdString(), salt)));
             });
     }
 

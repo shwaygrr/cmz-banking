@@ -7,7 +7,7 @@
 //Davies-Meyers hash using AES
 class Hash {
 public:
-    std::string hash(const std::string& input);
+    std::string hash(const std::string& input, const std::string& salt = "");
 
 private:
     std::string pad(const std::string& input, const unsigned int bit_size);

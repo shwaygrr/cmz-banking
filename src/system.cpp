@@ -76,5 +76,3 @@ bool System::deleteUser() {
 bool System::updateUser(const QString& field, const QString& new_value) const {
     return db->updateUserById(user->getUserId(), field, new_value);
 }
-
-
