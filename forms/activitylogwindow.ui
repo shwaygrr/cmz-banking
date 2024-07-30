@@ -17,7 +17,7 @@
    <widget class="QPushButton" name="button_profile">
     <property name="geometry">
      <rect>
-      <x>190</x>
+      <x>180</x>
       <y>330</y>
       <width>130</width>
       <height>24</height>
@@ -30,8 +30,8 @@
    <widget class="QLabel" name="label_accountnumber">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>80</y>
+      <x>210</x>
+      <y>60</y>
       <width>61</width>
       <height>16</height>
      </rect>
@@ -39,37 +39,27 @@
     <property name="text">
      <string>Activity</string>
     </property>
-   </widget>
-   <widget class="QLabel" name="label_type">
-    <property name="geometry">
-     <rect>
-      <x>310</x>
-      <y>80</y>
-      <width>61</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Time</string>
+    <property name="alignment">
+     <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
    </widget>
    <widget class="QScrollArea" name="scrollArea">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>100</y>
+      <y>80</y>
       <width>451</width>
-      <height>221</height>
+      <height>241</height>
      </rect>
     </property>
     <property name="horizontalScrollBarPolicy">
-     <enum>Qt::ScrollBarAsNeeded</enum>
+     <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
     </property>
     <property name="widgetResizable">
      <bool>true</bool>
     </property>
     <property name="alignment">
-     <set>Qt::AlignHCenter|Qt::AlignTop</set>
+     <set>Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignTop</set>
     </property>
     <widget class="QWidget" name="contents">
      <property name="geometry">
@@ -77,7 +67,7 @@
        <x>0</x>
        <y>0</y>
        <width>449</width>
-       <height>219</height>
+       <height>239</height>
       </rect>
      </property>
      <property name="sizePolicy">

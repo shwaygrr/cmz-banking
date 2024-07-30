@@ -1,24 +1,21 @@
-#include "widgets/ActivityWidget.h"
+#include "widgets/activitywidget.h"
 
-ActivityWidget::ActivityWidget(QWidget *parent)
-    : QWidget(parent)
-{
-    activityLabel = new QLabel(this);
-    timeLabel = new QLabel(this);
+ActivityWidget::ActivityWidget(QWidget *parent) : QWidget(parent) {
+    activity_label = new QLabel(this);
+    time_label = new QLabel(this);
 
     QHBoxLayout *layout = new QHBoxLayout(this);
 
-    layout->addWidget(activityLabel);
-    layout->addWidget(timeLabel);
+    layout->addWidget(activity_label);
+    layout->addWidget(time_label);
 
     setLayout(layout);
 }
 
-void ActivityWidget::setActivity(string &activity)
-{
-    activityLabel->setText(QString::fromStdString(activity));
+void ActivityWidget::setDescription(const QString& description) {
+    activity_label->setText(description);
 }
-void ActivityWidget::setTime(string &time)
-{
-    timeLabel->setText(QString::fromStdString(time));
+
+void ActivityWidget::setTime(const QString& time) {
+    time_label->setText(time);
 }

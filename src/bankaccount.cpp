@@ -1,6 +1,5 @@
 #include "bankaccount.h"
 
-
 BankAccount::BankAccount() : account_id(0), user_id(0), balance(0.0) {}
 
 BankAccount::BankAccount(int user_id_, QString account_type_, float balance_)

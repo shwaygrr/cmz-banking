@@ -17,15 +17,15 @@ class BankWidget : public QWidget
 public:
     BankWidget(QWidget *parent = 0);
 
-    void setAccountNumber(QString& accountNumber);
-    void setAccountType(QString& accountType);
-    void setAccountBalance(QString& accountBalance);
+    void setAccountNumber(const QString& accountNumber);
+    void setAccountType(const QString& accountType);
+    void setAccountBalance(const QString& accountBalance);
 
-    QString getAccountNumber();
-    QString getAccountType();
-    QString getAccountBalance();
+    QString getAccountNumber() const;
+    QString getAccountType() const;
+    QString getAccountBalance() const;
 
-    QPushButton* getTrashButton();
+    QPushButton* getTrashButton() const;
 
     bool checkState();
 

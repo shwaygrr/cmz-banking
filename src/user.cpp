@@ -18,6 +18,8 @@ User::User(int user_id_, QString full_name_, QString username_, QString created_
     full_name = full_name_;
     username = username_;
     created_at = created_at_;
+    activity_log = {};
+    bank_accounts = {};
 }
 
 QDebug operator << (QDebug dbg, const User& user) {
@@ -37,78 +39,30 @@ QDebug operator << (QDebug dbg, const User& user) {
 
 
 //add security levels and error handling to getters later
-int User::getUserId() const {
-    return user_id;
-}
+int User::getUserId() const { return user_id; }
 
-QString User::getFullName() const {
-    return full_name;
-}
+QString User::getFullName() const { return full_name; }
 
-QString User::getUsername() const {
-    return username;
-}
+QString User::getUsername() const { return username; }
 
-QString User::getCreatedAt() const {
-    return created_at;
-}
+QString User::getCreatedAt() const { return created_at; }
 
-vector<string> User::getActivityLog()
-{
-    return activityLog;
-}
+QList<Activity> User::getActivityLog() const { return activity_log; }
 
-QList<BankAccount> User::getBankAccounts()
-{
-    return bank_accounts;
-}
+QList<BankAccount> User::getBankAccounts() const { return bank_accounts; }
 
-void User::setActivityLog(vector<string> s)
-{
-    activityLog = s;
-}
+void User::setActivityLog(const QList<Activity>& activity_log_) { activity_log = activity_log_; }
 
 void User::setBankAccounts(QList<BankAccount> bank_accounts_) { bank_accounts = bank_accounts_; }
 
-void User::addToActivityLog(string s) {
-    qDebug() << s;
-    this->activityLog.push_back(s);
-}
+BankAccount* User::findBankAccount(const QString& account_number) {
+    for (BankAccount& bank_account : bank_accounts) {
+        if (bank_account.getAccountNumber() == account_number) {
+            return &bank_account;
+        }
+    }
 
-void User::transferMoney(float amount, BankAccount &sender, BankAccount &receiver)
-{
-    sender.send(amount, receiver);
-    QString strNumber = QString::number(amount, 'f', 2);
-
-    // this->addToActivityLog(Transaction(sender.getAccountNumber(), receiver.getAccountNumber(), amount, time(0)).transferLogEntry());
-}
-
-void User::sendMoney(float amount, BankAccount sendAccount, User receiver)
-{
-    // sendAccount.send(amount, receiver.accounts[0]);   //send money to first account in receiver's list
-    // this->addToActivityLog(Transaction(this->getUsername().toStdString(), sendAccount.getNumber(), receiver.getUsername().toStdString(), receiver.getBankAccounts()[0].getNumber(), amount, time(0)).senderLogEntry());
-    // receiver.addToActivityLog(Transaction(this->getUsername().toStdString(), sendAccount.getNumber(), receiver.getUsername().toStdString(), receiver.getBankAccounts()[0].getNumber(), amount, time(0)).receiverLogEntry());
-}
-
-bool User::createBankAccount(const QString& account_type, const float balance) {
-    DB db;
-    BankAccount account(user_id, account_type, balance);
-    return db.createBankAccount(account);
-}
-
-bool User::deleteBankAccount(const QString& account_number) {
-    DB db;
-    db.deleteBankAccountByNumber(account_number);
-}
-
-BankAccount* User::findBankAccount(int num)
-{
-    // for(int i = 0; i < (int)accounts.size(); i++)
-    // {
-    //     if(accounts.at(i).getAccountNumber() == num)
-    //     {
-    //         return &accounts.at(i);
-    //     }
-    // }
     qDebug() << "Couldn't find account";
+    return nullptr;
 }
+
