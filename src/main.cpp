@@ -4,17 +4,33 @@
 #include "bankaccount.h"
 #include "transaction.h"
 #include "activity.h"
+<<<<<<< HEAD
 #include "system.h"
+=======
+#include "crypto/rsa.h"
+
+>>>>>>> 0f66a32 (fix bugs and test rsa)
 using namespace std;
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
-    DB db;
-    // db.createUser("Josh", "Josh Joe", "1234");
-    // db.updateBankAccountBalance(22, 300.00);
-    // qDebug() << db.getBankAccountById(34);
-    // System* system;
+    RSA rsa;
+
+    bigint b = rsa.encrypt(123);
+    std::cout << rsa.decrypt(a);
+
+    // rsa.rsaEnc(123);
+  //   bigint j("1232366543"), s("3454"), y("223"), odd_num("334556");
+
+  //   if (j >= s - 1 && y != odd_num - 1)
+  //       qDebug() << "hi";
+
+
+    // DB db;
+
+    // QList<Activity> activities = db.getActivitiesByUserId(7);
+
     // for(const Activity& activity : activities) {
     //     qDebug() << activity;
     //     qDebug() << "------------------------------------------";
@@ -46,9 +62,10 @@ int main(int argc, char *argv[]) {
     // }
     // db.createBankAccount(bank);
     // qDebug() << db.getAllBankAccountsByUserId(4);
-    MainWindow w;
+    // MainWindow w;
 
-    w.show();
+    // w.show();
 
-    return a.exec();
+    // return a.exec();
+    return 0;
 }
