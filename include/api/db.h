@@ -22,8 +22,9 @@ public:
     void signUp();
 
     //auth
-    bool createUser(const QString& full_name, const QString& username, const QString& password_hash);
+    bool createUser(const QString& full_name, const QString& username, const QString& password_hash, const QString& e_public, const QString& n_public);
     User getUserById(const int user_id);
+    bool authenticate(const QString& username, const QString& password, const QString& key);
     bool authenticate(const QString& username, const QString& password);
 
     //user info

@@ -107,7 +107,7 @@ ActivityWidget* MainWindow::createActivityWidget(const Activity& activity) {
 void MainWindow::setupButtonConnections() {
     //Login
     if (current_window == "mainwindow.ui") {
-        static QString full_name, username, password;
+        static QString full_name, username, password, secret_key;
         QLineEdit *main_input_username = centralWidget->findChild<QLineEdit*>("main_input_username");
         if(main_input_username)
             connect(main_input_username, &QLineEdit::textChanged, this, [](const QString &text) {
@@ -120,6 +120,12 @@ void MainWindow::setupButtonConnections() {
                 password = text;
             });
 
+        QLineEdit *main_input_key = centralWidget->findChild<QLineEdit*>("main_input_key");
+        if(main_input_key)
+            connect(main_input_key, &QLineEdit::textChanged, this, [](const QString &text) {
+                secret_key = text;
+            });
+
         QPushButton *main_button_login = centralWidget->findChild<QPushButton*>("main_button_login");
         if(main_button_login)
             connect(main_button_login, &QPushButton::clicked, this, [this]() {
@@ -128,7 +134,7 @@ void MainWindow::setupButtonConnections() {
                     return;
                 }
 
-                if(system->login(username, password)) {
+                if(system->login(username, password, secret_key)) {
                     loadUI("dashboardwindow.ui");
                 } else {
                     qDebug() << "Error logging in";
@@ -173,8 +179,8 @@ void MainWindow::setupButtonConnections() {
                     return;
                 }
 
-                if(system->createUser(full_name, username, password)) {
-                    loadUI("mainwindow.ui");
+                if(system->createUser(full_name, username, password) && system->login(username, password)) {
+                    loadUI("dashboardwindow.ui");
                 } else {
                     qDebug() << "Error Creating account";
                 }
@@ -215,7 +221,12 @@ void MainWindow::setupButtonConnections() {
 
                 loadUI("createaccountwindow.ui");
                 });
+
+        QLabel *private_key_label = centralWidget->findChild<QLabel*>("private_key_label");
+        if(private_key_label)
+            private_key_label->setText("Private Key (KEEP SECRET): " + system->getUser()->getPrivateKey());
         //Load user bank accounts
+        qDebug() << system->getUser()->getPrivateKey();
         loadAllAccounts();
     }
 

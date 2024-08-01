@@ -12,6 +12,7 @@ public:
     bool createAccount(const QString& account_type, const float account_balance) const;
     bool deleteAccount(const QString& account_number) const;
 
+    bool login(const QString& username_, const QString& password_, const QString& key);
     bool login(const QString& username_, const QString& password_);
     bool createUser(const QString& full_name_, const QString& username_, const QString& password_) const;
 

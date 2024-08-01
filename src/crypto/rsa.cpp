@@ -6,7 +6,9 @@
         -Output Base^Exponent mod Modulus
 */
 RSA::RSA() {
-    keyGen(30); //low bit size for speed
+    d_private = 0;
+    e_public = 0;
+    n_public = 0;
 }
 
 void RSA::test() {
@@ -32,7 +34,6 @@ bigint RSA::modExp(const bigint& base, bigint exp, const bigint& modulus) {
     std::cout << "exp: "  << exp << std::endl;
     while (exp != 0) {
         A = (A*A) % modulus;
-
         if (exp % 2 == 1) result = (A*result) % modulus;
 
         exp /= 2; //next bit
@@ -329,4 +330,45 @@ bigint RSA::encrypt(const bigint& plain_text) {
 bigint RSA::decrypt(const bigint& cipher_text) {
     std::cout << "rsa decrypting..." << std::endl;
     return modExp(cipher_text, d_private, n_public);
+}
+
+
+bigint RSA::encrypt(const bigint& plain_text, const bigint& e_pub_key_, const bigint& n_pub_key_) {
+    std::cout << "rsa encryption..." << std::endl;
+    return modExp(plain_text, e_pub_key_, n_pub_key_);
+}
+
+
+bigint RSA::decrypt(const bigint& cipher_text, const bigint& priv_key, const bigint& n_pub_key_) {
+    std::cout << "rsa decrypting..." << std::endl;
+    return modExp(cipher_text, priv_key, n_pub_key_);
+}
+
+void RSA::setPrivateKey(const bigint& d_private_) {
+    d_private = d_private_;
+}
+
+void RSA::setPublicKeys(const bigint& e_public_, const bigint& n_public_) {
+    e_public = e_public_;
+    n_public = n_public_;
+}
+
+bigint RSA::getPrivateKey() const { return d_private;}
+
+bool RSA::verifyPrivateKey(const bigint& d_private_, const bigint& e_public_, const bigint& n_public_) {
+    qDebug() << d_private.as_str();
+    qDebug() << e_public.as_str();
+    qDebug() << n_public.as_str();
+
+    bigint random_plain_text = randNumGen(3000, bigint("9000000000000"));
+    qDebug() << "random_plain_text: " << random_plain_text.as_str();
+
+    bigint random_plain_text_enc = encrypt(random_plain_text, e_public_, n_public_);
+
+
+    if(decrypt(random_plain_text_enc, d_private_, n_public_) == random_plain_text) {
+        qDebug() << "Invalid Key";
+        return true;
+    }
+    return false;
 }

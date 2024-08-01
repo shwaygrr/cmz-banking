@@ -1,16 +1,13 @@
 #include "system.h"
 
-System::System() : user(nullptr), db(new DB()) {}
+System::System() : user(new User()), db(new DB()) {}
 
 System::~System() {
-    if (user != nullptr) {
         delete user;
         user = nullptr;
-    }
-    if (db != nullptr) {
+
         delete db;
         db = nullptr;
-    }
 }
 
 void System::setUser(User* current_user) { user = current_user; }
@@ -34,9 +31,22 @@ bool System::deleteAccount(const QString& account_number) const {
     }
 }
 
+bool System::login(const QString& username_, const QString& password_, const QString& key) {
+    if(db->authenticate(username_, password_, key)) {
+        setUser(db->getUserByUsername(username_));
+        user->setPrivateKey(key);
+        fetchUserData(user->getUserId());
+        return true;
+    } else {
+        return false;
+    }
+}
+
 bool System::login(const QString& username_, const QString& password_) {
     if(db->authenticate(username_, password_)) {
+        QString d_private = user->getPrivateKey();
         setUser(db->getUserByUsername(username_));
+        user->setPrivateKey(d_private);
         fetchUserData(user->getUserId());
         return true;
     } else {
@@ -45,7 +55,11 @@ bool System::login(const QString& username_, const QString& password_) {
 }
 
 bool System::createUser(const QString& full_name_, const QString& username_, const QString& password_) const {
-    return db->createUser(full_name_, username_, password_);
+    user->user_rsa.keyGen(20);
+    QString e_public = QString::fromStdString(user->user_rsa.e_public.as_str());
+    QString n_public = QString::fromStdString(user->user_rsa.n_public.as_str());
+
+    return db->createUser(full_name_, username_, password_, e_public, n_public);
 }
 
 void System::fetchUserData(const int id) {
