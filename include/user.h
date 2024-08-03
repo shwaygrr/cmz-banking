@@ -7,6 +7,8 @@
 #include "widgets/BankWidget.h"
 #include "bankaccount.h"
 #include "activity.h"
+#include "crypto/aes.h"
+#include "crypto/rsa.h"
 
 class User {
     private:
@@ -18,7 +20,7 @@ class User {
 
     public:
         User();
-        User(int user_id_, QString full_name_, QString username_, QString created_at_);
+        User(const int user_id_, const QString& full_name_, const QString& username_, const QString& created_at_, const QString& e_public, const QString& n_public, const QString& private_key);
 
         //ostream overload
         friend QDebug operator << (QDebug dbg, const User& user);
@@ -34,12 +36,18 @@ class User {
         QString getFullName() const;
         QString getUsername() const;
         QString getCreatedAt() const;
+        QString getPrivateKey() const;
+
         QList<Activity> getActivityLog() const;
         QList<BankAccount> getBankAccounts() const;
 
+        void setPrivateKey(const QString& key);
         //others
         BankAccount* findBankAccount(const QString& account_number);
         void addBankWidget(BankWidget *widget);
+
+        RSA user_rsa;
+        AES128 user_aes;
 };
 
 #endif // USER_H
