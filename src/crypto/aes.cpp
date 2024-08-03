@@ -355,7 +355,7 @@ std::bitset<128> AES128::aesDec128(const std::string& cipher_text, const std::st
         - Input: 128x-bit Plain text as hex and 128-bit hex
         - Output: 128x-bit Cipher text as hex
 */
-std::string AES128::encECB128(std::string message_hex, std::string priv_key_hex) {
+std::string AES128::encECB128(std::string message_hex) {
 
     //pad message and key
     while (message_hex.size() % 32 != 0) message_hex = "0" + message_hex;
@@ -378,13 +378,36 @@ std::string AES128::encECB128(std::string message_hex, std::string priv_key_hex)
     return cipher_text;
 }
 
+std::string AES128::encECB128(std::string message_hex, std::string priv_key_hex_) {
+
+    //pad message and key
+    while (message_hex.size() % 32 != 0) message_hex = "0" + message_hex;
+    while (priv_key_hex_.size() % 32 != 0) priv_key_hex_ = "0" + priv_key_hex_;
+
+    //start encryption 128 bits at a time
+    std::string cipher_text = "";
+
+    for(int i = 0; i < message_hex.length(); i+=32) {
+        //get 32-hexadecimal block
+        std::string cipher_hex_block = message_hex.substr(i, 32);
+
+        //encrypt
+        cipher_hex_block = binToHex<128>(aesEnc128(cipher_hex_block, priv_key_hex_));
+
+        //add block
+        cipher_text += cipher_hex_block;
+    }
+
+    return cipher_text;
+}
+
 
 /*
     Electronic Code Block Mode of Operation
         - Input: 128x-bit Cipher text as hex and 128-bit hex
         - Output: 128x-bit Plain text as hex
 */
-std::string AES128::decECB128(std::string message_hex, std::string priv_key_hex) {
+std::string AES128::decECB128(std::string message_hex) {
 
     //pad message and key
     while (message_hex.size() % 32 != 0) message_hex = "0" + message_hex;
@@ -407,4 +430,30 @@ std::string AES128::decECB128(std::string message_hex, std::string priv_key_hex)
     }
 
     return plain_text;
+}
+
+void AES128::setPrivateKey(const std::string& priv_key_hex_) {
+    priv_key_hex = priv_key_hex_;
+}
+
+std::string AES128::generatePrivateKey() {
+    const int key_length = 16;
+    unsigned char key[key_length];
+
+    // Create a random device and Mersenne Twister engine
+    std::random_device rd;
+    std::mt19937 gen(rd());
+
+    // Generate random bytes
+    for (int i = 0; i < key_length; ++i) {
+        key[i] = static_cast<unsigned char>(gen() & 0xFF);
+    }
+
+    // Convert the bytes to a hex string
+    std::stringstream ss;
+    for (int i = 0; i < key_length; ++i) {
+        ss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(key[i]);
+    }
+
+    return ss.str();
 }

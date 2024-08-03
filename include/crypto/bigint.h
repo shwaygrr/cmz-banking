@@ -352,7 +352,7 @@ public:
         parameter for the programmer's convinience  */
     friend bigint operator % (bigint const &n1, bigint const &n2) {
         bigint ans;
-        ans.str = add(n1.str, n2.str);
+        ans.str = mod(n1.str, n2.str);
         return ans;
     }
 
@@ -435,7 +435,7 @@ public:
 
     /* Operator {>} Overloadings, for different kind of
         parameter for the programmer's convinience  */
-    friend bigint operator > (bigint const &n1, bigint const &n2) {
+    friend bool operator > (bigint const &n1, bigint const &n2) {
         return is_strictlyMaximum(n1.str, n2.str);
     }
 
@@ -495,61 +495,109 @@ public:
     }
 
 
+    // /* Operator {>=} Overloadings, for different kind of
+    //     parameter for the programmer's convinience  */
+    // friend bool operator >= (bigint const &n1, bigint const &n2) {
+    //     return is_maximum(n1.str, n2.str);
+    // }
+
+    // friend bool operator >= (bigint const &n1, int n2) {
+    //     return is_maximum(n1.str, std::to_string(n2));
+    // }
+
+    // friend bool operator >= (int n1, bigint const &n2) {
+    //     return is_maximum(std::to_string(n1), n2.str);
+    // }
+
+    // friend bool operator >= (bigint const &n1, long int n2) {
+    //     return is_maximum(n1.str, std::to_string(n2));
+    // }
+
+    // friend bool operator >= (long int n1, bigint const &n2) {
+    //     return is_maximum(std::to_string(n1), n2.str);
+    // }
+
+    // friend bool operator >= (bigint const &n1, long long int n2) {
+    //     return is_maximum(n1.str, std::to_string(n2));
+    // }
+
+    // friend bool operator >= (long long int n1, bigint const &n2) {
+    //     return is_maximum(std::to_string(n1), n2.str);
+    // }
+
+    // /* Operator {<=} Overloadings, for different kind of
+    //     parameter for the programmer's convinience  */
+    // friend bool operator <= (bigint const &n1, bigint const &n2) {
+    //     return is_minimum(n1.str, n2.str);
+    // }
+
+    // friend bool operator <= (bigint const &n1, int n2) {
+    //     return is_minimum(n1.str, std::to_string(n2));
+    // }
+    // friend bool operator <= (int n1, bigint const &n2) {
+    //     return is_minimum(std::to_string(n1), n2.str);
+    // }
+    // friend bool operator <= (bigint const &n1, long int n2) {
+    //     return is_minimum(n1.str, std::to_string(n2));
+    // }
+    // friend bool operator <= (long int n1, bigint const &n2) {
+    //     return is_minimum(std::to_string(n1), n2.str);
+    // }
+    // friend bool operator <= (bigint const &n1, long long int n2) {
+    //     return is_minimum(n1.str, std::to_string(n2));
+    // }
+    // friend bool operator <= (long long int n1, bigint const &n2) {
+    //     return is_minimum(std::to_string(n1), n2.str);
+    // }
     /* Operator {>=} Overloadings, for different kind of
         parameter for the programmer's convinience  */
-    friend bigint operator >= (bigint const &n1, bigint const &n2) {
-        return is_maximum(n1.str, n2.str);
-    }
 
-    friend bool operator >= (bigint const &n1, int n2) {
+    inline bool operator >= (bigint const &n) {
+        return is_maximum(str, n.str);
+    }
+    inline friend bool operator >= (bigint const &n1, int n2) {
         return is_maximum(n1.str, std::to_string(n2));
     }
-
-    friend bool operator >= (int n1, bigint const &n2) {
+    inline friend bool operator >= (int n1, bigint const &n2) {
         return is_maximum(std::to_string(n1), n2.str);
     }
-
-    friend bool operator >= (bigint const &n1, long int n2) {
+    inline friend bool operator >= (bigint const &n1, long int n2) {
         return is_maximum(n1.str, std::to_string(n2));
     }
-
-    friend bool operator >= (long int n1, bigint const &n2) {
+    inline friend bool operator >= (long int n1, bigint const &n2) {
         return is_maximum(std::to_string(n1), n2.str);
     }
-
-    friend bool operator >= (bigint const &n1, long long int n2) {
+    inline friend bool operator >= (bigint const &n1, long long int n2) {
         return is_maximum(n1.str, std::to_string(n2));
     }
-
-    friend bool operator >= (long long int n1, bigint const &n2) {
+    inline friend bool operator >= (long long int n1, bigint const &n2) {
         return is_maximum(std::to_string(n1), n2.str);
     }
 
     /* Operator {<=} Overloadings, for different kind of
         parameter for the programmer's convinience  */
-    friend bigint operator <= (bigint const &n1, bigint const &n2) {
-        return is_minimum(n1.str, n2.str);
-    }
 
-    friend bool operator <= (bigint const &n1, int n2) {
+    inline bool operator <= (bigint const &n) {
+        return is_minimum(str, n.str);
+    }
+    inline friend bool operator <= (bigint const &n1, int n2) {
         return is_minimum(n1.str, std::to_string(n2));
     }
-    friend bool operator <= (int n1, bigint const &n2) {
+    inline friend bool operator <= (int n1, bigint const &n2) {
         return is_minimum(std::to_string(n1), n2.str);
     }
-    friend bool operator <= (bigint const &n1, long int n2) {
+    inline friend bool operator <= (bigint const &n1, long int n2) {
         return is_minimum(n1.str, std::to_string(n2));
     }
-    friend bool operator <= (long int n1, bigint const &n2) {
+    inline friend bool operator <= (long int n1, bigint const &n2) {
         return is_minimum(std::to_string(n1), n2.str);
     }
-    friend bool operator <= (bigint const &n1, long long int n2) {
+    inline friend bool operator <= (bigint const &n1, long long int n2) {
         return is_minimum(n1.str, std::to_string(n2));
     }
-    friend bool operator <= (long long int n1, bigint const &n2) {
+    inline friend bool operator <= (long long int n1, bigint const &n2) {
         return is_minimum(std::to_string(n1), n2.str);
     }
-
 
     /* Operator {==} Overloadings, for different kind of
         parameter for the programmer's convinience  */
@@ -637,7 +685,7 @@ public:
         ans.str = sqrt(a.str);
         return ans;
     }
-    static bigint _big_log2(bigint &a) {                // returns the log of Big Integer to the base of 2.
+    static bigint _big_log2(const bigint &a) {                // returns the log of Big Integer to the base of 2.
         bigint ans;
         ans.str = log2(a.str);
         return ans;

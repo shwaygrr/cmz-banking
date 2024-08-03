@@ -63,13 +63,13 @@
      </rect>
     </property>
     <property name="horizontalScrollBarPolicy">
-     <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+     <enum>Qt::ScrollBarAlwaysOff</enum>
     </property>
     <property name="widgetResizable">
      <bool>true</bool>
     </property>
     <property name="alignment">
-     <set>Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignTop</set>
+     <set>Qt::AlignHCenter|Qt::AlignTop</set>
     </property>
     <widget class="QWidget" name="contents">
      <property name="geometry">
@@ -99,6 +99,22 @@
     </property>
     <property name="text">
      <string>Add Account</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="private_key_label">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>30</y>
+      <width>281</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
   </widget>

@@ -67,9 +67,7 @@ QDebug operator << (QDebug dbg, const Transaction& transaction) {
     QDebugStateSaver saver(dbg);
     dbg.nospace();
 
-    if (transaction.getTransactionId() == 0) {
-        dbg << "Invalid Transaction -- Transaction undefined";
-    } else {
+
     dbg << "Transaction ID: " << transaction.transaction_id << "\n"
         << "Transaction Type: " << transaction.transaction_type << "\n"
         << "Description: " << transaction.description << "\n"
@@ -77,7 +75,6 @@ QDebug operator << (QDebug dbg, const Transaction& transaction) {
         << "Receiver Account ID: " << transaction.receiver_id << "\n"
         << "Amount: " << transaction.amount << "\n"
         << "Created At: " << transaction.created_at;
-    }
 
     return dbg;
 }
