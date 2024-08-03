@@ -11,15 +11,19 @@ User::User() {
     full_name = "";
     username = "";
     created_at = "";
+    user_rsa = RSA();
+    user_aes = AES128();
 }
 
-User::User(int user_id_, QString full_name_, QString username_, QString created_at_) {
+User::User(const int user_id_, const QString& full_name_, const QString& username_, const QString& created_at_, const QString& e_public, const QString& n_public, const QString &private_key) {
     user_id = user_id_;
     full_name = full_name_;
     username = username_;
     created_at = created_at_;
     activity_log = {};
     bank_accounts = {};
+    user_rsa.setPublicKeys(bigint(e_public.toStdString()), bigint(n_public.toStdString()));
+    user_aes.setPrivateKey(private_key.toStdString());
 }
 
 QDebug operator << (QDebug dbg, const User& user) {
@@ -49,6 +53,11 @@ QString User::getCreatedAt() const { return created_at; }
 
 QList<Activity> User::getActivityLog() const { return activity_log; }
 
+QString User::getPrivateKey() const {
+    qDebug() << "hi";
+    return QString::fromStdString(user_rsa.getPrivateKey().as_str());
+}
+
 QList<BankAccount> User::getBankAccounts() const { return bank_accounts; }
 
 void User::setActivityLog(const QList<Activity>& activity_log_) { activity_log = activity_log_; }
@@ -61,8 +70,10 @@ BankAccount* User::findBankAccount(const QString& account_number) {
             return &bank_account;
         }
     }
-
     qDebug() << "Couldn't find account";
     return nullptr;
 }
 
+void User::setPrivateKey(const QString& key) {
+    user_rsa.setPrivateKey(bigint(key.toStdString()));
+}

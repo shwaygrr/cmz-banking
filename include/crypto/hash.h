@@ -3,7 +3,7 @@
 
 #include "helpers.h"
 #include "aes.h"
-
+#include <QDebug>
 //Davies-Meyers hash using AES
 class Hash {
 public:

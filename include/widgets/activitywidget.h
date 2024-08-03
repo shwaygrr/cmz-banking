@@ -22,6 +22,7 @@ public:
     ActivityWidget(QWidget *parent = 0);
     void setDescription(const QString& description);
     void setTime(const QString& time);
+    void setTextColor(const QColor& color);
 };
 
 #endif // ACTIVITYWIDGET_H

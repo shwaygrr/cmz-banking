@@ -1,21 +1,32 @@
 #ifndef AES_H
 #define AES_H
 
-#include "bigint.h"
-#include "helpers.h"
 #include <iostream>
 #include <set>
+#include <random>
+#include <sstream>
+#include <iomanip>
+
+#include "bigint.h"
+#include "helpers.h"
 
 class AES128 {
 public:
     //Mode of operation
-    std::string encECB128(std::string message_hex, std::string priv_key_hex);
-    std::string decECB128(std::string message_hex, std::string priv_key_hex);
+    std::string encECB128(std::string message_hex);
+    std::string encECB128(std::string message_hex, std::string priv_key_hex_);
+    std::string decECB128(std::string message_hex);
 
     //AES-128 encryption
     std::bitset<128> aesEnc128(const std::string& plain_text128, const std::string& priv_key128);
 
+    std::bitset<128> aesDec128(const std::string& cipher_text, const std::string& priv_key);
+
+    void setPrivateKey(const std::string& priv_key_hex_);
+
+    std::string generatePrivateKey();
 private:
+    std::string priv_key_hex;
     //tables
     static const std::vector<std::vector<std::string>> SBOX;
     static const std::vector<std::string> ROUND_CONSTANTS;
@@ -70,7 +81,6 @@ private:
     void invShiftRows(std::bitset<128>& bin128) ;
 
     //AES-128 decryption
-    std::bitset<128> aesDec128(const std::string& cipher_text, const std::string& priv_key);
 
 };
 #endif // AES_H

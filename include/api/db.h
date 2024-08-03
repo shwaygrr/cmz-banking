@@ -12,6 +12,7 @@
 #include "transaction.h"
 #include "activity.h"
 #include "crypto/hash.h"
+#include "crypto/digsig.h"
 
 class DB {
 public:
@@ -22,10 +23,10 @@ public:
     void signUp();
 
     //auth
-    bool createUser(const QString& full_name, const QString& username, const QString& password_hash);
-    User getUserById(const int user_id);
+    bool createUser(const QString& full_name, const QString& username, const QString& password, const QString& e_public, const QString& n_public);
+    User getUserById(const int user_id, const QString& key);
     bool authenticate(const QString& username, const QString& password);
-
+    bool authenticate(const QString& username, const QString& password, const QString& key);
     //user info
     QList<BankAccount> getAllBankAccountsByUserId(const int user_id);
     std::vector<Transaction> getTransactionsByUserId(const int user_id);
@@ -58,6 +59,7 @@ private:
     void createTables();
     void createTriggers();
     bool credIsUnique(const QString& credential_type, const QString& credential);
+    QSet<QString> getPublicKeysById(int user_id);
 };
 
 #endif // DB_H

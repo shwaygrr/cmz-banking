@@ -5,16 +5,50 @@
 #include "transaction.h"
 #include "activity.h"
 #include "system.h"
-using namespace std;
+#include "crypto/digsig.h"
+#include "crypto/hash.h"
+#include "crypto/rsa.h"
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
-    DB db;
-    // db.createUser("Josh", "Josh Joe", "1234");
-    // db.updateBankAccountBalance(22, 300.00);
-    // qDebug() << db.getBankAccountById(34);
-    // System* system;
+    // RSA rsa;
+    // rsa.keyGen(10);
+    // Hash hash;
+
+    // qDebug() << "Hash ex" << QString::fromStdString(hash.hash("Hi"));
+    // DigSig dig_sig;
+    // dig_sig.setRSA(rsa);
+    // qDebug() << "starting signing";
+    // qDebug() << "signature: " <<QString::fromStdString(dig_sig.sign("Hi"));
+    // qDebug() << "done";
+    // System system;
+    // system.digitalSignature("Hello");
+
+    // RSA rsa;
+    // rsa.keyGen(10);
+
+    // rsa.verifyPrivateKey(rsa.getPrivateKey(), rsa.e_public, rsa.n_public);
+    // AES128 aes;
+    // qDebug() << aes.generatePrivateKey();
+    // RSA rsa;
+
+    // bigint b = rsa.encrypt(123);
+    // std::cout << rsa.decrypt(a);
+
+
+
+    // rsa.rsaEnc(123);
+  //   bigint j("1232366543"), s("3454"), y("223"), odd_num("334556");
+
+  //   if (j >= s - 1 && y != odd_num - 1)
+  //       qDebug() << "hi";
+
+
+    // DB db;
+
+    // QList<Activity> activities = db.getActivitiesByUserId(7);
+
     // for(const Activity& activity : activities) {
     //     qDebug() << activity;
     //     qDebug() << "------------------------------------------";
@@ -51,4 +85,5 @@ int main(int argc, char *argv[]) {
     w.show();
 
     return a.exec();
+    return 0;
 }

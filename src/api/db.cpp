@@ -98,6 +98,9 @@ void DB::createTables() {
             username VARCHAR(255) UNIQUE NOT NULL,
             password_hash VARCHAR(255) NOT NULL,
             salt VARCHAR(255) NOT NULL,
+            e_public VARCHAR(255) NOT NULL,
+            n_public VARCHAR(255) NOT NULL,
+            private_key_enc VARCHAR(255) NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
@@ -144,6 +147,7 @@ void DB::createTables() {
             activity_id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER,
             description VARCHAR(255),
+            signature VARCHAR(255),
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES Users(user_id)
         );
@@ -189,10 +193,11 @@ void DB::createTriggers() {
     }
 }
 
-User DB::getUserById(const int user_id) {
+User DB::getUserById(const int user_id, const QString& key) {
     QSqlQuery query;
+    RSA rsa;
     // Prepare the SQL query to select a user by ID
-    query.prepare("SELECT user_id, full_name, username, password_hash, created_at FROM Users WHERE user_id = :user_id");
+    query.prepare("SELECT user_id, full_name, username, password_hash, e_public, n_public, private_key_enc, created_at FROM Users WHERE user_id = :user_id");
     query.bindValue(":user_id", user_id);
 
     // Execute the query and check for errors
@@ -209,8 +214,18 @@ User DB::getUserById(const int user_id) {
         QString full_name = record.value("full_name").toString();
         QString username = record.value("username").toString();
         QString created_at = record.value("created_at").toString();
+        QString e_public = record.value("e_public").toString();
+        QString n_public = record.value("n_public").toString();
+        QString private_key_enc = record.value("private_key_enc").toString();
 
-        return User(user_id, full_name, username, created_at);
+        //decrypt private key
+        qDebug() << "Private key enc:" << private_key_enc;
+
+        // QString private_key = QString::fromStdString(rsa.decrypt(bigint(private_key_enc.toStdString()), bigint(e_public.toStdString()), bigint(key.toStdString())));
+
+        // qDebug() << "private key: " << private_key;
+        return User(user_id, full_name, username, created_at, e_public, n_public, private_key_enc);
+        return User();
     } else {
         qDebug() << "User not found";
         return User();
@@ -241,17 +256,28 @@ bool DB::credIsUnique(const QString& credential_type, const QString& credential)
 }
 
 
-bool DB::createUser(const QString& full_name, const QString& username, const QString& password) {
+bool DB::createUser(const QString& full_name, const QString& username, const QString& password, const QString& e_public, const QString& n_public) {
     QSqlQuery query;
     Hash hash;
+    RSA rsa;
+    AES128 aes;
+
     std::string salt = generateSalt();
 
+    bigint private_key = binToInt<128>(hexToBin<128>(aes.generatePrivateKey()));
+
+    QString private_key_enc = QString::fromStdString(rsa.encrypt(private_key, e_public.toStdString(), n_public.toStdString()).as_str());
+
+
     if (credIsUnique("username", username)) {
-        query.prepare("INSERT INTO Users (full_name, username, password_hash, salt) VALUES (:full_name, :username, :password_hash, :salt)");
+        query.prepare("INSERT INTO Users (full_name, username, password_hash, salt, e_public, n_public, private_key_enc) VALUES (:full_name, :username, :password_hash, :salt, :e_public, :n_public, :private_key_enc)");
         query.bindValue(":full_name", full_name);
         query.bindValue(":username", username);
         query.bindValue(":password_hash", QString::fromStdString(hash.hash(password.toStdString(), salt)));
         query.bindValue(":salt", QString::fromStdString(salt));
+        query.bindValue(":e_public", e_public);
+        query.bindValue(":n_public", n_public);
+        query.bindValue(":private_key_enc", private_key_enc);
 
         if (!query.exec()) {
             qDebug() << "Error adding user:" << query.lastError().text();
@@ -266,12 +292,14 @@ bool DB::createUser(const QString& full_name, const QString& username, const QSt
 }
 
 
+
 bool DB::updateUserById(const int id, const QString &field, const QString &new_data) {
     QSqlQuery query;
     QString queryString;
 
+    // Validate field name
     if (field == "full_name" || field == "username" || field == "password_hash") {
-        queryString = "UPDATE Users SET " + field + " = :new_data WHERE user_id = :id";
+        queryString = "UPDATE Users SET " + field + " = :new_data, updated_at = CURRENT_TIMESTAMP WHERE user_id = :id";
     } else {
         qDebug() << "Invalid field name:" << field;
         return false;
@@ -281,15 +309,12 @@ bool DB::updateUserById(const int id, const QString &field, const QString &new_d
     query.bindValue(":new_data", new_data);
     query.bindValue(":id", id);
 
-    QString field_name = field == "password_hash" ? "Password" : field == "username" ? "Username" : "Full Name";
     if (!query.exec()) {
-        createActivity(Activity(id, "Attempted and failed to update " + field_name));
-        qDebug() << "Error updating profile:" << query.lastError().text();
+        qDebug() << "Error executing query:" << query.lastError().text();
         return false;
     }
 
     if (query.numRowsAffected() > 0) {
-        createActivity(Activity(id, field_name + " updated"));
         qDebug() << "Profile updated successfully.";
         return true;
     } else {
@@ -297,6 +322,7 @@ bool DB::updateUserById(const int id, const QString &field, const QString &new_d
         return false;
     }
 }
+
 
 bool DB::deleteUserById(const int user_id) {
     QSqlQuery query;
@@ -320,6 +346,51 @@ bool DB::deleteUserById(const int user_id) {
 
 
 
+bool DB::authenticate(const QString& username, const QString& password, const QString& key) {
+    QSqlQuery query;
+    Hash hash;
+    query.prepare("SELECT user_id, salt, password_hash, e_public, n_public FROM Users WHERE username = :username");
+    query.bindValue(":username", username);
+
+    if (!query.exec()) {
+        qDebug() << "Query Error" << query.lastError().text();
+        return false;
+    }
+
+    //check username
+    if (query.next()) {
+        QSqlRecord record = query.record();
+        QString password_hash = record.value("password_hash").toString();
+        bigint e_public(record.value("e_public").toString().toStdString());
+        bigint n_public(record.value("n_public").toString().toStdString());
+
+        std::string salt = record.value("salt").toString().toStdString();
+        // int user_id = record.value("user_id").toInt();
+
+        //check password
+        if (password_hash.toStdString() == hash.hash(password.toStdString(), salt)) {
+
+            //check key
+            RSA rsa;
+            if (!rsa.verifyPrivateKey(bigint(key.toStdString()), e_public, n_public)) {
+                qDebug() << "Invalid Key";
+                return false;
+            }
+
+            qDebug() << "Authenticated!";
+            return true;
+        } else {
+            qDebug() << "invalid password";
+            // createActivity(Activity(user_id, "Unsuccessful login attempt"));
+            return false;
+        }
+    } else {
+        qDebug() << "Invalid username";
+        return false;
+    }
+}
+
+
 bool DB::authenticate(const QString& username, const QString& password) {
     QSqlQuery query;
     Hash hash;
@@ -331,18 +402,21 @@ bool DB::authenticate(const QString& username, const QString& password) {
         return false;
     }
 
+    //check username
     if (query.next()) {
         QSqlRecord record = query.record();
         QString password_hash = record.value("password_hash").toString();
         std::string salt = record.value("salt").toString().toStdString();
         int user_id = record.value("user_id").toInt();
 
+
+        qDebug() << "Key validated";
+        //check password
         if (password_hash.toStdString() == hash.hash(password.toStdString(), salt)) {
             qDebug() << "Authenticated!";
             return true;
         } else {
             qDebug() << "invalid password";
-            createActivity(Activity(user_id, "Unsuccessful login attempt"));
             return false;
         }
     } else {
@@ -351,10 +425,11 @@ bool DB::authenticate(const QString& username, const QString& password) {
     }
 }
 
+
 User* DB::getUserByUsername(const QString& username) {
     QSqlQuery query;
 
-    query.prepare("SELECT user_id, full_name, username, password_hash, created_at FROM Users WHERE username = :username");
+    query.prepare("SELECT user_id, full_name, username, password_hash, created_at, e_public, n_public, private_key_enc FROM Users WHERE username = :username");
     query.bindValue(":username", username);
 
     if (!query.exec()) {
@@ -369,9 +444,13 @@ User* DB::getUserByUsername(const QString& username) {
         QString full_name = record.value("full_name").toString();
         QString username = record.value("username").toString();
         QString created_at = record.value("created_at").toDateTime().toString();
+        QString e_public_key = record.value("e_public").toString();
+        QString n_public_key = record.value("n_public").toString();
+        QString private_key = record.value("private_key").toString();
 
-        createActivity(Activity(user_id, "Successfully Logged in"));
-        return new User(user_id, full_name, username, created_at);
+        // createActivity(Activity(user_id, "Successfully Logged in"));
+
+        return new User(user_id, full_name, username, created_at, e_public_key, n_public_key, private_key);
     } else {
         qDebug() << "User not found";
         return nullptr;
@@ -432,7 +511,7 @@ bool DB::createBankAccount(const BankAccount& new_bank_account) {
         qDebug() << "Error Creating new bank account:" << query.lastError().text();
         return false;
     } else {
-        createActivity(Activity(new_bank_account.getAccountUserId(), "Added a new " + new_bank_account.getAccountType() + " account with an initial balance of $" + QString::number(new_bank_account.getBalance())));
+        // createActivity(Activity(new_bank_account.getAccountUserId(), "Added a new " + new_bank_account.getAccountType() + " account with an initial balance of $" + QString::number(new_bank_account.getBalance())));
         qDebug() << "New bank account created successfully.";
         return true;
     }
@@ -586,35 +665,32 @@ Transaction DB::getTransactionById(const int transaction_id) {
     }
 }
 
+
 bool DB::createActivity(const Activity& new_activity) {
     QSqlQuery query;
 
-    if (!db.isOpen()) {
-        qDebug() << "Error: Database is not open";
-        return false;
-    }
     query.prepare(R"(
-        INSERT INTO Activities (user_id, description, created_at)
-        VALUES (:user_id, :description, CURRENT_TIMESTAMP)
+        INSERT INTO Activities (user_id, description, signature, created_at)
+        VALUES (:user_id, :description, :signature, CURRENT_TIMESTAMP)
     )");
 
     query.bindValue(":user_id", new_activity.getUserId());
     query.bindValue(":description", new_activity.getDescription());
+    query.bindValue(":signature", new_activity.getSignature());
 
     if (!query.exec()) {
         qDebug() << "Error creating activity:" << query.lastError();
         return false;
     }
-
+    qDebug() << "activity created";
     return true;
 }
 
 
 QList<Activity> DB::getActivitiesByUserId(const int user_id) {
-
     QList<Activity> activities;
     QSqlQuery query;
-    query.prepare("SELECT activity_id, user_id, description, created_at FROM Activities WHERE user_id = :user_id");
+    query.prepare("SELECT activity_id, user_id, description, signature, created_at FROM Activities WHERE user_id = :user_id");
     query.bindValue(":user_id", user_id);
 
     if (!query.exec()) {
@@ -626,11 +702,34 @@ QList<Activity> DB::getActivitiesByUserId(const int user_id) {
         int activity_id = query.value("activity_id").toInt();
         QString description = query.value("description").toString();
         QString created_at = query.value("created_at").toString();
-
-        Activity activity(activity_id, user_id, description, created_at);
+        QString signature = query.value("signature").toString();
+        Activity activity(activity_id, user_id, description, signature, created_at);
 
         activities.append(activity);
     }
 
     return activities;
+}
+
+QSet<QString> DB::getPublicKeysById(int user_id) {
+    QSet<QString> publicKeys;
+    QSqlQuery query;
+
+    // Prepare the query to fetch e_public and n_public from the Users table
+    query.prepare("SELECT e_public, n_public FROM Users WHERE user_id = :user_id");
+    query.bindValue(":user_id", user_id);
+
+    // Execute the query
+    if (!query.exec()) {
+        qDebug() << "Error fetching public keys:" << query.lastError().text();
+        return publicKeys;
+    }
+
+    // If the query is successful and there is at least one result, add the keys to the set
+    if (query.next()) {
+        publicKeys.insert(query.value("e_public").toString());
+        publicKeys.insert(query.value("n_public").toString());
+    }
+
+    return publicKeys;
 }
