@@ -19,3 +19,9 @@ void ActivityWidget::setDescription(const QString& description) {
 void ActivityWidget::setTime(const QString& time) {
     time_label->setText(time);
 }
+
+void ActivityWidget::setTextColor(const QColor& color) {
+    QPalette palette = activity_label->palette();
+    palette.setColor(QPalette::WindowText, color);
+    activity_label->setPalette(palette);
+}

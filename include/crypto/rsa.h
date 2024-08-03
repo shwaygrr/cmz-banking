@@ -37,6 +37,11 @@ public:
     bigint getPrivateKey() const;
 
     void test();
+
+    //digital signature
+    bigint sign(const bigint& cipher_text);
+    bigint unsign(const bigint& cipher_text);
+
 private:
     bigint modExp(const bigint& base, bigint exp, const bigint& modulus);
     bigint binaryToDecimal(const std::string& binary_str);

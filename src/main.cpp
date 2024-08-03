@@ -5,11 +5,26 @@
 #include "transaction.h"
 #include "activity.h"
 #include "system.h"
-
+#include "crypto/digsig.h"
+#include "crypto/hash.h"
 #include "crypto/rsa.h"
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
+
+    // RSA rsa;
+    // rsa.keyGen(10);
+    // Hash hash;
+
+    // qDebug() << "Hash ex" << QString::fromStdString(hash.hash("Hi"));
+    // DigSig dig_sig;
+    // dig_sig.setRSA(rsa);
+    // qDebug() << "starting signing";
+    // qDebug() << "signature: " <<QString::fromStdString(dig_sig.sign("Hi"));
+    // qDebug() << "done";
+    // System system;
+    // system.digitalSignature("Hello");
+
     // RSA rsa;
     // rsa.keyGen(10);
 

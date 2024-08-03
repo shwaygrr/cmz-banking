@@ -100,6 +100,15 @@ ActivityWidget* MainWindow::createActivityWidget(const Activity& activity) {
     widget->setDescription(activity.getDescription());
     widget->setTime(activity.getCreatedAt());
 
+
+    if (activity.getValidated()) {
+        qDebug() << activity.getValidated() << "green";
+        widget->setTextColor(Qt::green);
+    } else {
+        qDebug() << activity.getValidated() << "red";
+        widget->setTextColor(Qt::red);
+    }
+
     return widget;
 }
 
@@ -307,6 +316,7 @@ void MainWindow::setupButtonConnections() {
         QPushButton *signout = centralWidget->findChild<QPushButton*>("button_signout");
         if(signout)
             connect(signout, &QPushButton::clicked, this, [this]() {
+                //need to delete user from within system after this
                 system->createActivity(Activity(system->getUser()->getUserId(), "Signed out"));
                 loadUI("mainwindow.ui");
             });
@@ -335,7 +345,9 @@ void MainWindow::setupButtonConnections() {
         QPushButton *change_full_name_button = centralWidget->findChild<QPushButton*>("profile_button_changefullname");
         if(change_full_name_button)
             connect(change_full_name_button, &QPushButton::clicked, this, [this]() {
-                system->updateUser("full_name", new_full_name);
+                if(!system->updateUser("full_name", new_full_name, system->getUser()->getPrivateKey())) {
+                    qDebug() << "Error updating";
+                }
             });
 
         //username field and button
@@ -346,7 +358,7 @@ void MainWindow::setupButtonConnections() {
         QPushButton *change_username_button = centralWidget->findChild<QPushButton*>("profile_button_changeusername");
         if(change_username_button)
             connect(change_username_button, &QPushButton::clicked, this, [this]() {
-                if(!system->updateUser("username", new_username)) {
+                if(!system->updateUser("username", new_username, system->getUser()->getPrivateKey())) {
                     qDebug() << "Error updating";
                 };
             });
@@ -361,7 +373,7 @@ void MainWindow::setupButtonConnections() {
             connect(change_password_button, &QPushButton::clicked, this, [this]() {
                 Hash hash;
                 std::string salt = generateSalt();
-                system->updateUser("password_hash", QString::fromStdString(hash.hash(new_password.toStdString(), salt)));
+                system->updateUser("password_hash", QString::fromStdString(hash.hash(new_password.toStdString(), salt)), system->getUser()->getPrivateKey());
             });
     }
 
@@ -401,6 +413,7 @@ void MainWindow::setupButtonConnections() {
             connect(confirm, &QPushButton::clicked, this, [this, combo_box, input_balance]() {
                 //Create the account
                 if(input_balance->text().toFloat() < 0){return;}
+
                 system->createAccount(combo_box->currentText(), input_balance->text().toFloat());
 
                 loadUI("dashboardwindow.ui");

@@ -12,6 +12,7 @@ INCLUDEPATH += include
 
 SOURCES += \
     src/activity.cpp \
+    src/crypto/digsig.cpp \
     src/crypto/rsa.cpp \
     src/system.cpp \
     src/widgets/activitywidget.cpp \
@@ -32,6 +33,7 @@ HEADERS += \
     include/activity.h \
     include/api/db.h \
     include/crypto/aes.h \
+    include/crypto/digsig.h \
     include/crypto/rsa.h \
     include/crytpo/bigint.h \
     include/mainwindow.h \

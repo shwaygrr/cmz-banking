@@ -37,7 +37,7 @@ bigint RSA::modExp(const bigint& base, bigint exp, const bigint& modulus) {
         if (exp % 2 == 1) result = (A*result) % modulus;
 
         exp /= 2; //next bit
-        std::cout << "Result = " << result << std::endl;
+        // qDebug() << "Result = " << QString::fromStdString((result.as_str()));
 
     }
     return result;
@@ -318,6 +318,7 @@ void RSA::keyGen(unsigned int bit_size) {
 */
 bigint RSA::encrypt(const bigint& plain_text) {
     std::cout << "rsa encryption..." << std::endl;
+
     return modExp(plain_text, e_public, n_public);
 }
 
@@ -337,6 +338,7 @@ bigint RSA::encrypt(const bigint& plain_text, const bigint& e_pub_key_, const bi
     std::cout << "rsa encryption..." << std::endl;
     return modExp(plain_text, e_pub_key_, n_pub_key_);
 }
+
 
 
 bigint RSA::decrypt(const bigint& cipher_text, const bigint& priv_key, const bigint& n_pub_key_) {
@@ -360,15 +362,25 @@ bool RSA::verifyPrivateKey(const bigint& d_private_, const bigint& e_public_, co
     qDebug() << e_public.as_str();
     qDebug() << n_public.as_str();
 
-    bigint random_plain_text = randNumGen(3000, bigint("9000000000000"));
-    qDebug() << "random_plain_text: " << random_plain_text.as_str();
+    bigint plain_text("123");
+    qDebug() << "random_plain_text: " << plain_text.as_str();
 
-    bigint random_plain_text_enc = encrypt(random_plain_text, e_public_, n_public_);
+    bigint plain_text_enc = encrypt(plain_text, e_public_, n_public_);
 
-
-    if(decrypt(random_plain_text_enc, d_private_, n_public_) == random_plain_text) {
+    if(decrypt(plain_text_enc, d_private_, n_public_) == plain_text) {
         qDebug() << "Invalid Key";
         return true;
     }
     return false;
+}
+
+bigint RSA::sign(const bigint& cipher_text) {
+    std::cout << "rsa decrypting..." << std::endl;
+    return modExp(cipher_text, d_private, n_public);
+}
+
+
+bigint RSA::unsign(const bigint& cipher_text) {
+    std::cout << "rsa decrypting..." << std::endl;
+    return modExp(cipher_text, e_public, n_public);
 }
