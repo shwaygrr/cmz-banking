@@ -47,12 +47,12 @@ QString Transaction::getLogEntry() const {
     QString logEntry;
     //change to account numbers and username later
     if (transaction_type == "send") {
-        logEntry = QString("Sender ID: %1 sent $%2 to Receiver ID: %3")
+        logEntry = QString("Account ID: %1 sent $%2 to Receiver ID: %3")
                        .arg(sender_id)
                        .arg(amount)
                        .arg(receiver_id);
     } else if (transaction_type == "transfer") {
-        logEntry = QString("Sender ID: %1 transferred $%2 to Receiver ID: %3")
+        logEntry = QString("Account ID: %1 transferred $%2 to Receiver ID: %3")
                        .arg(sender_id)
                        .arg(amount)
                        .arg(receiver_id);
