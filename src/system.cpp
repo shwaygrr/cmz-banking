@@ -100,8 +100,8 @@ bool System::createTransaction(const Transaction& transaction) const {
     Transaction new_transaction = transaction;
     // add conditional for tpe if sending feature is complete
     new_transaction.setTransactionType("transfer");
-    if (db->createTransaction(transaction)) {
-        createActivity(Activity(user->getUserId(), transaction));
+    if (db->createTransaction(new_transaction)) {
+        createActivity(Activity(user->getUserId(), new_transaction));
         return true;
     } else {
         return false;
