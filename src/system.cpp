@@ -73,7 +73,7 @@ bool System::login(const QString& username_, const QString& password_) {
 }
 
 bool System::createUser(const QString& full_name_, const QString& username_, const QString& password_) const {
-    user->user_rsa.keyGen(20);
+    user->user_rsa.keyGen(30);
     QString e_public = QString::fromStdString(user->user_rsa.e_public.as_str());
     QString n_public = QString::fromStdString(user->user_rsa.n_public.as_str());
 
